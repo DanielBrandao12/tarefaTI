@@ -1,0 +1,59 @@
+.container-painel header h1{
+    font-size: 32px;
+    text-align: center;
+    color: #31759a;
+}
+
+
+.container-painel{
+    display: flex;
+    flex-direction: column;
+}
+
+.container-painel header {
+    display: flex;
+    align-items:center;
+   justify-content: center;
+    width: 80vw;
+    height: 15vh;
+    border-bottom: 1px #31759a solid;
+}
+.container-painel header button {
+    margin-left: 35px;
+    background-color: #31759a;
+    width: 150px;
+    height: 40px;
+    font-size: 20px;
+    color: #ffff;
+    border-style: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.container-painel section{
+    display: flex;
+   
+    width: 80vw;
+    height: 85vh;
+    
+}
+
+.container-tarefa{
+    margin: 30px 30px;
+    width: 80%;
+    height: auto;
+    padding: 20px;
+    border: 1px solid #31759A;
+}
+
+
+
+.containerDatas{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    
+}
+.containerDatas div strong, text {
+    font-size: 15px;
+}
+
