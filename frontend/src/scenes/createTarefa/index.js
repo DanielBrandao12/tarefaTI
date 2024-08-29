@@ -5,6 +5,8 @@ import './styleAlert.css';
 import api from '../../services/api';
 import './style.css';
 import Menu from '../../components/menu';
+import Painel from '../../components/painel';
+import ModalConfirm from '../../components/modalConfirm';
 
 function CreateTarefa() {
 
@@ -32,7 +34,8 @@ function CreateTarefa() {
     const [nivel_prioridade, setNivelPrioridade] = useState('');
     const [observacao, setObservacao] = useState('');
     const [getTarefa, setGetTarefa] = useState([]);
-    const [load, setLoad] = useState()
+    const [alertConfirm, setAlertConfirm] = useState('')
+    const [msg, setMsg] = useState()
 
     const [erroInput, setErroInput] = useState()
 
@@ -50,7 +53,7 @@ function CreateTarefa() {
     const getTarefaShow = async () => {
         try {
             const response = await api.get('/tarefas');
-            setGetTarefa(response.data.filter((item) => item.status_tarefa == 'em aberto'));
+            setGetTarefa(response.data.filter((item) => item.status_tarefa === 'em aberto'));
 
 
 
@@ -69,8 +72,8 @@ function CreateTarefa() {
 
 
 
-    const createTarefa = async () => {
-
+    const createTarefa = async (event) => {
+        event.preventDefault()
         try {
             await api.post('/tarefas/create', {
                 nome,
@@ -82,14 +85,18 @@ function CreateTarefa() {
             // Após criar a tarefa, recarregar a lista de tarefas
             await getTarefaShow();
 
+
             // Limpar campos
             setNome('');
             setTarefa('');
             setNivelPrioridade('');
             setObservacao('');
             toggleForm('none');
-            setErroInput('#31759A')
-            alert('Tarefa criada com sucesso!')
+            
+            console.log('oidd')
+            alertCon ('Tarefa criada com sucesso!')
+
+              
         } catch (error) {
             console.error('Erro ao criar tarefa', error);
         }
@@ -105,6 +112,8 @@ function CreateTarefa() {
         setObservacao(observacao)
 
     }
+
+
     const saveEdit = async () => {
 
         try {
@@ -126,11 +135,12 @@ function CreateTarefa() {
             setNivelPrioridade('');
             setObservacao('');
             toggleForm('none');
-            alert('Edição feita com sucesso!')
+        
+            alertCon('Edição feita com sucesso!')
 
         } catch (error) {
             console.error('Erro ao editar tarefa', error);
-            alert('Erro ao editar, faça alguma alteração!')
+            alertCon('Erro ao editar, faça alguma alteração!')
         }
     }
     const confirmaEdit = (event) => {
@@ -195,17 +205,30 @@ function CreateTarefa() {
         if (!nivelPrioridade) {
             setDadosFiltrados(getTarefa); // Mostra todos os itens
         } else {
-            const filteredTasks = getTarefa.filter((item) => item.nivel_prioridade === nivelPrioridade);
+            const filteredTasks = getTarefa.filter((item) => item.nivel_prioridade == nivelPrioridade);
             setDadosFiltrados(filteredTasks); // Atualiza o estado com os itens filtrados
         }
     };
+
+    const alertCon = (msgF) => {
+      
+
+            setMsg(msgF);
+            setAlertConfirm('flex');
+             setTimeout(() => {
+                setMsg('')
+                setAlertConfirm('none');
+            }, 2000); // 10 seconds
+   
+    };
+
 
     return (
         <>
             <main className="container-main">
                 <Menu />
-                <section className='container-painel'>
-                    <header>
+                <Painel >
+                    <header className='headerButton'>
                         <button className='button-padrao' onClick={() => toggleForm('flex')}>Criar Tarefa</button>
                     </header>
                     <section className='sectionPainel'>
@@ -231,7 +254,19 @@ function CreateTarefa() {
 
                                         <div className='container-tarefa-check'>
                                             <div className='divTitle'>
-                                                <h2 className='textPrioridade'>{item.nivel_prioridade}</h2>
+                                                {
+                                                    item.nivel_prioridade === 'Prioridade Alta' &&
+                                                     <h2 className='textPrioridade' style={{color: 'red'}} >{item.nivel_prioridade}</h2> 
+                                                }
+                                                {
+                                                    item.nivel_prioridade === 'Prioridade Média' &&
+                                                     <h2 className='textPrioridade' style={{color: '#31759A'}} >{item.nivel_prioridade}</h2> 
+                                                }
+                                                {
+                                                    item.nivel_prioridade === 'Prioridade Baixa' &&
+                                                     <h2 className='textPrioridade' style={{color: 'green'}} >{item.nivel_prioridade}</h2> 
+                                                }
+
                                             </div>
                                             <text onClick={() => editTarefa(item.id, item.nome, item.tarefa, item.nivel_prioridade, item.observacao)}>Editar</text>
                                             <text onClick={() => confirmaCloncuir(item.id)}>Concluir</text>
@@ -271,7 +306,7 @@ function CreateTarefa() {
                                 )) : <div>Nenhuma tarefa encontrada.</div>}
                         </div>
                     </section>
-                </section>
+                </Painel>
             </main>
 
             <div className='container-form' style={{ display: changeCreate }}>
@@ -329,6 +364,8 @@ function CreateTarefa() {
                 </div>
 
             </div>
+
+            <ModalConfirm  value={msg} container={alertConfirm}/>
         </>
     );
 }

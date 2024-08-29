@@ -3,7 +3,7 @@ import './style.css'
 
 
 import Menu from '../../components/menu'
-
+import Painel from '../../components/painel';
 
 import api from '../../services/api';
 
@@ -52,8 +52,8 @@ function Tarefas() {
     return (
         <main className="container-main">
             <Menu />
-            <section className='container-painel'>
-                <header>
+            <Painel >
+                <header className='headerTitle'>
                     <h1>Lista de Tarefas Concluídas</h1>
                 </header>
                 <section>
@@ -101,7 +101,7 @@ function Tarefas() {
                             )) : <div>Nenhuma tarefa encontrada.</div>}
                     </div>
                 </section>
-            </section>
+            </Painel>
 
         </main>
     );

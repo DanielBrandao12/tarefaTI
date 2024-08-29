@@ -1,0 +1,5 @@
+.container-painel {
+    display: flex;
+    flex-direction: column;
+    
+}
