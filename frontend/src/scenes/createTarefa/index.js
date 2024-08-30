@@ -192,7 +192,7 @@ function CreateTarefa() {
             await getTarefaShow();
 
 
-
+            alertCon('Tarefa Concluída!')
 
         } catch (error) {
             console.error('Erro ao concluir tarefa', error);
@@ -293,7 +293,7 @@ function CreateTarefa() {
 
                                             </div>
                                             <div>
-                                                <strong>Tarefa: </strong>
+                                                <strong>Descrição: </strong>
                                                 <text>{item.tarefa}</text>
                                             </div>
                                             <div>

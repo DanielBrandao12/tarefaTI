@@ -220,7 +220,7 @@ textarea{
     margin-left: 5px;
     font-style: oblique;
     text-transform: uppercase;
-    color: #dd940b; /* Bright yellow color */
+   
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Add a subtle shadow for better visibility */
     letter-spacing: 1px; /* Add spacing between letters */
     line-height: 1.5;

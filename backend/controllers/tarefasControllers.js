@@ -33,7 +33,8 @@ const createTarefa = async (req, res) => {
       nivel_prioridade,
       observacao,
       data_criacao: new Date(),
-      status_tarefa: 'em aberto'
+      status_tarefa: 'em aberto',
+      id_users: 1
     });
 
     // Retorna a nova tarefa criada com status 201

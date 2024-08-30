@@ -89,7 +89,7 @@ function Tarefas() {
                                             </div>
                                         </div>
                                         <div>
-                                            <strong>Tarefa: </strong>
+                                            <strong>Descrição: </strong>
                                             <text>{item.tarefa}</text>
                                         </div>
                                         <div>

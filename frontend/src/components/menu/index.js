@@ -21,6 +21,7 @@ function Menu() {
                    
                         <Link className='link' to={'/'}>Tarefas</Link>
                         <Link className='link' to={'/tarefas'}>Tarefas Concluídas</Link>
+                        <Link className='link' to={'/login'}>Login</Link>
                     
                 </div>
             </nav>

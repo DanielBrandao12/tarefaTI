@@ -28,12 +28,22 @@ module.exports = (sequelize, DataTypes) => {
         observacao: {
           type: DataTypes.STRING,
         },
+        id_users: {
+          type: DataTypes.INTEGER,
+        }
       },
       {
         tableName: "tarefas",
         timestamps: false,
       }
     );
+    
+    Tarefas.associate = function (models) {
+      Tarefas.belongsTo(models.Users, {
+        as: "users",
+        foreignKey: "id_users",
+      });
+    };
   
     return Tarefas;
 };
