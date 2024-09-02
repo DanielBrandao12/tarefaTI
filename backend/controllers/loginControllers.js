@@ -1,6 +1,6 @@
 const {Users} = require('../database/models');
 
-const { check } = require("express-validator");
+
 const jwt = require("jsonwebtoken");
 const { jwtKey } = require("../config/secrets");
 const bcrypt = require("bcrypt");
@@ -31,43 +31,60 @@ const createUser = async (req, res) => {
 }
 
 
-const handleLogin = async (req, res) =>{
-   
-    const { nome_user, senha } = req.body;
-   
-    const token = jwt.sign({ nome_user }, jwtKey, { expiresIn: "1h" });
-    res.cookie("token", token);
+const handleLogin = async (req, res) => {
+  const { nome_user, senha } = req.body;
+
+  // Encontre o usuário no banco de dados
+  const logon = await Users.findOne({
+    where: {
+      nome_user,
+    }
+  });
   
-   const  logon = await Users.findOne({
-      where: {
-        nome_user,
+  if (!logon) {
+    return res.status(401).json('E-mail ou senha incorretos');
+  }
+
+  // Compare a senha fornecida com a senha armazenada
+  const check = bcrypt.compareSync(senha, logon.dataValues.senha);
+
+  if (check) {
+    // Remover a senha dos dados do usuário antes de armazenar na sessão
+    delete logon.dataValues.senha;
+    const id =logon.dataValues.id 
+    const nome = logon.dataValues.nome
+    // Criar um token JWT (opcional)
+    const token = jwt.sign({ id, nome_user, nome }, jwtKey, { expiresIn: "1h" });
+    res.cookie("token", token);
+
+    // Armazenar os dados do usuário na sessão
+    req.session.userLogged = logon.dataValues;
+
+    // Enviar resposta ao cliente
+    res.json(logon.dataValues);
+    console.log('Logado');
+  } else {
+    console.log("E-mail ou senha incorretos");
+    res.status(401).json('E-mail ou senha incorretos');
+  }
+};
+
+
+const logout = async (req,res) =>{
+    // Destruir a sessão
+  await  req.session.destroy((err) => {
+      if (err) {
+        return res.status(500).send('Erro ao fazer logout');
       }
   
-    })
-
-    
-  
-
-       const check = bcrypt.compareSync(senha, logon.dataValues.senha)
-  
-        if (check) {
-          //tirar a senha antes de ir para sessão, para não exibir minha senha 
-          delete logon.dataValues.senha
-          //sessão recebe os dados dos usuário logado para poder usar em todas as minhas views
-         // req.session.userLogged = data.dataValues
-          res.json( logon)
-          console.log('Logado')
-        } else {
-          console.log( "E-mail ou senha incorretos");
-          res.json('erro')
-        }
+      // Excluir o cookie da sessão
+      res.clearCookie('connect.sid', { path: '/' }); // Inclua o caminho se necessário
       
-      
-
-  };
-
+    });
+}
 
 module.exports = {
     createUser,
-    handleLogin
+    handleLogin, 
+    logout
 }

@@ -7,8 +7,31 @@ import './style.css';
 import Menu from '../../components/menu';
 import Painel from '../../components/painel';
 import ModalConfirm from '../../components/modalConfirm';
+import Cookies from 'js-cookie';
+import { jwtDecode } from "jwt-decode";
 
 function CreateTarefa() {
+
+    const [idUser, setIdUser] =useState()
+    const [userLogado, setUserLogado] = useState()
+    const handleToken = () =>{
+
+
+        // Recuperar o token do cookie
+    const token = Cookies.get('token'); // 'token' é o nome do cookie onde o token está armazenado
+    
+ 
+    if (token) {
+        try {
+          const decodedToken = jwtDecode(token);
+          console.log('Dados do token:', decodedToken);
+          setIdUser(decodedToken.id)
+          setUserLogado(decodedToken.nome)
+        } catch (error) {
+          console.error('Erro ao decodificar o token:', error);
+        }
+      }
+    }
 
 
     const formatDateTime = (dateTime) => {
@@ -64,6 +87,8 @@ function CreateTarefa() {
 
     useEffect(() => {
         getTarefaShow();
+        handleToken()
+      
     }, []);
 
     useEffect(() => {
@@ -73,13 +98,16 @@ function CreateTarefa() {
 
 
     const createTarefa = async (event) => {
+     
         event.preventDefault()
+       
         try {
             await api.post('/tarefas/create', {
-                nome,
+                nome:userLogado,
                 tarefa,
                 nivel_prioridade,
-                observacao
+                observacao,
+                idUser
             });
 
             // Após criar a tarefa, recarregar a lista de tarefas
@@ -320,10 +348,9 @@ function CreateTarefa() {
                         <input
                             placeholder='Digite seu nome'
                             className='inputs'
-                            value={nome}
-                            onChange={(event) => (setNome(event.target.value))}
-
-                            required
+                            value={id ? nome : userLogado}
+                            
+                          
                         />
                         <textarea
                             placeholder='Descrição'

@@ -27,17 +27,19 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
+    align-items: center;
     gap: 1rem;
 
 }
 .div-form h1{
+    font-size: 3vw;
     color: #31759A;
 }
 
 .input-login{
     
-   
-    font-size: 20px;
+    width: 90%;
+    font-size: 1.7vw;
     border: 1px solid #31759A;
     color: #31759A;
     padding: 5px;
@@ -50,6 +52,7 @@
 }
 
 .button-login {
+ 
     background-color: #31759A;
     color: #fff;
     cursor: pointer;

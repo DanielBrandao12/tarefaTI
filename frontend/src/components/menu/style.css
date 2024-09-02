@@ -56,3 +56,13 @@ nav{
 .container-nav-options .link:hover{
     background-color: #408ab3;
 }
+
+.sair{
+   
+    position: absolute;
+    bottom: 0;
+    
+    font-size: 15px;
+
+    width: 20vw;
+}

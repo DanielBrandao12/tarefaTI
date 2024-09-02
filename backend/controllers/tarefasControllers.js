@@ -19,7 +19,7 @@ const getTarefas = async (req, res) => {
 // Função para criar uma nova tarefa
 const createTarefa = async (req, res) => {
   try {
-    const { nome, tarefa, nivel_prioridade, observacao } = req.body;
+    const { nome, tarefa, nivel_prioridade, observacao, idUser } = req.body;
 
     // Validação básica para garantir que todos os campos necessários estão presentes
     if (!nome || !tarefa || !nivel_prioridade) {
@@ -34,7 +34,7 @@ const createTarefa = async (req, res) => {
       observacao,
       data_criacao: new Date(),
       status_tarefa: 'em aberto',
-      id_users: 1
+      id_users: idUser
     });
 
     // Retorna a nova tarefa criada com status 201
