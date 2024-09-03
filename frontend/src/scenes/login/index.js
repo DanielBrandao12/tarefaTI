@@ -10,13 +10,18 @@ const Login = () => {
   const navigate = useNavigate(); // Hook para navegação programática
 
   const handleLogin = async (e) => {
-   console.log( e.preventDefault());
-    console.log('Form submitted'); // Log para verificar se o formulário está sendo enviado
+    e.preventDefault()
+    
     setError(''); // Limpa o erro antes de tentar fazer o login
     try {
-     const dadosUser = await api.post('/login', { nome_user, senha });
-      navigate('/');
-      console.log(dadosUser)
+      if(!nome_user || !senha){
+        setError('Preencha todos os campos!')
+      }else{
+
+        await api.post('/login', { nome_user, senha });
+        navigate('/');
+      }
+      
     } catch (err) {
       console.error('Login failed:', err); // Log do erro
       setError('Credenciais inválidas');

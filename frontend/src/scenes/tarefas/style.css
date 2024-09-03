@@ -31,7 +31,7 @@
 }
 .container-painel section{
     display: flex;
-   
+   flex-direction: column;
     width: 80vw;
     height: 85vh;
     
@@ -56,4 +56,35 @@
 .containerDatas div strong, text {
     font-size: 15px;
 }
+.container-date{
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 5px;
+    margin-top: 20px;
+}
 
+.container-date strong{
+    margin-left: 15px;
+    font-size: 17px;
+    color: #31759A;
+}
+
+.datePickerInput {
+
+    font-size: 16px;
+    border: 2px solid #31759A;
+    border-radius: 5px;
+    cursor: pointer;
+    color: #31759A;
+    padding: 5px;
+
+}
+
+.datePickerInput{
+    outline: none;
+}
+
+.datePickerInput::placeholder{
+    color: #31759A;
+}

@@ -70,17 +70,20 @@ const handleLogin = async (req, res) => {
 };
 
 
-const logout = async (req,res) =>{
-    // Destruir a sessão
-  await  req.session.destroy((err) => {
+const logout = async (req, res) => {
+  // Destruir a sessão
+  req.session.destroy((err) => {
       if (err) {
-        return res.status(500).send('Erro ao fazer logout');
+          return res.status(500).send('Erro ao fazer logout');
       }
-  
+
       // Excluir o cookie da sessão
-      res.clearCookie('connect.sid', { path: '/' }); // Inclua o caminho se necessário
+      res.clearCookie('connect.sid', { path: '/' });
+      res.clearCookie('token', { path: '/' });
       
-    });
+      // Enviar resposta de sucesso
+      res.status(200).send('Logout realizado com sucesso');
+  });
 }
 
 module.exports = {

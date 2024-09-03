@@ -60,9 +60,9 @@ nav{
 .sair{
    
     position: absolute;
-    bottom: 0;
+    bottom: 5px;
     
-    font-size: 15px;
+    font-size: 17px;
 
     width: 20vw;
 }
