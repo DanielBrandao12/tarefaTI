@@ -41,7 +41,7 @@ function Menu() {
     };
 
     return (
-        <nav>
+        <div className='nav'>
             <div className='container-nav-title'>
                 <h1>Tarefas TI</h1>
                 {/* <FontAwesomeIcon icon={faBars} fontSize={28} color='#fff' /> */}
@@ -55,7 +55,7 @@ function Menu() {
                     Sair
                 </Link>
             </div>
-        </nav>
+        </div>
     );
 }
 

@@ -12,8 +12,32 @@ import { jwtDecode } from "jwt-decode";
 
 function CreateTarefa() {
 
-    const [idUser, setIdUser] =useState()
-    const [userLogado, setUserLogado] = useState()
+    const [prioridadeNew, setPrioridadeNew] = useState('')
+    const [dadosFiltrados, setDadosFiltrados] = useState([]);
+    const [changeCreate, setChangeCreate] = useState('none'); // Ajuste inicial
+    const [nome, setNome] = useState('');
+    const [tarefa, setTarefa] = useState('');
+    const [nivel_prioridade, setNivelPrioridade] = useState('');
+    const [observacao, setObservacao] = useState('');
+    const [getTarefa, setGetTarefa] = useState([]);
+    const [alertConfirm, setAlertConfirm] = useState('')
+    const [msg, setMsg] = useState('')
+    const [idUser, setIdUser] =useState('')
+    const [userLogado, setUserLogado] = useState('')
+
+
+
+
+    useEffect(() => {
+        getTarefaShow();
+        handleToken()
+      
+    }, []);
+
+    useEffect(() => {
+        filterDados()
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [getTarefa, prioridadeNew]);
     const handleToken = () =>{
 
 
@@ -24,7 +48,7 @@ function CreateTarefa() {
     if (token) {
         try {
           const decodedToken = jwtDecode(token);
-          console.log('Dados do token:', decodedToken);
+        
           setIdUser(decodedToken.id)
           setUserLogado(decodedToken.nome)
         } catch (error) {
@@ -49,19 +73,9 @@ function CreateTarefa() {
         return ` ${day}/${month}/${year} - ${hours}:${minutes}`;
     };
 
-    const [prioridadeNew, setPrioridadeNew] = useState()
-    const [dadosFiltrados, setDadosFiltrados] = useState([]);
-    const [changeCreate, setChangeCreate] = useState('none'); // Ajuste inicial
-    const [nome, setNome] = useState('');
-    const [tarefa, setTarefa] = useState('');
-    const [nivel_prioridade, setNivelPrioridade] = useState('');
-    const [observacao, setObservacao] = useState('');
-    const [getTarefa, setGetTarefa] = useState([]);
-    const [alertConfirm, setAlertConfirm] = useState('')
-    const [msg, setMsg] = useState()
 
-    const [erroInput, setErroInput] = useState()
 
+    
     const toggleForm = (value) => {
 
         setChangeCreate(value);
@@ -85,15 +99,7 @@ function CreateTarefa() {
         }
     };
 
-    useEffect(() => {
-        getTarefaShow();
-        handleToken()
-      
-    }, []);
 
-    useEffect(() => {
-        filterDados(prioridadeNew);
-    }, [getTarefa, prioridadeNew]);
 
 
 
@@ -183,7 +189,7 @@ function CreateTarefa() {
                 },
                 {
                     label: 'Não',
-                    onPress: () => toggleForm('none')
+                    onClick: () => toggleForm('none')
                 }
             ]
         });
@@ -229,11 +235,11 @@ function CreateTarefa() {
     }
 
 
-    const filterDados = (nivelPrioridade) => {
-        if (!nivelPrioridade) {
+    const filterDados = () => {
+        if (!prioridadeNew) {
             setDadosFiltrados(getTarefa); // Mostra todos os itens
         } else {
-            const filteredTasks = getTarefa.filter((item) => item.nivel_prioridade == nivelPrioridade);
+            const filteredTasks = getTarefa.filter((item) => item.nivel_prioridade === prioridadeNew);
             setDadosFiltrados(filteredTasks); // Atualiza o estado com os itens filtrados
         }
     };
@@ -259,7 +265,7 @@ function CreateTarefa() {
                     <header className='headerButton'>
                         <button className='button-padrao' onClick={() => toggleForm('flex')}>Criar Tarefa</button>
                     </header>
-                    <section className='sectionPainel'>
+                    <div className='sectionPainel'>
                         <div className='container-filter'>
                             <div className='title-filter'>
                                 <h1>Lista de Tarefas</h1>
@@ -278,7 +284,7 @@ function CreateTarefa() {
                         <div className='container-scroll'>
                             {dadosFiltrados.length > 0 ?
                                 dadosFiltrados.map((item) => (
-                                    <div key={item.id} className='container-tarefa'>
+                                    <div key={item.id} className='container-tarefa' >
 
                                         <div className='container-tarefa-check'>
                                             <div className='divTitle'>
@@ -296,44 +302,44 @@ function CreateTarefa() {
                                                 }
 
                                             </div>
-                                            <text onClick={() => editTarefa(item.id, item.nome, item.tarefa, item.nivel_prioridade, item.observacao)}>Editar</text>
-                                            <text onClick={() => confirmaCloncuir(item.id)}>Concluir</text>
+                                            <span onClick={() => editTarefa(item.id, item.nome, item.tarefa, item.nivel_prioridade, item.observacao)}>Editar</span>
+                                            <span onClick={() => confirmaCloncuir(item.id)}>Concluir</span>
                                         </div>
                                         <div className='container-info-tarefa'>
                                             <div className='numeroTarefa'>
                                                 <div>
                                                     <strong>Nº: </strong>
-                                                    <text>{item.id}</text>
+                                                    <span>{item.id}</span>
 
                                                 </div>
                                                 <div>
                                                     <strong>Data e Hora criação: </strong>
-                                                    <text>{formatDateTime(item.data_criacao)}</text>
+                                                    <span>{formatDateTime(item.data_criacao)}</span>
                                                 </div>
                                             </div>
                                             <div className='info-first'>
 
                                                 <div>
                                                     <strong>Nome: </strong>
-                                                    <text>{item.nome}</text>
+                                                    <span>{item.nome}</span>
                                                 </div>
 
 
                                             </div>
-                                            <div>
+                                            <div >
                                                 <strong>Descrição: </strong>
-                                                <text>{item.tarefa}</text>
+                                                <div className='container-descricao'>{item.tarefa}</div>
                                             </div>
                                             <div>
                                                 <strong>Observação: </strong>
-                                                <text>{item.observacao}</text>
+                                                <span>{item.observacao}</span>
                                             </div>
 
                                         </div>
                                     </div>
                                 )) : <div>Nenhuma tarefa encontrada.</div>}
                         </div>
-                    </section>
+                    </div>
                 </Painel>
             </main>
 
@@ -349,7 +355,7 @@ function CreateTarefa() {
                             placeholder='Digite seu nome'
                             className='inputs'
                             value={id ? nome : userLogado}
-                            
+                            onChange={(event)=>setNome(event.target.value)}
                           
                         />
                         <textarea
@@ -384,7 +390,7 @@ function CreateTarefa() {
                             onChange={(event) => setObservacao(event.target.value)}
                         />
                         <div className='container-button-form'>
-                            <button className='button-padrao' type='submit'>Salvar</button>
+                        <button className="button-padrao" type="submit">Salvar</button>
                         </div>
                     </form>
 

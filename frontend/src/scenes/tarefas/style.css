@@ -53,7 +53,7 @@
     justify-content: space-between;
     
 }
-.containerDatas div strong, text {
+.containerDatas div strong, span {
     font-size: 15px;
 }
 .container-date{

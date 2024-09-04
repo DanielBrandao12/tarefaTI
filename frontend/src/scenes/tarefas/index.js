@@ -53,6 +53,7 @@ function Tarefas() {
 
   useEffect(() => {
     filterDate();
+   // eslint-disable-next-line
   }, [dates, getTarefa]);
 
   // Função para lidar com mudanças no DatePicker
@@ -103,30 +104,30 @@ function Tarefas() {
                     <div className='containerDatas'>
                       <div>
                         <strong>Nº: </strong>
-                        <text>{item.id}</text>
+                        <span>{item.id}</span>
                       </div>
                       <div>
                         <strong>Data e Hora criação: </strong>
-                        <text>{formatDateTime(item.data_criacao)}</text>
+                        <span>{formatDateTime(item.data_criacao)}</span>
                       </div>
                       <div>
                         <strong>Data e hora da Conclusão:</strong>
-                        <text>{formatDateTime(item.data_concluida)}</text>
+                        <span>{formatDateTime(item.data_concluida)}</span>
                       </div>
                     </div>
                     <div className='info-first'>
                       <div>
                         <strong>Nome: </strong>
-                        <text>{item.nome}</text>
+                        <span>{item.nome}</span>
                       </div>
                     </div>
                     <div>
                       <strong>Descrição: </strong>
-                      <text>{item.tarefa}</text>
+                      <span>{item.tarefa}</span>
                     </div>
                     <div>
                       <strong>Observação: </strong>
-                      <text>{item.observacao}</text>
+                      <span>{item.observacao}</span>
                     </div>
                   </div>
                 </div>

@@ -168,7 +168,7 @@ textarea{
 .divTitle{
     width: 70%;
 }
-.container-tarefa-check text{
+.container-tarefa-check span{
     font-family: Verdana, Geneva, Tahoma, sans-serif;
     font-size: 18px;
     color: #31759A;
@@ -177,23 +177,33 @@ textarea{
 
 }
 
-.container-tarefa-check text:hover{
+.container-tarefa-check span:hover{
     color: #698fa3;
 }
 .container-info-tarefa{
     display: flex;
+
     flex-direction: column;
     justify-content: center;
+   
     gap: 20px;
+    max-width: 100%; /* Define a largura máxima do contêiner */
+    overflow: hidden; /* Oculta o texto que ultrapassa o contêiner */
+ 
     height: 70%;
 
 
 }
-.container-info-tarefa strong, text{
+.container-info-tarefa strong, span{
     font-size: 15px;
     font-family: Verdana, Geneva, Tahoma, sans-serif;
     color: #31759A;
+  
+    
 }
+
+
+
 
 .numeroTarefa{
     display: flex;
@@ -226,3 +236,12 @@ textarea{
     line-height: 1.5;
    
 }
+.container-descricao{
+    width: 100%;
+   
+    padding: 10px;
+   color: #31759A;
+    box-sizing: border-box;
+    overflow-wrap: break-word;
+}
+

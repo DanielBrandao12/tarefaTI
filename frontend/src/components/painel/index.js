@@ -4,9 +4,9 @@ import './style.css';
 
 function Painel({ children }) {
     return (
-        <section className='container-painel'>
+        <div className='container-painel'>
             {children}
-        </section>
+        </div>
     );
 }
 
