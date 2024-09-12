@@ -15,6 +15,7 @@ const usersLogin = require('./routes/login')
 const app = express();
 
 
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
@@ -26,7 +27,8 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 // Configuração do CORS
 const corsOptions = {
-  origin: 'http://localhost:3000', // Substitua pelo domínio do seu frontend
+  origin: 'http://servicedesk:3000', // Substitua pelo domínio do seu frontend
+
   credentials: true, // Permite que cookies e outras credenciais sejam enviadas
 };
 

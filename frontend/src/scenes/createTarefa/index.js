@@ -256,6 +256,22 @@ function CreateTarefa() {
    
     };
 
+          // Função para formatar a tarefa com quebras de linha
+          const formatTarefa = (tarefa) => {
+            if (!tarefa) return '';
+        
+            // Substitui ':', '.' e ';' por uma quebra de linha e adiciona uma quebra de linha extra para a legibilidade
+            return tarefa.split(/(:|\.|;)/).map((part, index) => (
+              // Ignora partes vazias e não exibe quebras de linha consecutivas
+              part.trim() === '' ? null : (
+                <React.Fragment key={index}>
+                  {part}
+                  {(part === ':' || part === '.' || part === ';') && <br />}
+                </React.Fragment>
+              )
+            ));
+          };
+    
 
     return (
         <>
@@ -328,7 +344,7 @@ function CreateTarefa() {
                                             </div>
                                             <div >
                                                 <strong>Descrição: </strong>
-                                                <div className='container-descricao'>{item.tarefa}</div>
+                                                <div className='container-descricao'>{formatTarefa(item.tarefa)}</div>
                                             </div>
                                             <div>
                                                 <strong>Observação: </strong>

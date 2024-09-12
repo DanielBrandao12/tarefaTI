@@ -1,5 +1,5 @@
 var express = require('express');
-const loggedMiddlewares = require('../middlewares/notLoggedMiddlewares');
+
 var router = express.Router();
 
 /* GET users listing. */

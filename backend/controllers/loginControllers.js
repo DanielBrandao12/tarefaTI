@@ -7,7 +7,7 @@ const bcrypt = require("bcrypt");
 
 
 const createUser = async (req, res) => {
-    con
+    
     try{
         const { nome, nome_user, senha } = req.body;
              console.log(nome, nome_user, senha)
