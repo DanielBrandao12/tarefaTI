@@ -127,7 +127,7 @@ function CreateTarefa() {
             setObservacao('');
             toggleForm('none');
             
-            console.log('oidd')
+       
             alertCon ('Tarefa criada com sucesso!')
 
               
@@ -303,23 +303,23 @@ function CreateTarefa() {
                                     <div key={item.id} className='container-tarefa' >
 
                                         <div className='container-tarefa-check'>
-                                            <div className='divTitle'>
                                                 {
                                                     item.nivel_prioridade === 'Prioridade Alta' &&
-                                                     <h2 className='textPrioridade' style={{color: 'red'}} >{item.nivel_prioridade}</h2> 
+                                                     <h2 className='textPrioridade' style={{backgroundColor: 'rgba(126, 0, 0)'}} >{item.nivel_prioridade}</h2> 
                                                 }
                                                 {
                                                     item.nivel_prioridade === 'Prioridade Média' &&
-                                                     <h2 className='textPrioridade' style={{color: '#31759A'}} >{item.nivel_prioridade}</h2> 
+                                                     <h2 className='textPrioridade' style={{backgroundColor: '#a4ad1e'}} >{item.nivel_prioridade}</h2> 
                                                 }
                                                 {
                                                     item.nivel_prioridade === 'Prioridade Baixa' &&
-                                                     <h2 className='textPrioridade' style={{color: 'green'}} >{item.nivel_prioridade}</h2> 
+                                                     <h2 className='textPrioridade' style={{backgroundColor: '#174e12'}} >{item.nivel_prioridade}</h2> 
                                                 }
+                                            <div className='divTitle'>
 
-                                            </div>
                                             <span onClick={() => editTarefa(item.id, item.nome, item.tarefa, item.nivel_prioridade, item.observacao)}>Editar</span>
                                             <span onClick={() => confirmaCloncuir(item.id)}>Concluir</span>
+                                            </div>
                                         </div>
                                         <div className='container-info-tarefa'>
                                             <div className='numeroTarefa'>

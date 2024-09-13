@@ -4,7 +4,7 @@
     align-items: center;
     width: 100vw;
     height: 100vh;
-    background-color: #31759a;
+    background-color: #B20000;
 }
 
 .div-form{
@@ -33,33 +33,33 @@
 }
 .div-form h1{
     font-size: 3vw;
-    color: #31759A;
+    color: #B20000;
 }
 
 .input-login{
     
     width: 90%;
     font-size: 1.7vw;
-    border: 1px solid #31759A;
-    color: #31759A;
+    border: 1px solid #B20000;
+    color: #B20000;
     padding: 5px;
     outline:none;
   
 }
 
 .input-login::placeholder{
-    color: #31759A;
+    color: #B20000;
 }
 
 .button-login {
  
-    background-color: #31759A;
+    background-color: #B20000;
     color: #fff;
     cursor: pointer;
     transition: 0.5s;
 }
 
 .button-login:hover{
-    background-color: #5b95b4;
+    background-color: #7e0000;
 
 }

@@ -3,7 +3,7 @@
     width: 20vw;
     height: 100vh;
     
-    background-color: #31759A;
+    background-color: #B20000;
 }
 
 
@@ -20,6 +20,9 @@
     border-bottom: 1px solid #fff;
 }
 
+.container-nav-title h1{
+    font-size: 30px;
+}
 .container-nav-title{
     font-size: 20px;
     color: #fff;
@@ -54,7 +57,7 @@
 }
 
 .container-nav-options .link:hover{
-    background-color: #408ab3;
+    background-color: #7E0000;
 }
 
 .sair{

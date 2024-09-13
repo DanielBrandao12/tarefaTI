@@ -43,7 +43,7 @@ function Menu() {
     return (
         <div className='nav'>
             <div className='container-nav-title'>
-                <h1>Tarefas TI</h1>
+                <h1>Service Desk 1.0</h1>
                 {/* <FontAwesomeIcon icon={faBars} fontSize={28} color='#fff' /> */}
             </div>
             <div className='container-nav-options'>

@@ -1,7 +1,7 @@
 module.exports ={
     "development": {
       "username": "root",
-      "password": "ftcbp183",
+      "password": null,
       "database": "bd_tarefas",
       "host": "127.0.0.1",
       "dialect": "mysql"

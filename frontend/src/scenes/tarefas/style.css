@@ -1,7 +1,7 @@
 .headerTitle h1{
     font-size: 32px;
     text-align: center;
-    color: #31759a;
+    color: #B20000;
 }
 
 
@@ -16,11 +16,11 @@
    justify-content: center;
     width: 80vw;
     height: 15vh;
-    border-bottom: 1px #31759a solid;
+    border-bottom: 1px #B20000 solid;
 }
 .container-painel header button {
     margin-left: 35px;
-    background-color: #31759a;
+    background-color: #B20000;
     width: 150px;
     height: 40px;
     font-size: 20px;
@@ -42,7 +42,7 @@
     width: 80%;
     height: auto;
     padding: 20px;
-    border: 1px solid #31759A;
+    border: 1px solid #B20000;
 }
 
 
@@ -67,16 +67,16 @@
 .container-date strong{
     margin-left: 15px;
     font-size: 17px;
-    color: #31759A;
+    color: #B20000;
 }
 
 .datePickerInput {
 
     font-size: 16px;
-    border: 2px solid #31759A;
+    border: 2px solid #B20000;
     border-radius: 5px;
     cursor: pointer;
-    color: #31759A;
+    color: #B20000;
     padding: 5px;
 
 }
@@ -86,5 +86,5 @@
 }
 
 .datePickerInput::placeholder{
-    color: #31759A;
+    color: #B20000;
 }
