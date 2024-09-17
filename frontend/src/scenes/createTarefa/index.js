@@ -403,7 +403,7 @@ function CreateTarefa() {
                             placeholder='Observação'
                             className='inputs'
                             value={observacao}
-                            onChange={(event) => setObservacao(event.target.value)}
+                            onChange={(event) => (setObservacao(event.target.value))}
                         />
                         <div className='container-button-form'>
                         <button className="button-padrao" type="submit">Salvar</button>

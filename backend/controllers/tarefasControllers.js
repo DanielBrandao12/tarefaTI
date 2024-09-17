@@ -11,7 +11,7 @@ const getTarefas = async (req, res) => {
       res.status(200).json(tarefas);
     } catch (error) {
       // Captura e trata erros durante a consulta
-      console.error('Erro ao obter tarefas:', error);
+     
       res.status(500).json({ error: 'Erro ao obter tarefas' });
     }
   };
@@ -78,7 +78,7 @@ const editTarefa = async (req, res) => {
     // Retorna uma mensagem de sucesso
     res.status(200).json({ message: 'Tarefa atualizada com sucesso' });
   } catch (error) {
-    console.error('Erro ao atualizar tarefa:', error);
+  
     res.status(500).json({ error: 'Erro ao atualizar tarefa' });
   }
 };
