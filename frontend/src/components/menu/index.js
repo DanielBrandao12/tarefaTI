@@ -43,17 +43,22 @@ function Menu() {
     return (
         <div className='nav'>
             <div className='container-nav-title'>
-                <h1>Service Desk 1.0</h1>
+                <h1>Service Desk 2.0</h1>
                 {/* <FontAwesomeIcon icon={faBars} fontSize={28} color='#fff' /> */}
             </div>
             <div className='container-nav-options'>
                 <div>
-                    <Link className='link' to={'/'}>Tarefas</Link>
-                    <Link className='link' to={'/tarefas'}>Tarefas Concluídas</Link>
+                    <Link className='link' to={'/'}>Chamados</Link>
+                    <Link className='link' to={'/chamado'}>Chamado Provisorio</Link>
+                    <Link className='link' to={'/'}>Categorias</Link>
+                    <Link className='link' to={'/tarefas'}>Relátorios</Link>
+              
                 </div>
-                <Link className='link sair' onClick={(e) => { e.preventDefault(); confirmaCloncuir(); }}>
-                    Sair
-                </Link>
+          
+                    <Link className='link sair' onClick={(e) => { e.preventDefault(); confirmaCloncuir(); }}>
+                        Sair
+                    </Link>
+            
             </div>
         </div>
     );

@@ -2,12 +2,12 @@ import React from 'react'
 
 import styles from './style.module.css'
 
-function Painel({children}) {
+function Card({children}) {
   return (
-    <div className={styles.Painel}>
+    <div className={styles.containerCard}>
       {children}
     </div>
   )
 }
 
-export default Painel
+export default Card

@@ -1,0 +1,12 @@
+.containerCard {
+    max-width: 600px; /* ou apenas remova essa linha */
+    padding: 16px; /* adicione um padding para espaçamento interno */
+    box-shadow: 1px 1px 5px 0px rgba(178, 0, 0, 0.4);
+    margin: 10px;
+    border-radius: 4px; /* opcional, para bordas arredondadas */
+
+    
+    word-wrap: break-word; /* quebra palavras longas */
+    overflow-wrap: break-word; /* também quebra palavras longas */
+ 
+}

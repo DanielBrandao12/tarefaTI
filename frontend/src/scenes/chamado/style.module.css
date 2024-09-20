@@ -1,0 +1,27 @@
+.containerDivCards{
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+  
+
+
+}
+
+.containerFirstCard{
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    width: 70%;
+   
+
+   
+}
+
+.containerSecondCard{
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    width: 30%;
+
+
+}

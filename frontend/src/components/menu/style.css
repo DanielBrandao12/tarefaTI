@@ -1,52 +1,34 @@
 
 .nav{
-    width: 20vw;
+    width: 18vw;
     height: 100vh;
     
     background-color: #B20000;
 }
 
-
-
-
-
-
+.container-nav-title h1{
+    font-size: 22px;
+    padding: 10px;
+    color: #fff;
+}
 
 .container-nav-title{
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: space-around;
+    height: 80px;
     border-bottom: 1px solid #fff;
-}
-
-.container-nav-title h1{
-    font-size: 30px;
-}
-.container-nav-title{
-    font-size: 20px;
-    color: #fff;
 }
 
 
 .container-nav-options {
     display: flex;
     flex-direction: column;
- 
     width: 100%;
-    margin-top: 40px;
-    list-style: none;
-    font-size: 18px;
-    font-family: Verdana, Geneva, Tahoma, sans-serif;
-    color: #fff;
- 
+    margin-top: 20px;
+}
 
-}
-.link{
-    font-family: Verdana, Geneva, Tahoma, sans-serif;
-    font-size: 25px;
-    color: #fff;
-}
 .container-nav-options .link{
     display: flex;
     align-items: center;
@@ -54,18 +36,23 @@
     height: 50px;
     cursor: pointer;    
     text-decoration: none;
+
+    font-size: 15px;
+    color: #fff;
 }
 
 .container-nav-options .link:hover{
     background-color: #7E0000;
 }
 
+
 .sair{
    
     position: absolute;
     bottom: 5px;
     
-    font-size: 17px;
+    width:18vw ;
 
-    width: 20vw;
+
+    
 }
