@@ -1,0 +1,91 @@
+*::placeholder{
+    color: #b96868;
+  }
+.colunasInput{
+    display: flex;
+    justify-content: space-between;
+}
+.colunasInput div{
+    display: flex;
+    flex-direction: column;
+    
+}
+.containerName{
+    display: flex;
+    flex-direction: column;
+}
+
+.titleFormChamado{
+    font-size: 24px;
+    color: #b20000;
+    text-align: center;
+}
+
+.formChamado{
+    display: flex;
+    flex-direction: column;
+    
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    gap: 10px;
+  }
+
+  .formChamado label{
+    font-size: 15px;
+    font-weight: bold;
+    color: #b20000;
+    padding: 5px;
+  }
+  .inputTextChamado{
+
+    width: auto;
+    border: 1px solid #b20000;
+   border-radius: 5px;
+    
+    font-size: 15px;
+    color: #b20000;
+    padding: 5px;
+  }
+  
+  .inputTextChamado:focus{
+        outline: none;
+  }
+
+
+  
+  .selectChamado{
+    font-size: 15px;
+    color: #b20000;
+    border-color: #b20000;
+    border-radius: 5px;
+    width: auto;
+
+   outline: none;
+    white-space: nowrap; /* Impede a quebra de linha */
+    padding: 5px;
+  }
+
+.containerInputs{
+    display: flex;
+    gap: 20px;
+}
+
+  .containerInputSelect{
+    display: flex;
+    align-items: center;
+  }
+ .containerInputSelect input{
+    min-width: 100px;
+    width: auto;
+ }
+
+  .iconSelect{
+    position: relative;
+    right: 20px;
+    color: #b20000;
+  }
+
+
+
+
