@@ -1,0 +1,25 @@
+.table{
+    width: 100%;
+    font-size: 16px;
+    font-weight: 400;
+    
+}
+.table thead {
+    height: 48px;
+    background-color: #b20000;
+    font-weight: 700;
+    line-height: normal;
+    letter-spacing: .1px;
+    color: #fff;
+   
+}
+.tbody {
+   
+    background-color: #b65151;
+    color: #fff;
+    text-align: center;
+}
+
+.tbody tr{
+    height: 48px;
+}

@@ -1,91 +1,97 @@
-*::placeholder{
-    color: #b96868;
-  }
-.colunasInput{
-    display: flex;
-    justify-content: space-between;
-}
-.colunasInput div{
-    display: flex;
-    flex-direction: column;
-    
-}
-.containerName{
-    display: flex;
-    flex-direction: column;
+*::placeholder {
+  color: #b96868;
 }
 
-.titleFormChamado{
-    font-size: 24px;
-    color: #b20000;
-    text-align: center;
+.formChamado {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 15px;
+  max-width: 1200px;
+  /* Aumentando a largura máxima */
+  margin: 20px auto;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  background: none;
+  /* Removendo o fundo cinza */
 }
 
-.formChamado{
-    display: flex;
-    flex-direction: column;
-    
-    max-width: 600px;
-    margin: 20px auto;
-    padding: 20px;
-    gap: 10px;
-  }
-
-  .formChamado label{
-    font-size: 15px;
-    font-weight: bold;
-    color: #b20000;
-    padding: 5px;
-  }
-  .inputTextChamado{
-
-    width: auto;
-    border: 1px solid #b20000;
-   border-radius: 5px;
-    
-    font-size: 15px;
-    color: #b20000;
-    padding: 5px;
-  }
-  
-  .inputTextChamado:focus{
-        outline: none;
-  }
-
-
-  
-  .selectChamado{
-    font-size: 15px;
-    color: #b20000;
-    border-color: #b20000;
-    border-radius: 5px;
-    width: auto;
-
-   outline: none;
-    white-space: nowrap; /* Impede a quebra de linha */
-    padding: 5px;
-  }
-
-.containerInputs{
-    display: flex;
-    gap: 20px;
+.titleFormChamado {
+  font-size: 24px;
+  color: #b20000;
+  text-align: center;
+  margin-bottom: 20px;
 }
 
-  .containerInputSelect{
-    display: flex;
-    align-items: center;
-  }
- .containerInputSelect input{
-    min-width: 100px;
-    width: auto;
- }
+.fieldGroup {
+  display: flex;
+  flex-direction: column;
+}
 
-  .iconSelect{
-    position: relative;
-    right: 20px;
-    color: #b20000;
-  }
+.fieldGroup label {
+  font-size: 15px;
+  font-weight: bold;
+  color: #b20000;
+  margin-bottom: 5px;
+}
 
+.inputTextChamado,
+.selectChamado {
+  border: 1px solid #b20000;
+  border-radius: 5px;
+  padding: 10px;
+  font-size: 15px;
+  color: #b20000;
+}
 
+.inputTextChamado:focus,
+.selectChamado:focus {
+  outline: none;
+  border-color: #900000;
+  /* cor mais escura ao focar */
+}
 
+.buttonEnviar {
+  padding: 10px 15px;
+  background-color: #b20000;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-top: 10px;
+}
 
+.buttonEnviar:hover {
+  background-color: #900000;
+  /* cor escura ao passar o mouse */
+}
+
+.reactQuill {
+  height: 300px;
+  color: #b20000;
+  margin-bottom: 50px;
+}
+
+.containerInputAdd {
+  display: flex;
+  align-items: center;
+}
+
+.containerIconPlus {
+  display: flex;
+  justify-content: center;
+
+  position: relative;
+  top: 0;
+  right: 35px;
+  padding: 5px;
+  cursor: pointer;
+}
+
+.positionIconPlus {
+  font-size: 17px;
+  color: #b20000;
+
+}

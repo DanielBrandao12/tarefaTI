@@ -48,7 +48,7 @@ function Menu() {
             </div>
             <div className='container-nav-options'>
                 <div>
-                    <Link className='link' to={'/'}>Chamados</Link>
+                    <Link className='link' to={'/chamados'}>Chamados</Link>
                     <Link className='link' to={'/chamado'}>Chamado Provisorio</Link>
                     <Link className='link' to={'/'}>Categorias</Link>
                     <Link className='link' to={'/tarefas'}>Relátorios</Link>
