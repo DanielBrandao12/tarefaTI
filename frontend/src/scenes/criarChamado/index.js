@@ -1,5 +1,6 @@
 import React from 'react';
 import styles from './style.module.css';
+import stylesGlobal from '../../styles/styleGlobal.module.css'
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -15,7 +16,7 @@ function CriarChamado() {
         <form className={styles.formChamado}>
           <div className={styles.fieldGroup}>
             <label>Categoria:</label>
-            <select name='Categoria' className={styles.selectChamado}>
+            <select name='Categoria' className={stylesGlobal.selectChamado}>
               <option value='' disabled>Selecione Categoria</option>
               <option value='Hardware'>Hardware</option>
               <option value='Software'>Software</option>
@@ -27,12 +28,12 @@ function CriarChamado() {
 
           <div className={styles.fieldGroup}>
             <label>Nome:</label>
-            <input type='text' placeholder='Digite seu nome' className={styles.inputTextChamado} />
+            <input type='text' placeholder='Digite seu nome' className={stylesGlobal.inputTextChamado} />
           </div>
 
           <div className={styles.fieldGroup}>
             <label>Assunto:</label>
-            <input type='text' placeholder='Assunto' className={styles.inputTextChamado} />
+            <input type='text' placeholder='Assunto' className={stylesGlobal.inputTextChamado} />
           </div>
 
           <div className={styles.fieldGroup}>
@@ -42,10 +43,10 @@ function CriarChamado() {
 
           <div className={styles.fieldGroup}>
             <label>Criar Lista de Tarefas:</label>
-            <div className={styles.containerInputAdd}>
-              <input type='text' placeholder='Digite a tarefa' className={styles.inputTextChamado} />
-              <div className={styles.containerIconPlus}>
-                  <FontAwesomeIcon icon={faPlus} className={styles.positionIconPlus}/>
+            <div className={stylesGlobal.containerInputAdd}>
+              <input type='text' placeholder='Digite a tarefa' className={stylesGlobal.inputTextChamado} />
+              <div className={stylesGlobal.containerIconPlus}>
+                  <FontAwesomeIcon icon={faPlus} className={stylesGlobal.positionIconPlus}/>
               </div>
             </div>
             {/*aqui vai ficar a lista caso for criado lista */}
@@ -54,7 +55,7 @@ function CriarChamado() {
 
           <div className={styles.fieldGroup}>
             <label>Prioridade:</label>
-            <select name='Nível de prioridade' className={styles.selectChamado}>
+            <select name='Nível de prioridade' className={stylesGlobal.selectChamado}>
               <option value='' disabled selected>Nível de prioridade</option>
               <option value='Prioridade Baixa'>Baixa</option>
               <option value='Prioridade Média'>Média</option>
@@ -64,7 +65,7 @@ function CriarChamado() {
 
           <div className={styles.fieldGroup}>
             <label>Status:</label>
-            <select name='Status' className={styles.selectChamado}>
+            <select name='Status' className={stylesGlobal.selectChamado}>
               <option value='' disabled selected>Status</option>
               <option value='Aguardando classificação'>Aguardando classificação</option>
               <option value='Em atendimento'>Em atendimento</option>
@@ -75,7 +76,7 @@ function CriarChamado() {
 
           <div className={styles.fieldGroup}>
             <label>Atribuir para:</label>
-            <select name='Atribuir' className={styles.selectChamado}>
+            <select name='Atribuir' className={stylesGlobal.selectChamado}>
               <option value='' disabled>Atribuir para</option>
               <option value='Daniel'>Daniel</option>
               <option value='Márcio'>Márcio</option>

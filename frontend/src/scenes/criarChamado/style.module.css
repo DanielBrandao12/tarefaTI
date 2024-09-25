@@ -35,21 +35,7 @@
   margin-bottom: 5px;
 }
 
-.inputTextChamado,
-.selectChamado {
-  border: 1px solid #b20000;
-  border-radius: 5px;
-  padding: 10px;
-  font-size: 15px;
-  color: #b20000;
-}
 
-.inputTextChamado:focus,
-.selectChamado:focus {
-  outline: none;
-  border-color: #900000;
-  /* cor mais escura ao focar */
-}
 
 .buttonEnviar {
   padding: 10px 15px;
@@ -72,26 +58,4 @@
   height: 300px;
   color: #b20000;
   margin-bottom: 50px;
-}
-
-.containerInputAdd {
-  display: flex;
-  align-items: center;
-}
-
-.containerIconPlus {
-  display: flex;
-  justify-content: center;
-
-  position: relative;
-  top: 0;
-  right: 35px;
-  padding: 5px;
-  cursor: pointer;
-}
-
-.positionIconPlus {
-  font-size: 17px;
-  color: #b20000;
-
 }

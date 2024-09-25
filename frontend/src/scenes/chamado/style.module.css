@@ -1,27 +1,43 @@
-.containerDivCards{
+.containerDivCards {
     display: flex;
     flex-direction: row;
-    width: 100%;
-  
-
-
+    justify-content: center;
+    max-width: 80vw;
 }
 
-.containerFirstCard{
+.containerFirstCard {
     display: flex;
     flex-direction: column;
     padding: 20px;
-    width: 70%;
-   
-
-   
 }
 
-.containerSecondCard{
+.containerSecondCard {
     display: flex;
     flex-direction: column;
     padding: 20px;
-    width: 30%;
+}
 
+.containerChamadoView {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
 
+.titleAssunto {
+    font-size: 20px;
+    color: #b20000;
+    font-weight: bold;
+    padding: 10px;
+}
+
+.autor {
+    display: flex;
+    align-items: center;
+}
+
+.span {
+    font-size: 17px;
+    color: #b20000;
+    font-weight: bold;
+    padding: 10px;
 }

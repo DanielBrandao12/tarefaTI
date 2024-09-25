@@ -1,0 +1,43 @@
+
+.inputTextChamado,
+.selectChamado {
+  border: 1px solid #b20000;
+  border-radius: 5px;
+  padding: 10px;
+  font-size: 15px;
+  color: #b20000;
+}
+
+.inputTextChamado:focus,
+.selectChamado:focus {
+  outline: none;
+  border-color: #900000;
+  /* cor mais escura ao focar */
+}
+.containerInputAdd {
+    display: flex;
+    align-items: center;
+  }
+  
+  .containerIconPlus {
+    display: flex;
+    justify-content: center;
+  
+    position: relative;
+    top: 0;
+    right: 35px;
+    padding: 5px;
+    cursor: pointer;
+  }
+  
+  .positionIconPlus {
+    font-size: 17px;
+    color: #b20000;
+  
+  }
+
+  .paragrafoGlobal{
+    font-size: 16px;
+    color: #900000;
+    padding: 5px;
+  }
