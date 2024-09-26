@@ -4,7 +4,8 @@
     width: 100%;
     font-size: 16px;
     font-weight: 400;
- 
+    
+    padding: 10px;
   
 }
 .table thead {
@@ -36,10 +37,10 @@
 
 .containerCards{
     display: flex;
+    justify-content: flex-start;
    
+    max-width: 80vw;
 
-   
-    
 }
 
 .containerCardsColuna{
@@ -48,8 +49,13 @@
     
     width: 80%;
     
+    
 }
-
+.containerCardsLinha{
+    display: flex;
+    flex-direction: column;
+    width: 20%;
+}
 
 .containerFilter{
     display: flex;
@@ -82,10 +88,7 @@
     margin-bottom: 5px;
 }
 
-.fixed{
-    position: fixed;
-    
-}
+
 
 .inputFilter{
     border: 1px solid #b20000;
@@ -93,7 +96,45 @@
     padding: 10px;
     font-size: 15px;
     color: #b20000;
+    
 }
 .inputFilter:focus{
     outline: none;
+}
+.containerButtonsChamados{
+    display: flex;
+    justify-content: space-evenly;
+    margin: 20px 0 20px 0;
+    
+}
+
+.buttonChamados {
+    
+    background-color: #B20000;
+    min-width: 180px;
+    max-width: 300px;
+    height: 35px;
+    font-size: 16px;
+    
+    text-align: center;
+    color: #ffff;
+    border-style: none;
+    border-radius: 5px;
+    padding: 0 5px 0 5px;
+    cursor: pointer;
+  }
+.buttonChamados:hover{
+    background-color: #7E0000;
+}
+
+.spanLink{
+    font-size: 14px;
+    font-weight: bold;
+    padding: 5px;
+    cursor: pointer;
+    color: #B65151;
+}
+
+.spanLink:hover{
+    text-decoration: underline;
 }

@@ -24,7 +24,7 @@
 }
 
 .titleAssunto {
-    font-size: 20px;
+    font-size: 22px;
     color: #b20000;
     font-weight: bold;
     padding: 10px;
@@ -40,4 +40,74 @@
     color: #b20000;
     font-weight: bold;
     padding: 10px;
+}
+.containerListaTarefas {
+    display: flex;
+    flex-direction: column;
+
+    padding: 16px;
+    gap: 10px;
+ 
+    
+   
+}
+
+.containerListaTarefas h3 {
+    color: #b20000; /* Cor do título */
+}
+
+.containerListaTarefas label {
+    color: #b20000;
+    font-size: 19px;
+    margin: 8px 0; /* Espaçamento entre os checkboxes */
+}
+
+
+.containerListaTarefas span{
+    font-size: 18px;
+}
+.containerCheckboxes {
+    display: flex;
+    flex-direction: row; /* Alinha os checkboxes verticalmente */
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px; /* Espaçamento superior */
+}
+
+.containerCheckboxes label {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px; /* Espaçamento entre os checkboxes */
+    font-size: 17px; /* Tamanho da fonte */
+    color: #b20000; /* Cor do texto */
+}
+
+.checkBox {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #b20000; /* Cor da borda */
+    border-radius: 4px; /* Bordas arredondadas */
+    margin-right: 8px; /* Espaçamento entre o checkbox e o texto */
+    cursor: pointer; /* Muda o cursor ao passar o mouse */
+    -webkit-appearance: none; /* Remove a aparência padrão */
+    appearance: none; /* Remove a aparência padrão */
+}
+
+.checkBox:checked {
+
+   
+    background-color: #b20000; /* Cor de fundo também */
+    border: none; /* Remove a borda quando marcado (opcional) */
+}
+
+.titleLista {
+    font-size: 25px;
+    padding: 5px;
+
+}
+
+.addContainer{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }

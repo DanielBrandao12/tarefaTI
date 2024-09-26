@@ -135,30 +135,33 @@ function Chamados() {
             <div className={styles.containerCards}>
                 <div className={styles.containerCardsColuna}>
                     <Card>
-                        <input
-                            type='button'
-                            value={`Todos ${contadorTodos}`}
-                            className='button-padrao'
+                        <div className={styles.containerButtonsChamados}>
+
+                            <input
+                                type='button'
+                                value={`Todos ${contadorTodos}`}
+                                className={styles.buttonChamados}
+                                
+                            />
+                            <input
+                                type='button'
+                                value={`Atribuído a mim ${contadorAtribuidoAMim}`}
+                                className={styles.buttonChamados}
                             
-                        />
-                        <input
-                            type='button'
-                            value={`Atribuído a mim ${contadorAtribuidoAMim}`}
-                            className='button-padrao'
-                           
-                        />
-                        <input
-                            type='button'
-                            value={`Atribuído a outros ${contadorAtribuidoAOutros}`}
-                            className='button-padrao'
+                            />
+                            <input
+                                type='button'
+                                value={`Atribuído a outros ${contadorAtribuidoAOutros}`}
+                                className={styles.buttonChamados}
+                                
+                            />
+                            <input
+                                type='button'
+                                value={`Não atribuído ${contadorNaoAtribuido}`}
+                                className={styles.buttonChamados}
                             
-                        />
-                        <input
-                            type='button'
-                            value={`Não atribuído ${contadorNaoAtribuido}`}
-                            className='button-padrao'
-                           
-                        />
+                            />
+                        </div>
                     </Card>
                     <Card>
                         <div >
@@ -193,19 +196,19 @@ function Chamados() {
 
                 </div>
                 <div className={styles.containerCardsLinha}>
-                    <div className={styles.fixed}>
-
                         <Card>
                             <div className={styles.containerFilter}>
                                 <label className={styles.labelFilter}>Pesquisar por:</label>
                                 <select className={styles.selectFilter}>
+                                    <option disabled selected>Pesquise por</option>
                                     <option>ID</option>
+                                    <option>Nome criador</option>
                                     <option>Email</option>
                                     <option>Assunto</option>
                                 </select>
                                 <label className={styles.labelFilter}>Pesquisar:</label>
                                 <input type='text' className={styles.inputFilter} />
-
+                                <input  type='button' className={styles.buttonChamados} value={'Buscar'} />
                             </div>
 
                         </Card>
@@ -216,23 +219,24 @@ function Chamados() {
 
                                 <label className={styles.labelFilter}>Nível de Prioridade:</label>
                                 <select className={styles.selectFilter}>
+                                <option disabled selected>Prioridade</option>
                                     <option>Baixa</option>
                                     <option>Média</option>
                                     <option>Alta</option>
                                 </select>
                                 <label className={styles.labelFilter}>Status:</label>
                                 <select className={styles.selectFilter}>
+                                <option disabled selected>Status</option>
                                     <option>Aguardando classificação</option>
                                     <option>Em atendimento</option>
                                     <option>Suspenso</option>
                                     <option>Fechado</option>
                                 </select>
-
+                                <span className={styles.spanLink}>Limpar filtro</span>
                             </div>
 
                         </Card>
                     </div>
-                </div>
             </div>
         </PaginaPadrao>
     )

@@ -9,5 +9,7 @@
     
     word-wrap: break-word; /* quebra palavras longas */
     overflow-wrap: break-word; /* também quebra palavras longas */
+
+    background-color: #ffff;
  
 }
