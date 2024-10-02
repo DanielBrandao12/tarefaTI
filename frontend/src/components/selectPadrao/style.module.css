@@ -1,0 +1,32 @@
+.containerSelect {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    color: #b20000;
+    cursor: pointer;
+    position: relative; /* Necessário para o posicionamento do dropdown */
+}
+
+.cardOptions {
+    position: absolute; /* Usar absolute para posicionar em relação ao container */
+    top: 100%; /* Posiciona logo abaixo do container */
+    right: 2%; /* Alinha à esquerda do container */
+    border: solid;
+    border-radius: 4px;
+    background-color: #fff;
+    z-index: 9999;
+    min-width: 130px; /* Largura mínima opcional */
+    max-width: 280px;
+}
+.cardOptions span{
+    font-size: 15px;
+    cursor: pointer;
+}
+.cardOptions span:hover{
+    background-color: #b20000;
+    color: #fff;
+}
+
+.iconStatus {
+    font-size: 13px;
+}

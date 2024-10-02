@@ -1,16 +1,19 @@
-import React from 'react'
+import React, { useState } from 'react'
 import styles from './style.module.css'
 import stylesGlobal from '../../styles/styleGlobal.module.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faPenToSquare, faPrint,faChevronUp, faChevronDown } from '@fortawesome/free-solid-svg-icons';
 import PaginaPadrao from '../../components/paginaPadrao'
 import Card from '../../components/card'
-
+import SelectPadrao from '../../components/selectPadrao';
 //provisorio
 import { LoremIpsum } from 'lorem-ipsum';
 
 function Chamado() {
-
+  const array = ['Aguardando Classficação','Em atendimento','Suspenso','Fechado']
+  const array1 = ['Hardware','Software','Acedemico','Rede']
+  const array2 = ['Baixa','Média','Alta']
+  const array3 = ['Daniel','Márcio','Clayton','Wilson']
   const lorem = new LoremIpsum({
     sentencesPerParagraph: {
       min: 3,
@@ -22,12 +25,18 @@ function Chamado() {
     },
   });
 
+  const [expandCard, setExpandCard] = useState(false)
+  const toggle = () => {
+    setExpandCard(!expandCard);
+};
+
   return (
 
     <PaginaPadrao >
 
       <div className={styles.containerDivCards}>
         <div className={styles.containerFirstCard}>
+          {/*Assunto principal do chamado */}
           <Card>
             <div className={styles.containerChamadoView}>
 
@@ -42,6 +51,7 @@ function Chamado() {
 
 
           </Card>
+          {/*Card de lista de tarefas */}
           <Card>
 
             <div className={styles.containerListaTarefas}>
@@ -82,15 +92,68 @@ function Chamado() {
 
 
           </Card>
+
           <Card>
-            
+
           </Card>
 
         </div>
         <div className={styles.containerSecondCard}>
           <Card>
-            <h1>Service Desk 2.0ssssssssssss</h1>
-            <span>teste</span>
+            <div className={styles.editPrintContainer}>
+              <div>
+                <FontAwesomeIcon icon={faPenToSquare} />
+                <span>Editar</span>
+              </div>
+              <div>
+                <FontAwesomeIcon icon={faPrint} />
+                <span>Imprimir</span>
+              </div>
+            </div>
+          </Card>
+          <Card>
+            <div className={styles.statusContainer}>
+              <div>
+                <span>Status:</span>
+                <SelectPadrao>{array}</SelectPadrao>
+              </div>
+              <div>
+                <span>Categoria:</span>
+                <SelectPadrao>{array1}</SelectPadrao>
+              </div>
+              <div>
+                <span>Prioridade:</span>
+                <SelectPadrao>{array2}</SelectPadrao>
+              </div>
+              <div>
+                <span>Atribuído a:</span>
+                <SelectPadrao>{array3}</SelectPadrao>
+              </div>
+            </div>
+          </Card>
+          <Card>
+            <div onClick={toggle}>
+              <span>Detalhes do chamado</span>
+              <FontAwesomeIcon  icon={expandCard ? faChevronUp : faChevronDown} style={{color: '#b20000'}}/>
+                  {
+                    expandCard && <div style={{display:'flex', flexDirection:'column'}}>
+                      <span>Detalhes do chamado</span>
+                      <span>Detalhes do chamado</span>
+                      <span>Detalhes do chamado</span>
+                      <span>Detalhes do chamado</span>
+                      <span>Detalhes do chamado</span>
+                      <span>Detalhes do chamado</span>
+                      <span>Detalhes do chamado</span>
+                      <span>Detalhes do chamado</span>
+                      <span>Detalhes do chamado</span>
+                      </div>
+                  }
+            </div>
+          </Card>
+          <Card>
+            <div>
+              <span>Histórico</span>
+            </div>
           </Card>
         </div>
       </div>
