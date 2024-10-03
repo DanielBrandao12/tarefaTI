@@ -157,3 +157,39 @@
 .statusContainer span{
     font-size: 18px;
 }
+
+.responsesCard{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px;
+}
+.responsesCard span{
+    font-size: 15px;
+}
+.responsesCardDivFirst{
+    display: flex;
+    justify-content: space-between;
+    
+
+
+   
+}
+.responsesCardDivTwo{
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.divisao{
+    border-bottom: 1px solid #b20000;
+    width: 100%;
+}
+
+
+.reactQuill {
+    height: 300px;
+    color: #b20000;
+    margin-bottom: 50px;
+  }
+  

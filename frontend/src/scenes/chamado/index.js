@@ -2,18 +2,22 @@ import React, { useState } from 'react'
 import styles from './style.module.css'
 import stylesGlobal from '../../styles/styleGlobal.module.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus, faPenToSquare, faPrint,faChevronUp, faChevronDown } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faPenToSquare, faPrint, faEdit, faTrashCan } from '@fortawesome/free-solid-svg-icons';
 import PaginaPadrao from '../../components/paginaPadrao'
 import Card from '../../components/card'
 import SelectPadrao from '../../components/selectPadrao';
 //provisorio
 import { LoremIpsum } from 'lorem-ipsum';
+import CardExpand from '../../components/cardExpand';
+
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 
 function Chamado() {
-  const array = ['Aguardando Classficação','Em atendimento','Suspenso','Fechado']
-  const array1 = ['Hardware','Software','Acedemico','Rede']
-  const array2 = ['Baixa','Média','Alta']
-  const array3 = ['Daniel','Márcio','Clayton','Wilson']
+  const array = ['Aguardando Classficação', 'Em atendimento', 'Suspenso', 'Fechado']
+  const array1 = ['Hardware', 'Software', 'Acedemico', 'Rede']
+  const array2 = ['Baixa', 'Média', 'Alta']
+  const array3 = ['Daniel', 'Márcio', 'Clayton', 'Wilson']
   const lorem = new LoremIpsum({
     sentencesPerParagraph: {
       min: 3,
@@ -25,10 +29,7 @@ function Chamado() {
     },
   });
 
-  const [expandCard, setExpandCard] = useState(false)
-  const toggle = () => {
-    setExpandCard(!expandCard);
-};
+
 
   return (
 
@@ -51,6 +52,7 @@ function Chamado() {
 
 
           </Card>
+
           {/*Card de lista de tarefas */}
           <Card>
 
@@ -93,10 +95,93 @@ function Chamado() {
 
           </Card>
 
+          {/*Card respostas */}
           <Card>
+            <div className={styles.responsesCard}>
+              <div className={styles.responsesCardDivFirst}>
 
+                 <div><p>Respondido por <span>Daniel - </span>1 min.</p></div>
+
+                  <div className={styles.editPrintContainer}>
+                    <div>
+                      <FontAwesomeIcon icon={faEdit} />
+                      <span>Editar</span>
+                    </div>
+                    <div>
+                      <FontAwesomeIcon icon={faTrashCan} />
+                      <span>Excluir</span>
+                    </div>
+                  </div>
+              </div>
+              <div className={styles.divisao}></div>
+              <div className={styles.responsesCardDivTwo}>
+              <p className={stylesGlobal.paragrafoGlobal}>{lorem.generateParagraphs(1)}</p>
+              <p>Atenciosamente,</p>
+              <p>Equipe do TI</p>
+              </div>
+            </div>
           </Card>
+          <Card>
+            <div className={styles.responsesCard}>
+              <div className={styles.responsesCardDivFirst}>
 
+                 <div><p>Respondido por <span>Daniel - </span>1 min.</p></div>
+
+                  <div className={styles.editPrintContainer}>
+                    <div>
+                      <FontAwesomeIcon icon={faEdit} />
+                      <span>Editar</span>
+                    </div>
+                    <div>
+                      <FontAwesomeIcon icon={faTrashCan} />
+                      <span>Excluir</span>
+                    </div>
+                  </div>
+              </div>
+              <div className={styles.divisao}></div>
+              <div className={styles.responsesCardDivTwo}>
+              <p className={stylesGlobal.paragrafoGlobal}>{lorem.generateParagraphs(1)}</p>
+              <p>Atenciosamente,</p>
+              <p>Equipe do TI</p>
+              </div>
+            </div>
+          </Card>
+          <Card>
+            <div className={styles.responsesCard}>
+              <div className={styles.responsesCardDivFirst}>
+
+                 <div><p>Respondido por <span>Daniel - </span>1 min.</p></div>
+
+                  <div className={styles.editPrintContainer}>
+                    <div>
+                      <FontAwesomeIcon icon={faEdit} />
+                      <span>Editar</span>
+                    </div>
+                    <div>
+                      <FontAwesomeIcon icon={faTrashCan} />
+                      <span>Excluir</span>
+                    </div>
+                  </div>
+              </div>
+              <div className={styles.divisao}></div>
+              <div className={styles.responsesCardDivTwo}>
+              <p className={stylesGlobal.paragrafoGlobal}>{lorem.generateParagraphs(1)}</p>
+              <p>Atenciosamente,</p>
+              <p>Equipe do TI</p>
+              </div>
+            </div>
+          </Card>
+         
+
+          {/*Card respostas */}
+
+          <Card>
+            <h3>Envie uma respota</h3>
+            <ReactQuill className={styles.reactQuill} />
+            <div>
+              <input type='button' className='button-padrao' value={'Enviar'}/>
+            </div>
+          </Card>
         </div>
         <div className={styles.containerSecondCard}>
           <Card>
@@ -132,28 +217,14 @@ function Chamado() {
             </div>
           </Card>
           <Card>
-            <div onClick={toggle}>
+            <CardExpand>
               <span>Detalhes do chamado</span>
-              <FontAwesomeIcon  icon={expandCard ? faChevronUp : faChevronDown} style={{color: '#b20000'}}/>
-                  {
-                    expandCard && <div style={{display:'flex', flexDirection:'column'}}>
-                      <span>Detalhes do chamado</span>
-                      <span>Detalhes do chamado</span>
-                      <span>Detalhes do chamado</span>
-                      <span>Detalhes do chamado</span>
-                      <span>Detalhes do chamado</span>
-                      <span>Detalhes do chamado</span>
-                      <span>Detalhes do chamado</span>
-                      <span>Detalhes do chamado</span>
-                      <span>Detalhes do chamado</span>
-                      </div>
-                  }
-            </div>
+            </CardExpand>
           </Card>
           <Card>
-            <div>
+            <CardExpand>
               <span>Histórico</span>
-            </div>
+            </CardExpand>
           </Card>
         </div>
       </div>
