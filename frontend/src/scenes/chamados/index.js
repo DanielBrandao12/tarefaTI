@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import {  useNavigate } from 'react-router-dom';
 import styles from './style.module.css'
+import stylesGlobal from '../../styles/styleGlobal.module.css'
 import PaginaPadrao from '../../components/paginaPadrao'
 import Card from '../../components/card'
 function Chamados() {
@@ -165,7 +166,7 @@ function Chamados() {
                     </Card>
                     <Card>
                         <div >
-                            <table className={styles.table}>
+                            <table className={stylesGlobal.table}>
                                 <thead>
                                     <tr>
                                         <th>ID</th>
@@ -176,7 +177,7 @@ function Chamados() {
                                         <th>Prioridade</th>
                                     </tr>
                                 </thead>
-                                <tbody className={styles.tbody}>
+                                <tbody className={stylesGlobal.tbody}>
                                 {chamados.map(chamado => (
                             <tr key={chamado.id} onClick={() => handleChamado(chamado)}>
                                 <td>{chamado.id}</td>

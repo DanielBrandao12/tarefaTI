@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import styles from './style.module.css';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChevronUp, faChevronDown } from '@fortawesome/free-solid-svg-icons';
+import { faChevronUp, faChevronDown, faTicketSimple } from '@fortawesome/free-solid-svg-icons';
 
 function SelectPadrao({ children }) {
     const [isOptions, setIsOptions] = useState(false);
@@ -18,9 +18,9 @@ function SelectPadrao({ children }) {
             {isOptions && (
                 <div className={styles.cardOptions}>
                     <div style={{ display: 'flex', flexDirection: 'column' }}>
-                        <span>{children[0]}</span>
-                        <span>{children[1]}</span>
-                        <span>{children[2]}</span>
+                        <span>{ children[0]=='Baixa' ?<FontAwesomeIcon icon={faTicketSimple} style={{color:'#38BC7D'}}/>:null} {children[0]}</span>
+                        <span>{ children[1]=='Média' ?<FontAwesomeIcon icon={faTicketSimple} style={{color:'#FFC200'}}/>:null} {children[1]}</span>
+                        <span>{ children[2]=='Alta' ?<FontAwesomeIcon icon={faTicketSimple} style={{color:'#E64342'}}/>:null} {children[2]}</span>
                         <span>{children[3]}</span>
                   
                     </div>

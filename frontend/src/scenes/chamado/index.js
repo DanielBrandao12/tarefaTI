@@ -12,6 +12,7 @@ import CardExpand from '../../components/cardExpand';
 
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+import ExpandirLista from '../../components/expandirLista';
 
 function Chamado() {
   const array = ['Aguardando Classficação', 'Em atendimento', 'Suspenso', 'Fechado']
@@ -95,6 +96,8 @@ function Chamado() {
 
           </Card>
 
+        <ExpandirLista title={'Respostas do chamado'}>
+
           {/*Card respostas */}
           <Card>
             <div className={styles.responsesCard}>
@@ -174,12 +177,16 @@ function Chamado() {
          
 
           {/*Card respostas */}
+        </ExpandirLista>
 
           <Card>
-            <h3>Envie uma respota</h3>
-            <ReactQuill className={styles.reactQuill} />
-            <div>
-              <input type='button' className='button-padrao' value={'Enviar'}/>
+            <div className={styles.containerListaTarefas}>
+                <h3>Envie uma respota</h3>
+                <ReactQuill className={styles.reactQuill} />
+                <div>
+                  <input type='button' className='button-padrao' value={'Enviar'}/>
+                </div>
+
             </div>
           </Card>
         </div>

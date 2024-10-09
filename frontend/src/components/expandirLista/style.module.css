@@ -1,0 +1,13 @@
+.containerTitleExpand{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    padding: 10px;    
+ 
+    cursor: pointer;
+}
+
+.containerTitleExpand span{
+    font-size: 22px;
+}

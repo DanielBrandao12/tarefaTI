@@ -41,3 +41,58 @@
     color: #900000;
     padding: 5px;
   }
+
+  .table{
+    width: 100%;
+    font-size: 16px;
+    font-weight: 400;
+    
+    padding: 10px;
+  
+}
+.table thead {
+    height: 48px;
+    background-color: #b20000;
+    font-weight: 700;
+    line-height: normal;
+    letter-spacing: .1px;
+    color: #fff;
+   
+}
+.tbody {
+   
+    background-color: #b65151;
+    color: #fff;
+    text-align: center;
+    overflow-y: scroll;
+}
+
+.tbody tr{
+    height: 48px;
+    cursor: pointer;
+    
+}
+.tbody tr:hover{
+    background-color: #7E0000;
+    
+}
+
+.buttonPadrao {
+  margin-left: 35px;
+  background-color: #B20000;
+  min-width: 150px;
+  width: auto;
+  min-height: 35px;
+  font-size: 15px;
+  
+  text-align: center;
+  color: #ffff;
+  border-style: none;
+  border-radius: 5px;
+  padding: 0 10px 0 10px;
+  cursor: pointer;
+}
+
+.buttonPadrao:hover{
+  background-color: #7E0000;
+}
