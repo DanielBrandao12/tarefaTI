@@ -12,6 +12,9 @@ const usersRouter = require('./routes/users');
 
 const usersTarefa = require('./routes/routeTarefa')
 const usersLogin = require('./routes/login')
+
+//Novas rotas service desk 2.0
+const usuarioRouter =require('./routes/usuariosRoute')
 const app = express();
 
 
@@ -52,6 +55,9 @@ app.use('/users', usersRouter);
 app.use('/tarefas', usersTarefa)
 app.use('/login', usersLogin)
 
+//Novas rotas service desk 2.0
+app.use('/usuarios', usuarioRouter)
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
@@ -63,7 +69,7 @@ app.use(function(req, res, next) {
 app.use(function(err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
+  res.locals.error = req.app.get('env') === 'test' ? err : {};
 
   // render the error page
   res.status(err.status || 500);
