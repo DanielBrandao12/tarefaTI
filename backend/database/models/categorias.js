@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize');
-module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('categorias', {
+module.exports = (sequelize, DataTypes) => {
+  const Categorias = sequelize.define('Categorias', {
     id_categoria: {
       autoIncrement: true,
       type: DataTypes.INTEGER,
@@ -8,15 +8,15 @@ module.exports = function(sequelize, DataTypes) {
       primaryKey: true
     },
     nome: {
-      type: DataTypes.STRING(255),
+      type: DataTypes.STRING,
       allowNull: true
     },
     criado_por: {
-      type: DataTypes.STRING(255),
+      type: DataTypes.STRING,
       allowNull: true
     },
     status: {
-      type: DataTypes.STRING(50),
+      type: DataTypes.STRING,
       allowNull: true
     },
     data_criacao: {
@@ -38,4 +38,6 @@ module.exports = function(sequelize, DataTypes) {
       },
     ]
   });
+
+  return Categorias
 };

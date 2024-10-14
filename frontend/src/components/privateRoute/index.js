@@ -7,7 +7,7 @@ const PrivateRoute = ({ element: Component, ...rest }) => {
     useEffect(() => {
       const checkAuth = async () => {
         try {
-          await api.get('/tarefas');
+          await api.get('/');
           setIsAuthenticated(true);
         } catch {
           setIsAuthenticated(false);

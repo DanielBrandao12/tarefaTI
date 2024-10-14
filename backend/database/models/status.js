@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize');
-module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('status', {
+module.exports = (sequelize, DataTypes) => {
+  const Status = sequelize.define('Status', {
     id_status: {
       autoIncrement: true,
       type: DataTypes.INTEGER,
@@ -8,7 +8,7 @@ module.exports = function(sequelize, DataTypes) {
       primaryKey: true
     },
     nome: {
-      type: DataTypes.STRING(255),
+      type: DataTypes.STRING,
       allowNull: true
     },
     ativo: {
@@ -30,4 +30,6 @@ module.exports = function(sequelize, DataTypes) {
       },
     ]
   });
+
+  return Status
 };

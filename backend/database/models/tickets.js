@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize');
-module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('tickets', {
+module.exports = (sequelize, DataTypes) =>{
+  const Tickets = sequelize.define('Tickets', {
     id_ticket: {
       autoIncrement: true,
       type: DataTypes.INTEGER,
@@ -8,11 +8,15 @@ module.exports = function(sequelize, DataTypes) {
       primaryKey: true
     },
     codigo_ticket: {
-      type: DataTypes.STRING(50),
+      type: DataTypes.STRING,
       allowNull: true
     },
     assunto: {
-      type: DataTypes.STRING(255),
+      type: DataTypes.STRING,
+      allowNull: true
+    },
+    nome_requisitante: {
+      type: DataTypes.STRING,
       allowNull: true
     },
     descricao: {
@@ -20,7 +24,7 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: true
     },
     nivel_prioridade: {
-      type: DataTypes.STRING(50),
+      type: DataTypes.STRING,
       allowNull: true
     },
     data_criacao: {
@@ -32,11 +36,11 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: true
     },
     atribuido_a: {
-      type: DataTypes.STRING(255),
+      type: DataTypes.STRING,
       allowNull: true
     },
     lista_tarefa: {
-      type: DataTypes.STRING(255),
+      type: DataTypes.STRING,
       allowNull: true
     },
     id_categoria: {
@@ -99,4 +103,6 @@ module.exports = function(sequelize, DataTypes) {
       },
     ]
   });
+
+  return Tickets
 };

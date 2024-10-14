@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize');
-module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('historico_status', {
+module.exports = (sequelize, DataTypes)  => {
+  const Historico_status = sequelize.define('Historico_status', {
     id_historico: {
       autoIncrement: true,
       type: DataTypes.INTEGER,
@@ -71,4 +71,5 @@ module.exports = function(sequelize, DataTypes) {
       },
     ]
   });
+  return Historico_status
 };

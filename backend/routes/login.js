@@ -5,7 +5,7 @@ const controller = require('../controllers/loginControllers');
 
 
 
-router.post('/createUser', controller.createUser)
+
 router.post('/', controller.handleLogin)
 router.get('/logout', controller.logout)
 

@@ -27,7 +27,7 @@ function CriarChamado() {
           </div>
 
           <div className={styles.fieldGroup}>
-            <label>Nome:</label>
+            <label>Nome Requisitante:</label>
             <input type='text' placeholder='Digite seu nome' className={stylesGlobal.inputTextChamado} />
           </div>
 
@@ -73,7 +73,7 @@ function CriarChamado() {
               <option value='Fechado'>Fechado</option>
             </select>
           </div>
-
+          
           <div className={styles.fieldGroup}>
             <label>Atribuir para:</label>
             <select name='Atribuir' className={stylesGlobal.selectChamado}>

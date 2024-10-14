@@ -50,8 +50,9 @@ function CreateTarefa() {
         try {
           const decodedToken = jwtDecode(token);
         
-          setIdUser(decodedToken.id)
-          setUserLogado(decodedToken.nome)
+          setIdUser(decodedToken.id_usuario)
+          setUserLogado(decodedToken.nome_completo)
+       
         } catch (error) {
           console.error('Erro ao decodificar o token:', error);
         }

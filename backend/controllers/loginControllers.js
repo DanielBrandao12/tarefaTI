@@ -1,4 +1,4 @@
-const {Users} = require('../database/models');
+const {Usuarios} = require('../database/models');
 
 
 const jwt = require("jsonwebtoken");
@@ -6,38 +6,16 @@ const { jwtKey } = require("../config/secrets");
 const bcrypt = require("bcrypt");
 
 
-const createUser = async (req, res) => {
-    
-    try{
-        const { nome, nome_user, senha } = req.body;
-             console.log(nome, nome_user, senha)
- 
-   const senhaBcrypt = bcrypt.hashSync(senha, 10)
-    
-     const newUser = await Users.create({
-       nome,
-       nome_user,
-       senha:senhaBcrypt,
-       charset: 'utf8mb4'
-       
-     });
-   
-     return res.json(newUser)
- }catch(error){
-   
-            res.error(error)
- }
 
-}
 
 
 const handleLogin = async (req, res) => {
-  const { nome_user, senha } = req.body;
+  const { nome_usuario, senha_hash } = req.body;
 
   // Encontre o usuário no banco de dados
-  const logon = await Users.findOne({
+  const logon = await Usuarios.findOne({
     where: {
-      nome_user,
+      nome_usuario,
     }
   });
   
@@ -46,15 +24,15 @@ const handleLogin = async (req, res) => {
   }
 
   // Compare a senha fornecida com a senha armazenada
-  const check = bcrypt.compareSync(senha, logon.dataValues.senha);
+  const check = bcrypt.compareSync(senha_hash, logon.dataValues.senha_hash);
 
   if (check) {
     // Remover a senha dos dados do usuário antes de armazenar na sessão
-    delete logon.dataValues.senha;
-    const id =logon.dataValues.id 
-    const nome = logon.dataValues.nome
+    delete logon.dataValues.senha_hash;
+    const id =logon.dataValues.id_usuario 
+    const nome_completo = logon.dataValues.nome_completo
     // Criar um token JWT (opcional)
-    const token = jwt.sign({ id, nome_user, nome }, jwtKey, { expiresIn: "1h" });
+    const token = jwt.sign({ id, nome_usuario, nome_completo }, jwtKey, { expiresIn: "1h" });
     res.cookie("token", token);
 
     // Armazenar os dados do usuário na sessão
@@ -87,7 +65,7 @@ const logout = async (req, res) => {
 }
 
 module.exports = {
-    createUser,
+    
     handleLogin, 
     logout
 }

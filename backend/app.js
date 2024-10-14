@@ -15,6 +15,7 @@ const usersLogin = require('./routes/login')
 
 //Novas rotas service desk 2.0
 const usuarioRouter =require('./routes/usuariosRoute')
+const ticketRouter = require('./routes/ticketsRoute')
 const app = express();
 
 
@@ -57,6 +58,7 @@ app.use('/login', usersLogin)
 
 //Novas rotas service desk 2.0
 app.use('/usuarios', usuarioRouter)
+app.use('/tickets', ticketRouter)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
