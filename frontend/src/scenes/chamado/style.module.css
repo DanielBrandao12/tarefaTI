@@ -144,7 +144,9 @@
     display: flex;
     flex-direction: column;
     gap: 40px;
+    min-width: 350px;
     padding: 10px;
+    
 }
 .statusContainer div{
     display: flex;

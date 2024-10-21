@@ -39,10 +39,7 @@ module.exports = (sequelize, DataTypes) =>{
       type: DataTypes.STRING,
       allowNull: true
     },
-    lista_tarefa: {
-      type: DataTypes.STRING,
-      allowNull: true
-    },
+
     id_categoria: {
       type: DataTypes.INTEGER,
       allowNull: true,

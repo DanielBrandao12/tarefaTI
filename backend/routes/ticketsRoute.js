@@ -6,6 +6,7 @@ const controller = require('../controllers/ticketsController');
 
 
 router.post('/createTicket', controller.createTickets)
+router.put('/updateTicket', controller.updateTicket)
 
 
 module.exports = router

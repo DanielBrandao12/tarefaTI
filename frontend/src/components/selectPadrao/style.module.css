@@ -1,10 +1,15 @@
 .containerSelect {
-    display: flex;
-    gap: 5px;
-    align-items: center;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 5px !important;
+    min-width: 200px;
     color: #b20000;
     cursor: pointer;
     position: relative; /* Necessário para o posicionamento do dropdown */
+    border: 1px solid ;
+    font-size: 14px;
+    padding: 5px;
 }
 
 .cardOptions {
@@ -15,12 +20,14 @@
     border-radius: 4px;
     background-color: #fff;
     z-index: 9999;
-    min-width: 130px; /* Largura mínima opcional */
+    min-width: 180px; /* Largura mínima opcional */
     max-width: 280px;
 }
 .cardOptions span{
+    min-width: 180px;
     font-size: 15px;
     cursor: pointer;
+    padding: 5px;
 }
 .cardOptions span:hover{
     background-color: #b20000;

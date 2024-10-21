@@ -30,6 +30,17 @@ function Chamado() {
     },
   });
 
+  const [openSelect, setOpenSelect] = useState(null);
+
+  const toggleSelect = (index) => {
+    
+      if (openSelect === index) {
+          setOpenSelect(null);  // Fecha o dropdown se ele já estiver aberto
+      } else {
+          setOpenSelect(index);  // Abre o dropdown clicado e fecha os outros
+      }
+  };
+
 
 
   return (
@@ -207,19 +218,19 @@ function Chamado() {
             <div className={styles.statusContainer}>
               <div>
                 <span>Status:</span>
-                <SelectPadrao>{array}</SelectPadrao>
+                <SelectPadrao   isOpen={openSelect === 1} toggle={() => toggleSelect(1)}>{array}</SelectPadrao>
               </div>
               <div>
                 <span>Categoria:</span>
-                <SelectPadrao>{array1}</SelectPadrao>
+                <SelectPadrao isOpen={openSelect === 2} toggle={() => toggleSelect(2)}>{array1}</SelectPadrao>
               </div>
               <div>
                 <span>Prioridade:</span>
-                <SelectPadrao>{array2}</SelectPadrao>
+                <SelectPadrao isOpen={openSelect === 3} toggle={() => toggleSelect(3)}>{array2}</SelectPadrao>
               </div>
               <div>
                 <span>Atribuído a:</span>
-                <SelectPadrao>{array3}</SelectPadrao>
+                <SelectPadrao isOpen={openSelect === 4} toggle={() => toggleSelect(4)}>{array3}</SelectPadrao>
               </div>
             </div>
           </Card>
