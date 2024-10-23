@@ -16,6 +16,9 @@ const usersLogin = require('./routes/login')
 //Novas rotas service desk 2.0
 const usuarioRouter =require('./routes/usuariosRoute')
 const ticketRouter = require('./routes/ticketsRoute')
+const listaTarefaRouter = require('./routes/listaTarefaRoute')
+const categoriaRouter = require('./routes/categoriasRoute')
+
 const app = express();
 
 
@@ -59,6 +62,8 @@ app.use('/login', usersLogin)
 //Novas rotas service desk 2.0
 app.use('/usuarios', usuarioRouter)
 app.use('/tickets', ticketRouter)
+app.use('/listaTarefa', listaTarefaRouter)
+app.use('/categoria', categoriaRouter)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
