@@ -53,6 +53,7 @@ function Menu() {
                     <Link className='link' to={'/category'}>Categorias</Link>
                     <Link className='link' to={'/relatorio'}>Relátorios</Link>
                     <Link className='link' to={'/newticket'}>Criar</Link>
+                    <Link className='link' to={'/relatorioInventario'}>Inventario</Link>
               
                 </div>
           

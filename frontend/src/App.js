@@ -11,6 +11,7 @@ import PrivateRoute from './components/privateRoute'; // Importe o componente Pr
 import Category from './scenes/category';
 import Relatorio from './scenes/relatorio';
 import CriarChamadoUser from './scenes/newticket';
+import RelatorioInventario from './scenes/relatorioInventario';
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
         <Route path="/category" element={<PrivateRoute element={<Category />} />} />
         <Route path="/relatorio" element={<PrivateRoute element={<Relatorio />} />} />
         <Route path="/newticket" element={<PrivateRoute element={<CriarChamadoUser />} />} />
+        <Route path="/relatorioInventario" element={<PrivateRoute element={<RelatorioInventario />} />} />
       </Routes>
     </BrowserRouter>
   );

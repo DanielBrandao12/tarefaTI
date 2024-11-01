@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize');
-module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('tb_relatorio_software', {
+module.exports = (sequelize, DataTypes)=> {
+  const RelatorioSoftware = sequelize.define('RelatorioSoftware', {
     id: {
       autoIncrement: true,
       type: DataTypes.INTEGER,
@@ -52,4 +52,6 @@ module.exports = function(sequelize, DataTypes) {
       },
     ]
   });
+
+  return RelatorioSoftware
 };
