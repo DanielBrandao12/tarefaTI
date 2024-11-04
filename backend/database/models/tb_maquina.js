@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize');
-module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('tb_maquina', {
+module.exports = (sequelize, DataTypes) => {
+  const Maquina = sequelize.define('Maquina', {
     id: {
       autoIncrement: true,
       type: DataTypes.INTEGER,
@@ -45,4 +45,6 @@ module.exports = function(sequelize, DataTypes) {
       },
     ]
   });
+
+  return Maquina
 };

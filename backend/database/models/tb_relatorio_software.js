@@ -1,5 +1,5 @@
 const Sequelize = require('sequelize');
-module.exports = (sequelize, DataTypes)=> {
+module.exports = (sequelize, DataTypes) => {
   const RelatorioSoftware = sequelize.define('RelatorioSoftware', {
     id: {
       autoIncrement: true,
@@ -15,13 +15,9 @@ module.exports = (sequelize, DataTypes)=> {
         key: 'id'
       }
     },
-    id_software: {
-      type: DataTypes.INTEGER,
-      allowNull: true,
-      references: {
-        model: 'tb_software',
-        key: 'id'
-      }
+    id_softwares: {
+      type: DataTypes.JSON,
+      allowNull: true // Removida a referência, pois não é aplicável a um tipo JSON
     }
   }, {
     sequelize,
@@ -42,16 +38,9 @@ module.exports = (sequelize, DataTypes)=> {
         fields: [
           { name: "id_maquina" },
         ]
-      },
-      {
-        name: "id_software",
-        using: "BTREE",
-        fields: [
-          { name: "id_software" },
-        ]
-      },
+      }
     ]
   });
 
-  return RelatorioSoftware
+  return RelatorioSoftware;
 };

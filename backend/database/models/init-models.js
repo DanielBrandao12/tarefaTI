@@ -30,8 +30,7 @@ function initModels(sequelize) {
   tb_lab_sala.hasMany(tb_maquina, { as: "tb_maquinas", foreignKey: "id_lab_sala"});
   tb_relatorio_software.belongsTo(tb_maquina, { as: "id_maquina_tb_maquina", foreignKey: "id_maquina"});
   tb_maquina.hasMany(tb_relatorio_software, { as: "tb_relatorio_softwares", foreignKey: "id_maquina"});
-  tb_relatorio_software.belongsTo(tb_software, { as: "id_software_tb_software", foreignKey: "id_software"});
-  tb_software.hasMany(tb_relatorio_software, { as: "tb_relatorio_softwares", foreignKey: "id_software"});
+ 
 
   tickets.belongsTo(categorias, { as: "id_categoria_categoria", foreignKey: "id_categoria"});
   categorias.hasMany(tickets, { as: "tickets", foreignKey: "id_categoria"});

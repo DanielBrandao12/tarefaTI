@@ -19,6 +19,7 @@ const ticketRouter = require('./routes/ticketsRoute')
 const listaTarefaRouter = require('./routes/listaTarefaRoute')
 const categoriaRouter = require('./routes/categoriasRoute')
 const relatorioInventarioRouter = require('./routes/relatorioInventarioRoute')
+const maquinaRouter = require('./routes/maquinaRoute')
 
 const app = express();
 
@@ -66,6 +67,7 @@ app.use('/tickets', ticketRouter)
 app.use('/listaTarefa', listaTarefaRouter)
 app.use('/categoria', categoriaRouter)
 app.use('/relatorioInventario', relatorioInventarioRouter)
+app.use('/maquinas', maquinaRouter)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

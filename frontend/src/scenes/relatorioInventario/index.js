@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import PaginaPadrao from '../../components/paginaPadrao';
 import Card from '../../components/card';
-import axios from 'axios';
+import api from '../../services/api';
 
 function RelatorioInventario() {
   const [programasJSON, setProgramasJSON] = useState([]);
-
+  const [items, setItems]  = useState([])
   // Função para ler o arquivo
   const lerArquivo = (file) => {
     const reader = new FileReader();
@@ -48,18 +48,40 @@ function RelatorioInventario() {
     }
   };
 
-  // Exemplo de como usar programasJSON em uma consulta com api.get
-  const consultarAPI = async () => {
-    try {
-      // Supondo que você faça uma consulta na API com base nos programas carregados
-      const response = await axios.get('/api/consulta', {
-        params: { programas: programasJSON }
-      });
-      console.log('Resposta da API:', response.data);
-    } catch (error) {
-      console.error('Erro ao consultar a API:', error);
-    }
-  };
+
+// Exemplo de como usar programasJSON em uma consulta com api.post
+const consultarAPI = async () => {
+  try {
+    // Faz a requisição POST enviando programasJSON no corpo da requisição
+    const response = await api.post('/relatorioInventario/consultaSoft', {
+      id: 1, // Envia o id da máquina
+      programas: programasJSON // Envia o array de softwares no corpo
+    });
+
+    console.log('Resposta da API:', response.data);
+      setItems(response.data)
+   
+  } catch (error) {
+    console.error('Erro ao consultar a API:', error);
+  }
+};
+
+const addItem = async () => {
+  try {
+    // Faz a requisição POST enviando programasJSON no corpo da requisição
+    const response = await api.post('/relatorioInventario/', {
+        items
+    });
+
+    console.log('Resposta da API:', response.data);
+    
+   
+  } catch (error) {
+    console.error('Erro ao consultar a API:', error);
+  }
+};
+
+//criar algo para trazer lista das maquinas e pega o id da maquina selecionada
 
   return (
     <PaginaPadrao>
@@ -88,6 +110,7 @@ function RelatorioInventario() {
           <h2>JSON Gerado:</h2>
           <pre>{JSON.stringify(programasJSON, null, 2)}</pre>
           <button onClick={consultarAPI}>Consultar API</button>
+          <button onClick={addItem}>add</button>
         </div>
       </Card>
     </PaginaPadrao>
