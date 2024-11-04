@@ -5,7 +5,10 @@ import api from '../../services/api';
 
 function RelatorioInventario() {
   const [programasJSON, setProgramasJSON] = useState([]);
-  const [items, setItems]  = useState([])
+  const [items, setItems] = useState([]);
+  const [maqs, setMaqs] = useState([]);
+  const [maquinaSelecionada, setMaquinaSelecionada] = useState(null); // Estado para armazenar a máquina selecionada
+
   // Função para ler o arquivo
   const lerArquivo = (file) => {
     const reader = new FileReader();
@@ -35,7 +38,7 @@ function RelatorioInventario() {
         }
       }
     });
-    console.log(novoJSON)
+    console.log(novoJSON);
     setProgramasJSON(novoJSON);
   };
 
@@ -48,40 +51,50 @@ function RelatorioInventario() {
     }
   };
 
+  // Função para consultar a API com os programas e o ID da máquina
+  const consultarAPI = async () => {
+    if (!maquinaSelecionada) {
+      alert('Por favor, selecione uma máquina antes de consultar.');
+      return;
+    }
 
-// Exemplo de como usar programasJSON em uma consulta com api.post
-const consultarAPI = async () => {
-  try {
-    // Faz a requisição POST enviando programasJSON no corpo da requisição
-    const response = await api.post('/relatorioInventario/consultaSoft', {
-      id: 1, // Envia o id da máquina
-      programas: programasJSON // Envia o array de softwares no corpo
-    });
+    try {
+      // Faz a requisição POST enviando programasJSON no corpo da requisição
+      const response = await api.post('/relatorioInventario/consultaSoft', {
+        id: maquinaSelecionada, // Envia o id da máquina selecionada
+        programas: programasJSON // Envia o array de softwares no corpo
+      });
 
-    console.log('Resposta da API:', response.data);
-      setItems(response.data)
-   
-  } catch (error) {
-    console.error('Erro ao consultar a API:', error);
-  }
-};
+      console.log('Resposta da API:', response.data);
+      setItems(response.data);
+    } catch (error) {
+      console.error('Erro ao consultar a API:', error);
+    }
+  };
 
-const addItem = async () => {
-  try {
-    // Faz a requisição POST enviando programasJSON no corpo da requisição
-    const response = await api.post('/relatorioInventario/', {
+  const addItem = async () => {
+    try {
+      // Faz a requisição POST enviando programasJSON no corpo da requisição
+      const response = await api.post('/relatorioInventario/', {
         items
-    });
+      });
 
-    console.log('Resposta da API:', response.data);
-    
-   
-  } catch (error) {
-    console.error('Erro ao consultar a API:', error);
-  }
-};
+      console.log('Resposta da API:', response.data);
+    } catch (error) {
+      console.error('Erro ao adicionar itens à API:', error);
+    }
+  };
 
-//criar algo para trazer lista das maquinas e pega o id da maquina selecionada
+  // Função para buscar a lista de máquinas
+  const getMaquinas = async () => {
+    try {
+      const maquinas = await api.get('/maquinas/');
+      console.log('Respota da API: ', maquinas.data);
+      setMaqs(maquinas.data);
+    } catch (error) {
+      console.error('Erro ao tentar consultar máquinas!', error);
+    }
+  };
 
   return (
     <PaginaPadrao>
@@ -89,28 +102,28 @@ const addItem = async () => {
         <div>
           <h1>Programas Instalados</h1>
           <input type="file" onChange={handleFileChange} />
-          <table>
-            <thead>
-              <tr>
-                <th>Nome</th>
-                <th>Fornecedor</th>
-                <th>Versão</th>
-              </tr>
-            </thead>
-            <tbody>
-              {programasJSON.map((programa, index) => (
-                <tr key={index}>
-                  <td>{programa.name}</td>
-                  <td>{programa.vendor}</td>
-                  <td>{programa.version}</td>
-                </tr>
+
+          <div>
+            <label htmlFor="maquina-select">Selecione uma máquina:</label>
+            <select
+              id="maquina-select"
+              onChange={(e) => setMaquinaSelecionada(e.target.value)}
+              value={maquinaSelecionada}
+            >
+              <option value="">Selecione uma máquina</option>
+              {maqs.map((maquina, index) => (
+                <option key={index} value={maquina.id}>
+                  {maquina.nome_maquina}
+                </option>
               ))}
-            </tbody>
-          </table>
-          <h2>JSON Gerado:</h2>
-          <pre>{JSON.stringify(programasJSON, null, 2)}</pre>
+            </select>
+          </div>
+
           <button onClick={consultarAPI}>Consultar API</button>
-          <button onClick={addItem}>add</button>
+          <button onClick={addItem}>Adicionar</button>
+          <button onClick={getMaquinas}>Carregar Máquinas</button>
+
+        
         </div>
       </Card>
     </PaginaPadrao>
