@@ -1,4 +1,4 @@
-const { Tickets, ListaTarefa } = require('../database/models');
+const { Tickets, ListaTarefa, Historico_status } = require('../database/models');
 
 
 // Função que gera um código de ticket com a data e um número aleatório
@@ -81,6 +81,10 @@ const createTickets = async (req, res) => {
             });
         }
 
+        //cria um historico sempre que o status for alterado
+        //Para controle do andamento do atendimento
+        createHistorico( ticketCriado.id_ticket, id_status, id_usuario)
+
         return res.status(201).json({
             message: 'Ticket criado com sucesso!',
             ticketCriado
@@ -98,6 +102,7 @@ const createTickets = async (req, res) => {
 }
 
 
+
 //Função para editar ticket um ou mais de um campo
 const updateTicket = async (req, res) => {
     try {
@@ -110,6 +115,7 @@ const updateTicket = async (req, res) => {
             nivel_prioridade,
             id_status,
             atribuido_a,
+            id_usuario
         } = req.body;
 
         // Validação básica (você pode usar uma biblioteca para isso)
@@ -136,6 +142,11 @@ const updateTicket = async (req, res) => {
             where: { id_ticket }
         });
 
+        if(id_status) {
+
+            createHistorico( id_ticket, id_status, id_usuario)
+        }
+
         return res.status(200).json({
             message: 'Ticket alterado com sucesso!',
             ticketAlterado
@@ -150,6 +161,15 @@ const updateTicket = async (req, res) => {
 };
 
 
+//função para criar um historico de status sempre que for criado um ticket ou se os status for alterado
+const createHistorico = async ( id_ticket, id_status, id_usuario) =>{
+    await Historico_status.create({
+        data_hora: new Date(),
+        id_ticket,
+        id_status,
+        id_usuario
+    })
+}
 module.exports = {
     createTickets,
     updateTicket
