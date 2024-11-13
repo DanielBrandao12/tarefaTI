@@ -7,12 +7,12 @@ const createCategoria = async (req, res) => {
     try {
 
 
-        const { nome, criado_por, status } = req.body
+        const { nomeCategoria, statusCategoria } = req.body
 
         const categoria = await Categorias.create({
-            nome,
-            criado_por,
-            status,
+            nome:nomeCategoria,
+            criado_por:'Daniel',
+            status:statusCategoria,
             data_criacao: new Date()
         })
 

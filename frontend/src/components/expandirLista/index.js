@@ -1,12 +1,14 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from './style.module.css';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronUp, faChevronDown } from '@fortawesome/free-solid-svg-icons';
 import Card from '../card';
 
-function ExpandirLista({children, title}) {
+function ExpandirLista({children, title }) {
     const [isOptions, setIsOptions] = useState(false);
+
+ 
 
     const toggle = () => {
         setIsOptions(!isOptions);

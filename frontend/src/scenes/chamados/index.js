@@ -171,7 +171,8 @@ function Chamados() {
                                     <tr>
                                         <th>ID</th>
                                         <th>Atualizado</th>
-                                        <th>Criado por</th>
+                                        <th>Técnico</th>
+                                        <th>Solicitante</th>
                                         <th>Assunto</th>
                                         <th>Status</th>
                                         <th>Prioridade</th>
@@ -182,6 +183,7 @@ function Chamados() {
                             <tr key={chamado.id} onClick={() => handleChamado(chamado)}>
                                 <td>{chamado.id}</td>
                                 <td>{chamado.atualizado}</td>
+                                <td>{chamado.criadoPor}</td>
                                 <td>{chamado.criadoPor}</td>
                                 <td>{chamado.assunto}</td>
                                 <td>{chamado.status}</td>

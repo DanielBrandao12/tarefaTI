@@ -38,10 +38,13 @@ const createTickets = async (req, res) => {
             codigo_ticket = gerarCodigoTicket();
         } while (await verificarCodigoUnico(codigo_ticket));
 
+        //quando o post vier da pagina do usuário  de criação de ticket a categoria vai ser 
+        // aguardando aprovação id da categoria!
         const {
             id_categoria,
             nome_requisitante,
             assunto,
+            email,
             descricao,
             nivel_prioridade,
             lista_tarefa, // Supondo que isso seja uma string
@@ -55,6 +58,7 @@ const createTickets = async (req, res) => {
         const ticketCriado = await Tickets.create({
             codigo_ticket,
             assunto,
+            email,
             nome_requisitante,
             descricao,
             nivel_prioridade,
@@ -110,6 +114,7 @@ const updateTicket = async (req, res) => {
             id_ticket,
             id_categoria,
             nome_requisitante,
+            email,
             assunto,
             descricao,
             nivel_prioridade,
@@ -132,6 +137,7 @@ const updateTicket = async (req, res) => {
         // Atualizar o ticket
         const ticketAlterado = await Tickets.update({
             assunto,
+            email,
             nome_requisitante,
             descricao,
             nivel_prioridade,

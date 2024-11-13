@@ -96,3 +96,8 @@
 .buttonPadrao:hover{
   background-color: #7E0000;
 }
+
+
+.errorInput {
+  border: 2px solid red;
+}
