@@ -69,3 +69,48 @@
     color: #900000;
     margin-top: 22px;
 }
+
+.modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    z-index: 999999;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -60%);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+    }
+}
+
+.errorInput {
+    border: 2px solid red;
+}
+
+.errorMessage {
+    position: absolute;
+    top: 90%;
+    margin-right: 10px;
+    color: red;
+    font-size: 0.7rem;
+    display: block;
+}
+
+.containerMessageInput{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-end;
+}

@@ -1,6 +1,22 @@
 
 const { Categorias } = require('../database/models')
 
+const getAllCategoria = async (req, res) => {
+    try {
+        const categoriasAll = await Categorias.findAll(); // Corrigido para "findAll"
+
+        // Retorna as categorias em formato JSON
+        return res.status(200).json(categoriasAll);
+    } catch (error) {
+        console.error('Erro ao buscar categorias:', error);
+
+        // Retorna um erro genérico ao cliente
+        return res.status(500).json({
+            mensagem: 'Erro ao buscar categorias.',
+            erro: error.message,
+        });
+    }
+};
 
 const createCategoria = async (req, res) => {
 
@@ -36,14 +52,14 @@ const updateCategoria = async (req, res) => {
     try {
 
 
-        const { id_categoria, nome, criado_por, status } = req.body
+        const { idCategory, nomeCategoria,  statusCategoria } = req.body
 
         const categoriaEditada = await Categorias.update({
-            nome,
-            criado_por,
-            status,
+            nome:nomeCategoria,
+            
+            status:statusCategoria,
         },{
-        where: {id_categoria}
+        where: {id_categoria:idCategory}
     })
 
 
@@ -63,11 +79,12 @@ const updateCategoria = async (req, res) => {
 
 const deleteCategoria = async (req, res) => {
     try {
-        const { id_categoria, status } = req.body;
+        const { id, status } = req.query; // Obtém os parâmetros da query string
+        console.log(id, status)
         if(status !== 'Ativo'){
 
             const categoriaRemovida = await Categorias.destroy({
-                where: { id_categoria }
+                where: { id_categoria:id }
             });
 
             if (categoriaRemovida) {
@@ -96,5 +113,6 @@ const deleteCategoria = async (req, res) => {
 module.exports = {
     createCategoria,
     updateCategoria,
-    deleteCategoria
+    deleteCategoria,
+    getAllCategoria
 }
