@@ -1,4 +1,4 @@
-const { Tickets, ListaTarefa, Historico_status } = require('../database/models');
+const { Tickets, ListaTarefa, Historico_status, View_Ticket } = require('../database/models');
 
 
 // Função que gera um código de ticket com a data e um número aleatório
@@ -167,6 +167,76 @@ const updateTicket = async (req, res) => {
 };
 
 
+const getTickets = async (req, res) =>{
+ 
+
+    try{
+        const tickets = await View_Ticket.findAll()
+
+        console.log(tickets)
+        return res.status(201).json(tickets);
+
+    } catch (error) {
+        // Log de erro para depuração
+        console.error("Erro ao buscar tickets ", error);
+
+        // Resposta de erro
+        return res.status(500).json({
+            message: error.message || "Erro ao buscar tickets, tente novamente mais tarde.",
+        });
+    }
+}
+
+const getTicketsId = async (req, res) =>{
+    
+        const {id} = req.params
+        console.log(id)
+
+    try{
+        const ticket = await Tickets.findOne({id_ticket:id})
+
+     
+        return res.status(201).json(ticket);
+
+    } catch (error) {
+        // Log de erro para depuração
+        console.error("Erro ao buscar tickets ", error);
+
+        // Resposta de erro
+        return res.status(500).json({
+            message: error.message || "Erro ao buscar tickets, tente novamente mais tarde.",
+        });
+    }
+}
+
+const getListaTarefaTicket = async (req, res) =>{
+    
+    const {id} = req.params
+    console.log(id)
+
+try{
+    const listaTarefa = await ListaTarefa.findAll(
+        {
+            where:{
+                id_ticket:id
+            }
+        })
+
+    console.log(listaTarefa)
+    return res.status(201).json(listaTarefa);
+
+} catch (error) {
+    // Log de erro para depuração
+    console.error("Erro ao buscar Lista de tarefas", error);
+
+    // Resposta de erro
+    return res.status(500).json({
+        message: error.message || "Erro ao buscar lista, tente novamente mais tarde.",
+    });
+}
+}
+
+
 //função para criar um historico de status sempre que for criado um ticket ou se os status for alterado
 const createHistorico = async ( id_ticket, id_status, id_usuario) =>{
     await Historico_status.create({
@@ -178,5 +248,8 @@ const createHistorico = async ( id_ticket, id_status, id_usuario) =>{
 }
 module.exports = {
     createTickets,
-    updateTicket
+    updateTicket,
+    getTickets,
+    getTicketsId,
+    getListaTarefaTicket,
 }

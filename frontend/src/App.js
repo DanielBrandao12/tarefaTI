@@ -20,7 +20,7 @@ function App() {
       <Route path="/login" element={<Login />} />
         <Route path="/" element={<PrivateRoute element={<CreateTarefa />} />} />
         <Route path="/tarefas" element={<PrivateRoute element={<Tarefas />} />} />
-        <Route path="/chamado" element={<PrivateRoute element={<Chamado />} />} />
+        <Route path="/chamado/:id_ticket" element={<PrivateRoute element={<Chamado />} />} />
         <Route path="/chamados" element={<PrivateRoute element={<Chamados />} />} />
         <Route path="/criarChamado" element={<PrivateRoute element={<CriarChamado />} />} />
         <Route path="/category" element={<PrivateRoute element={<Category />} />} />

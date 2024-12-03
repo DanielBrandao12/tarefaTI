@@ -1,4 +1,5 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import { useParams } from 'react-router-dom';
 import styles from './style.module.css'
 import stylesGlobal from '../../styles/styleGlobal.module.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -14,7 +15,45 @@ import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import ExpandirLista from '../../components/expandirLista';
 
+import api from '../../services/api';
+
 function Chamado() {
+
+  const { id_ticket } = useParams(); // Captura o parâmetro da URL
+  const [chamado, setChamado] = useState('')
+  const [listaTarefaTicket, setListaTarefaTicket] = useState([])    
+
+
+      useEffect(() => {
+     const fetchChamado = async () => {
+            try {
+                const response = await api.get(`/tickets/${id_ticket}`);
+                setChamado(response.data);
+                
+            } catch (error) {
+                console.error('Erro ao buscar tickets:', error);
+            }
+        };
+        fetchChamado()
+    
+}, []);
+      useEffect(() => {
+
+     const fetchChamadoListaTarefa = async () => {
+            try {
+                const response = await api.get(`/tickets/listaTarefa/${id_ticket}`);
+                setListaTarefaTicket(response.data);
+                console.log(response.data)
+            } catch (error) {
+                console.error('Erro ao buscar tickets:', error);
+            }
+        };
+
+       
+        fetchChamadoListaTarefa()
+}, []);
+    
+
   const array = ['Aguardando Classficação', 'Em atendimento', 'Suspenso', 'Fechado']
   const array1 = ['Hardware', 'Software', 'Acedemico', 'Rede']
   const array2 = ['Baixa', 'Média', 'Alta']
@@ -53,13 +92,13 @@ function Chamado() {
           <Card>
             <div className={styles.containerChamadoView}>
 
-              <h3 className={styles.titleAssunto}>Instalação de softwares INTERFATECS</h3>
+              <h3 className={styles.titleAssunto}>{chamado.assunto}</h3>
               <div className={styles.autor}>
-                <span className={styles.span}>Criado por:</span>
-                <p className={stylesGlobal.paragrafoGlobal}>Daniel</p>
+                <span className={styles.span}>Enviado por:</span>
+                <p className={stylesGlobal.paragrafoGlobal}>{chamado.nome_requisitante}</p>
               </div>
-              <p className={stylesGlobal.paragrafoGlobal}>{lorem.generateParagraphs(1)}</p>
-              <p className={stylesGlobal.paragrafoGlobal}>{lorem.generateParagraphs(1)}</p>
+              <p className={stylesGlobal.paragrafoGlobal}>{chamado.descricao}</p>
+              
             </div>
 
 
@@ -85,20 +124,18 @@ function Chamado() {
 
 
               <div className={styles.containerCheckboxes}>
+                {
+                 !listaTarefaTicket.length ? <span>Não existe tarefas</span>
+                 : listaTarefaTicket.map((item)=>(
 
+                    <label>
+                    <input type="checkbox" value="opcao1" className={styles.checkBox}  />{item.assunto}
+                  </label>
+                  ))
+                }
 
-                <label>
-                  <input type="checkbox" value="opcao1" className={styles.checkBox} />Opção 1
-                </label>
-                <label>
-                  <input type="checkbox" value="opcao1" className={styles.checkBox} />Opção 2
-                </label>
-                <label>
-                  <input type="checkbox" value="opcao1" className={styles.checkBox} />Opção 3
-                </label>
-                <label>
-                  <input type="checkbox" value="opcao1" className={styles.checkBox} />Opção 4
-                </label>
+                
+            
 
               </div>
 

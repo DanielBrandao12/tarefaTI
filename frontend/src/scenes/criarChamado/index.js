@@ -1,4 +1,5 @@
 import React from 'react';
+
 import styles from './style.module.css';
 import stylesGlobal from '../../styles/styleGlobal.module.css'
 import ReactQuill from 'react-quill';
@@ -9,6 +10,8 @@ import Card from '../../components/card';
 import PaginaPadrao from '../../components/paginaPadrao';
 
 function CriarChamado() {
+
+
   return (
     <PaginaPadrao>
       <Card>

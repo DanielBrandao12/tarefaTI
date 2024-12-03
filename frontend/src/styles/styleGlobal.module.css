@@ -44,14 +44,14 @@
 
   .table{
     width: 100%;
-    font-size: 16px;
+    font-size: 13px;
     font-weight: 400;
-    
+    text-align: center;
     padding: 10px;
   
 }
 .table thead {
-    height: 48px;
+    height: 30px;
     background-color: #b20000;
     font-weight: 700;
     line-height: normal;
@@ -68,10 +68,11 @@
 }
 
 .tbody tr{
-    height: 48px;
+    height: 30px;
     cursor: pointer;
     
 }
+
 .tbody tr:hover{
     background-color: #7E0000;
     
