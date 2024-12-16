@@ -1,4 +1,5 @@
-const { Tickets, ListaTarefa, Historico_status, View_Ticket } = require('../database/models');
+
+const { Tickets, ListaTarefa, Historico_status, View_Ticket, View_Respostas } = require('../database/models');
 
 
 // Função que gera um código de ticket com a data e um número aleatório
@@ -187,27 +188,63 @@ const getTickets = async (req, res) =>{
     }
 }
 
-const getTicketsId = async (req, res) =>{
+// Função para obter ticket por ID
+const getTicketsId = async (req, res) => {
+    const { id } = req.params;
     
-        const {id} = req.params
-        console.log(id)
 
-    try{
-        const ticket = await Tickets.findOne({id_ticket:id})
+    const id_ticket = id
+    try {
+        // Busca o ticket pelo ID primário
+        const ticket = await Tickets.findByPk(id_ticket);
 
-     
-        return res.status(201).json(ticket);
+        // Verifica se o ticket existe
+        if (!ticket) {
+            return res.status(404).json({
+                message: "Ticket não encontrado.",
+            });
+        }
 
+        // Busca respostas relacionadas ao ticket
+        const respostas = await getViewRespostaId(id);
+
+        // Retorna o ticket e as respostas relacionadas
+        return res.status(200).json({
+            ticket,
+            respostas,
+        });
     } catch (error) {
         // Log de erro para depuração
-        console.error("Erro ao buscar tickets ", error);
+        console.error("Erro ao buscar ticket:", error);
 
         // Resposta de erro
         return res.status(500).json({
-            message: error.message || "Erro ao buscar tickets, tente novamente mais tarde.",
+            message: "Erro ao buscar ticket. Tente novamente mais tarde.",
+            
         });
     }
-}
+};
+
+// Função para obter respostas relacionadas ao ticket
+const getViewRespostaId = async (id_ticket) => {
+    try {
+        // Busca todas as respostas relacionadas ao ID do ticket
+        const respostas = await View_Respostas.findAll({
+            where: { id_ticket },
+        });
+
+        return respostas;
+    } catch (error) {
+        // Log de erro para depuração
+        console.error("Erro ao buscar respostas:", error);
+
+        // Lança o erro para que a função chamadora trate
+        return res.status(500).json({
+            message: "Erro ao buscar respostas. Tente novamente mais tarde.",
+           
+        });
+    }
+};
 
 const getListaTarefaTicket = async (req, res) =>{
     
@@ -246,10 +283,14 @@ const createHistorico = async ( id_ticket, id_status, id_usuario) =>{
         id_usuario
     })
 }
+
+
+
 module.exports = {
     createTickets,
     updateTicket,
     getTickets,
     getTicketsId,
     getListaTarefaTicket,
+   
 }

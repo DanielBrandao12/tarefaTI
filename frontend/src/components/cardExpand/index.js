@@ -4,7 +4,7 @@ import { faChevronUp, faChevronDown } from '@fortawesome/free-solid-svg-icons';
 
 import styles from './style.module.css'
 
-function CardExpand({ children }) {
+function CardExpand({ children, title }) {
 //Children vai ser um array
 
   const [expandCard, setExpandCard] = useState(false)
@@ -14,21 +14,13 @@ function CardExpand({ children }) {
   return (
     <div className={styles.containerCardExpand} onClick={toggle}>
       <div className={styles.containerDivFirst}>
+          <span className={styles.titleCardExpand}>{title}</span>
         
-        {children}
         <FontAwesomeIcon icon={expandCard ? faChevronUp : faChevronDown} style={{ color: '#b20000' }} />
       </div>
       {
         expandCard && <div className={styles.containerDivTwo}>
-          <span>Detalhes do chamado</span>
-          <span>Detalhes do chamado</span>
-          <span>Detalhes do chamado</span>
-          <span>Detalhes do chamado</span>
-          <span>Detalhes do chamado</span>
-          <span>Detalhes do chamado</span>
-          <span>Detalhes do chamado</span>
-          <span>Detalhes do chamado</span>
-          <span>Detalhes do chamado</span>
+        {children}
         </div>
       }
     </div>

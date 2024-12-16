@@ -1,6 +1,23 @@
 const {Status} = require('../database/models')
 
 
+const getStatusId = async (req, res) => {
+
+    const {id} = req.params
+    try{
+        const status = await Status.findByPk(id)
+
+        res.status(200).json(status)
+    }catch(error) {
+
+        console.error("Não encontrado: ", error);
+
+        // Resposta de erro
+        return res.status(500).json({
+            message: error.message || "Não encontrado, tente novamente mais tarde.",
+        });
+    }
+}
 const getStatus = async (req, res) => {
     try{
         const listaStatus = await Status.findAll()
@@ -106,5 +123,6 @@ module.exports = {
     getStatus,
     createStatus,
     updateStatus,
-    deleteStatus
+    deleteStatus,
+    getStatusId
 }

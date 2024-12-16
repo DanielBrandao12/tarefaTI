@@ -17,6 +17,24 @@ const getAllCategoria = async (req, res) => {
         });
     }
 };
+const getIdCategoria = async (req, res) => {
+
+    const {id} = req.params
+    try {
+        const categorias = await Categorias.findByPk(id); // Corrigido para "findAll"
+
+        // Retorna as categorias em formato JSON
+        return res.status(200).json(categorias);
+    } catch (error) {
+        console.error('Erro ao buscar categoria:', error);
+
+        // Retorna um erro genérico ao cliente
+        return res.status(500).json({
+            mensagem: 'Erro ao buscar categoria.',
+            erro: error.message,
+        });
+    }
+};
 
 const createCategoria = async (req, res) => {
 
@@ -114,5 +132,6 @@ module.exports = {
     createCategoria,
     updateCategoria,
     deleteCategoria,
-    getAllCategoria
+    getAllCategoria,
+    getIdCategoria
 }

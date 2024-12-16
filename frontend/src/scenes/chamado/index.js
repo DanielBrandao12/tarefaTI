@@ -3,13 +3,11 @@ import { useParams } from 'react-router-dom';
 import styles from './style.module.css'
 import stylesGlobal from '../../styles/styleGlobal.module.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus, faPenToSquare, faPrint, faEdit, faTrashCan } from '@fortawesome/free-solid-svg-icons';
+import {  faPenToSquare, faPrint, faEdit, faTrashCan } from '@fortawesome/free-solid-svg-icons';
 import PaginaPadrao from '../../components/paginaPadrao'
 import Card from '../../components/card'
-import SelectPadrao from '../../components/selectPadrao';
-//provisorio
-import { LoremIpsum } from 'lorem-ipsum';
-import CardExpand from '../../components/cardExpand';
+
+
 
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
@@ -21,66 +19,101 @@ function Chamado() {
 
   const { id_ticket } = useParams(); // Captura o parâmetro da URL
   const [chamado, setChamado] = useState('')
-  const [listaTarefaTicket, setListaTarefaTicket] = useState([])    
+  const [listaTarefaTicket, setListaTarefaTicket] = useState([])
+  const [status, setStatus] = useState('')
+  const [categoria, setCategoria] = useState('')
+  const [respostas, setRespostas] = useState('')
+
+  //Get para chamado por id
+  useEffect(() => {
+    const fetchChamado = async () => {
+      try {
+        const response = await api.get(`/tickets/${id_ticket}`);
+        setChamado(response.data.ticket);
+        console.log(response.data)
+        if(response.data.respostas.length > 0){
+          setRespostas(response.data.respostas)
+        }
+      } catch (error) {
+        console.error('Erro ao buscar tickets:', error);
+      }
+    };
+    fetchChamado()
+
+  }, []);
+  //Get para lista de tarefas pelo id do chamado
+  useEffect(() => {
+
+    const fetchChamadoListaTarefa = async () => {
+      try {
+        const response = await api.get(`/tickets/listaTarefa/${id_ticket}`);
+        setListaTarefaTicket(response.data);
+        console.log(response.data)
+      } catch (error) {
+        console.error('Erro ao buscar tickets:', error);
+      }
+    };
 
 
-      useEffect(() => {
-     const fetchChamado = async () => {
-            try {
-                const response = await api.get(`/tickets/${id_ticket}`);
-                setChamado(response.data);
-                
-            } catch (error) {
-                console.error('Erro ao buscar tickets:', error);
-            }
-        };
-        fetchChamado()
-    
-}, []);
-      useEffect(() => {
+    fetchChamadoListaTarefa()
+  }, []);
+  //get para pegar status do ticket
+  useEffect(() => {
+    const fetchStatus = async () => {
+      try {
+        console.log(chamado.id_status)
+        const response = await api.get(`/status/${chamado.id_status}`);
+        setStatus(response.data.nome);
+        console.log(response.data)
 
-     const fetchChamadoListaTarefa = async () => {
-            try {
-                const response = await api.get(`/tickets/listaTarefa/${id_ticket}`);
-                setListaTarefaTicket(response.data);
-                console.log(response.data)
-            } catch (error) {
-                console.error('Erro ao buscar tickets:', error);
-            }
-        };
+      } catch (error) {
+        console.error('Erro ao buscar status:', error);
+      }
+    };
+    fetchStatus()
 
-       
-        fetchChamadoListaTarefa()
-}, []);
-    
+  }, [chamado]);
+  //Get para pegar categoria do ticket
+  useEffect(() => {
+    const fetchCategoria = async () => {
+      try {
 
-  const array = ['Aguardando Classficação', 'Em atendimento', 'Suspenso', 'Fechado']
-  const array1 = ['Hardware', 'Software', 'Acedemico', 'Rede']
-  const array2 = ['Baixa', 'Média', 'Alta']
-  const array3 = ['Daniel', 'Márcio', 'Clayton', 'Wilson']
-  const lorem = new LoremIpsum({
-    sentencesPerParagraph: {
-      min: 3,
-      max: 7,
-    },
-    wordsPerSentence: {
-      min: 5,
-      max: 15,
-    },
-  });
+        const response = await api.get(`/categoria/${chamado.id_categoria}`);
+        setCategoria(response.data.nome);
+        console.log(response.data)
+
+      } catch (error) {
+        console.error('Erro ao buscar categoria:', error);
+      }
+    };
+    fetchCategoria()
+
+  }, [chamado]);
+
+
+  function formatarData(data) {
+    const date = new Date(data); // Cria um objeto Date
+    const dia = String(date.getDate()).padStart(2, '0');
+    const mes = String(date.getMonth() + 1).padStart(2, '0'); // Meses começam em 0
+    const ano = date.getFullYear();
+    const horas = String(date.getHours()).padStart(2, '0');
+    const minutos = String(date.getMinutes()).padStart(2, '0');
+
+    return `${dia}/${mes}/${ano} ${horas}:${minutos}`;
+  }
 
   const [openSelect, setOpenSelect] = useState(null);
 
   const toggleSelect = (index) => {
-    
-      if (openSelect === index) {
-          setOpenSelect(null);  // Fecha o dropdown se ele já estiver aberto
-      } else {
-          setOpenSelect(index);  // Abre o dropdown clicado e fecha os outros
-      }
+
+    if (openSelect === index) {
+      setOpenSelect(null);  // Fecha o dropdown se ele já estiver aberto
+    } else {
+      setOpenSelect(index);  // Abre o dropdown clicado e fecha os outros
+    }
   };
 
-
+//criar função para editar mensagem enviada
 
   return (
 
@@ -98,7 +131,7 @@ function Chamado() {
                 <p className={stylesGlobal.paragrafoGlobal}>{chamado.nome_requisitante}</p>
               </div>
               <p className={stylesGlobal.paragrafoGlobal}>{chamado.descricao}</p>
-              
+
             </div>
 
 
@@ -110,32 +143,20 @@ function Chamado() {
             <div className={styles.containerListaTarefas}>
 
               <h3 className={styles.titleLista}>Lista de Tarefas</h3>
-              <div className={styles.addContainer}>
-
-                <span>Adiconar novo item</span>
-
-                <div className={stylesGlobal.containerInputAdd}>
-                  <input type='text' placeholder='Digite a tarefa' className={stylesGlobal.inputTextChamado} />
-                  <div className={stylesGlobal.containerIconPlus}>
-                    <FontAwesomeIcon icon={faPlus} className={stylesGlobal.positionIconPlus} />
-                  </div>
-                </div>
-              </div>
-
 
               <div className={styles.containerCheckboxes}>
                 {
-                 !listaTarefaTicket.length ? <span>Não existe tarefas</span>
-                 : listaTarefaTicket.map((item)=>(
+                  !listaTarefaTicket.length ? <span>Não existe tarefas</span>
+                    : listaTarefaTicket.map((item) => (
 
-                    <label>
-                    <input type="checkbox" value="opcao1" className={styles.checkBox}  />{item.assunto}
-                  </label>
-                  ))
+                      <label>
+                        <input type="checkbox" value="opcao1" className={styles.checkBox} />{item.assunto}
+                      </label>
+                    ))
                 }
 
-                
-            
+
+
 
               </div>
 
@@ -144,96 +165,50 @@ function Chamado() {
 
           </Card>
 
-        <ExpandirLista title={'Respostas do chamado'}>
+          <ExpandirLista title={'Respostas do chamado'}>
 
-          {/*Card respostas */}
-          <Card>
-            <div className={styles.responsesCard}>
-              <div className={styles.responsesCardDivFirst}>
-
-                 <div><p>Respondido por <span>Daniel - </span>1 min.</p></div>
-
-                  <div className={styles.editPrintContainer}>
-                    <div>
-                      <FontAwesomeIcon icon={faEdit} />
-                      <span>Editar</span>
-                    </div>
-                    <div>
-                      <FontAwesomeIcon icon={faTrashCan} />
-                      <span>Excluir</span>
+            {/*Card respostas */}
+            {
+              !respostas.length ? <span>Não existe respostas</span>
+              : respostas.map((item)=>(
+                <Card>
+                <div className={styles.responsesCard}>
+                  <div className={styles.responsesCardDivFirst}>
+  
+                    <div><p>Enviado por <span>{!item.id_usuario?item.nome_requisitante: item.nome_usuario} - </span></p></div>
+  
+                    <div className={styles.editPrintContainer}>
+                      <div>
+                        <FontAwesomeIcon icon={faEdit} />
+                        <span>Editar</span>
+                      </div>
+                      
                     </div>
                   </div>
-              </div>
-              <div className={styles.divisao}></div>
-              <div className={styles.responsesCardDivTwo}>
-              <p className={stylesGlobal.paragrafoGlobal}>{lorem.generateParagraphs(1)}</p>
-              <p>Atenciosamente,</p>
-              <p>Equipe do TI</p>
-              </div>
-            </div>
-          </Card>
-          <Card>
-            <div className={styles.responsesCard}>
-              <div className={styles.responsesCardDivFirst}>
-
-                 <div><p>Respondido por <span>Daniel - </span>1 min.</p></div>
-
-                  <div className={styles.editPrintContainer}>
-                    <div>
-                      <FontAwesomeIcon icon={faEdit} />
-                      <span>Editar</span>
-                    </div>
-                    <div>
-                      <FontAwesomeIcon icon={faTrashCan} />
-                      <span>Excluir</span>
-                    </div>
+                  <div className={styles.divisao}></div>
+                  <div className={styles.responsesCardDivTwo}>
+                    <p className={stylesGlobal.paragrafoGlobal}></p>
+                    <p>{item.conteudo}</p>
+                    
                   </div>
-              </div>
-              <div className={styles.divisao}></div>
-              <div className={styles.responsesCardDivTwo}>
-              <p className={stylesGlobal.paragrafoGlobal}>{lorem.generateParagraphs(1)}</p>
-              <p>Atenciosamente,</p>
-              <p>Equipe do TI</p>
-              </div>
-            </div>
-          </Card>
-          <Card>
-            <div className={styles.responsesCard}>
-              <div className={styles.responsesCardDivFirst}>
+                </div>
+              </Card>
+              )) 
+       
+            }
+           
 
-                 <div><p>Respondido por <span>Daniel - </span>1 min.</p></div>
 
-                  <div className={styles.editPrintContainer}>
-                    <div>
-                      <FontAwesomeIcon icon={faEdit} />
-                      <span>Editar</span>
-                    </div>
-                    <div>
-                      <FontAwesomeIcon icon={faTrashCan} />
-                      <span>Excluir</span>
-                    </div>
-                  </div>
-              </div>
-              <div className={styles.divisao}></div>
-              <div className={styles.responsesCardDivTwo}>
-              <p className={stylesGlobal.paragrafoGlobal}>{lorem.generateParagraphs(1)}</p>
-              <p>Atenciosamente,</p>
-              <p>Equipe do TI</p>
-              </div>
-            </div>
-          </Card>
-         
-
-          {/*Card respostas */}
-        </ExpandirLista>
+            {/*Card respostas */}
+          </ExpandirLista>
 
           <Card>
             <div className={styles.containerListaTarefas}>
-                <h3>Envie uma respota</h3>
-                <ReactQuill className={styles.reactQuill} />
-                <div>
-                  <input type='button' className='button-padrao' value={'Enviar'}/>
-                </div>
+              <h3>Envie uma respota</h3>
+              <ReactQuill className={styles.reactQuill} />
+              <div>
+                <input type='button' className='button-padrao' value={'Enviar'} />
+              </div>
 
             </div>
           </Card>
@@ -251,35 +226,57 @@ function Chamado() {
               </div>
             </div>
           </Card>
+
           <Card>
-            <div className={styles.statusContainer}>
+            <div className={styles.containerDivFirst}>
+              <span className={styles.titleLista}>Detalhes do Chamado</span>
+            </div>
+            <div className={styles.containerDivTwo}>
+
+              <div>
+
+                <span>Código do Ticket:</span>
+                <span className={styles.spanDetalhes}>{chamado.codigo_ticket}</span>
+
+              </div>
+              <div>
+
+                <span>Data e Hora Criação:</span>
+                <span className={styles.spanDetalhes}>{formatarData(chamado.data_criacao)}</span>
+
+              </div>
+
+              {
+                chamado.data_conclusao && <div>
+                  <span>Data e Hora Conclusão:</span>
+                  <span className={styles.spanDetalhes}>{formatarData(chamado.data_conclusao)}</span>
+
+                </div>
+              }
               <div>
                 <span>Status:</span>
-                <SelectPadrao   isOpen={openSelect === 1} toggle={() => toggleSelect(1)}>{array}</SelectPadrao>
+                <span className={styles.spanDetalhes}>{status}</span>
               </div>
               <div>
                 <span>Categoria:</span>
-                <SelectPadrao isOpen={openSelect === 2} toggle={() => toggleSelect(2)}>{array1}</SelectPadrao>
+                <span className={styles.spanDetalhes}>{categoria}</span>
               </div>
               <div>
                 <span>Prioridade:</span>
-                <SelectPadrao isOpen={openSelect === 3} toggle={() => toggleSelect(3)}>{array2}</SelectPadrao>
+                <span className={styles.spanDetalhes}>{chamado.nivel_prioridade}</span>
               </div>
               <div>
                 <span>Atribuído a:</span>
-                <SelectPadrao isOpen={openSelect === 4} toggle={() => toggleSelect(4)}>{array3}</SelectPadrao>
+                <span className={styles.spanDetalhes}>{chamado.atribuido_a}</span>
               </div>
             </div>
+
+
           </Card>
           <Card>
-            <CardExpand>
-              <span>Detalhes do chamado</span>
-            </CardExpand>
-          </Card>
-          <Card>
-            <CardExpand>
-              <span>Histórico</span>
-            </CardExpand>
+
+            <span>Histórico</span>
+
           </Card>
         </div>
       </div>

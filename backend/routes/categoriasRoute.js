@@ -9,5 +9,6 @@ router.post('/createCategory', controller.createCategoria)
 router.put('/editCategory', controller.updateCategoria)
 router.delete('/deleteCategory', controller.deleteCategoria)
 router.get('/', controller.getAllCategoria)
+router.get('/:id', controller.getIdCategoria)
 
 module.exports = router

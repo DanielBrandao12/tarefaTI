@@ -1,7 +1,7 @@
 .containerDivCards {
     display: flex;
     flex-direction: row;
-    justify-content: center;
+    justify-content: space-around;
     max-width: 80vw;
 }
 
@@ -9,12 +9,14 @@
     display: flex;
     flex-direction: column;
     padding: 20px;
+    width: 60vw;
 }
 
 .containerSecondCard {
     display: flex;
     flex-direction: column;
     padding: 20px;
+    width: 40vw;
 }
 
 .containerChamadoView {
@@ -195,3 +197,34 @@
     margin-bottom: 50px;
   }
   
+
+  .spanDetalhes{
+    font-size: 14px;
+    color: gray;
+    
+  }
+
+  .containerDivFirst{
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding: 10px;
+    width: 100%;
+}
+.containerDivTwo{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+
+
+}
+.containerDivTwo div{
+    display: flex;
+    justify-content: flex-start;
+    gap: 20px;
+    padding: 5px;
+    width: 100%;
+
+}

@@ -53,6 +53,12 @@ function Chamados() {
         fetchChamados();
     }, []);
 
+    useEffect(() => {
+        if (usuario && chamados.length > 0) {
+            atualizarContadores(chamados);
+        }
+    }, [usuario, chamados]);
+
     const atualizarContadores = (dados) => {
         setContadorTodos(dados.length);
         setContadorAtMim(dados.filter(chamado => chamado.atribuido_a === usuario.nome_usuario).length);
@@ -118,7 +124,7 @@ function Chamados() {
                                 type="button"
                                 value={`Atribuído a outros (${contadorAtAOutros})`}
                                 className={styles.buttonChamados}
-                                onClick={() => setFilteredChamados(chamados.filter(chamado => chamado.atribuido_a && chamado.atribuido_a !== usuario.nome_usuario))}
+                                onClick={() => setFilteredChamados(chamados.filter(chamado => chamado.atribuido_a !== usuario.nome_usuario))}
                             />
                             <input
                                 type="button"
@@ -189,10 +195,10 @@ function Chamados() {
                                 onChange={(e) => setFiltro({ ...filtro, status: e.target.value })}
                             >
                                 <option value="">Escolha o status</option>
-                                <option value="aguardando">Aguardando classificação</option>
-                                <option value="atendimento">Em atendimento</option>
-                                <option value="suspenso">Suspenso</option>
-                                <option value="fechado">Fechado</option>
+                                <option value="Aguardando Classificação">Aguardando classificação</option>
+                                <option value="Em atendimento">Em atendimento</option>
+                                <option value="Suspenso">Suspenso</option>
+                                <option value="Fechado">Fechado</option>
                             </select>
                             <span
                                 className={styles.spanLink}
