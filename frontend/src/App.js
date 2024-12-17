@@ -22,6 +22,7 @@ function App() {
         <Route path="/tarefas" element={<PrivateRoute element={<Tarefas />} />} />
         <Route path="/chamado/:id_ticket" element={<PrivateRoute element={<Chamado />} />} />
         <Route path="/chamados" element={<PrivateRoute element={<Chamados />} />} />
+        <Route path="/criarChamado/:id" element={<PrivateRoute element={<CriarChamado />} />} />
         <Route path="/criarChamado" element={<PrivateRoute element={<CriarChamado />} />} />
         <Route path="/category" element={<PrivateRoute element={<Category />} />} />
         <Route path="/relatorio" element={<PrivateRoute element={<Relatorio />} />} />

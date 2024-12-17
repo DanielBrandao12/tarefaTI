@@ -102,3 +102,9 @@
 .errorInput {
   border: 2px solid red;
 }
+
+.line {
+  width: 80%;
+  
+  border-top: 1px solid #7E0000;
+}

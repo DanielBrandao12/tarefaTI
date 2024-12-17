@@ -1,5 +1,5 @@
 import React from 'react';
-
+import { useParams } from 'react-router-dom';
 import styles from './style.module.css';
 import stylesGlobal from '../../styles/styleGlobal.module.css'
 import ReactQuill from 'react-quill';
@@ -11,6 +11,7 @@ import PaginaPadrao from '../../components/paginaPadrao';
 
 function CriarChamado() {
 
+  const { id_ticket } = useParams(); // Captura o parâmetro da URL
 
   return (
     <PaginaPadrao>

@@ -25,11 +25,11 @@ const getResposta = async (req, res) => {
 
 const createResposta = async (req, res) => {
     try {
-        const {id_ticket, id_usuario, conteudo} = req.body
+        const {id_ticket, id_usuario, resposta} = req.body
 
-        const respotaCriada =  await Respostas.create({
+        const respostaCriada =  await Respostas.create({
             data_hora: new Date(),
-            conteudo,
+            conteudo:resposta,
             id_usuario,
             id_ticket
         })
@@ -37,7 +37,7 @@ const createResposta = async (req, res) => {
 
         return res.status(201).json({
             message: 'Resposta criada com sucesso!',
-            respotaCriada
+            respostaCriada
         });
 
     } catch (error) {
@@ -50,7 +50,6 @@ const createResposta = async (req, res) => {
         });
     }
 }
-
 
 
 
