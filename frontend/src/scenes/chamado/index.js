@@ -1,3 +1,4 @@
+// Importação das dependências necessárias
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import styles from './style.module.css';
@@ -6,15 +7,19 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare, faPrint } from '@fortawesome/free-solid-svg-icons';
 import PaginaPadrao from '../../components/paginaPadrao';
 import Card from '../../components/card';
+import  Popup  from '../../components/popup';
 import Cookies from 'js-cookie';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import ExpandirLista from '../../components/expandirLista';
 import api from '../../services/api';
 
+// Componente principal da página
 function Chamado() {
-  const navigate = useNavigate();
+  const navigate = useNavigate();  // Navegação entre páginas
   const { id_ticket } = useParams(); // Captura o parâmetro da URL
+
+   // Estados para armazenar dados e controlar o comportamento do componente
   const [chamado, setChamado] = useState({});
   const [listaTarefaTicket, setListaTarefaTicket] = useState([]);
   const [status, setStatus] = useState('');
@@ -23,7 +28,19 @@ function Chamado() {
   const [historicoStatus, setHistoricoStatus] = useState([]);
   const [resposta, setResposta] = useState('');
   const [usuario, setUsuario] = useState({});
+  const [message, setMessage] = useState('')
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
 
+
+   // Funções para controlar o Popup
+  const handleOpenPopup = (mensagem) => {
+    setMessage(mensagem)
+    setIsPopupOpen(true);
+  }
+  const handleClosePopup = () => setIsPopupOpen(false);
+
+
+  // Busca os detalhes do chamado pelo ID
   useEffect(() => {
     const fetchChamado = async () => {
       try {
@@ -39,6 +56,7 @@ function Chamado() {
     fetchChamado();
   }, [id_ticket]);
 
+  // Busca a lista de tarefas associadas ao chamado
   useEffect(() => {
     const fetchChamadoListaTarefa = async () => {
       try {
@@ -51,6 +69,7 @@ function Chamado() {
     fetchChamadoListaTarefa();
   }, [id_ticket]);
 
+   // Busca o status atual do chamado
   useEffect(() => {
     const fetchStatus = async () => {
       try {
@@ -65,6 +84,7 @@ function Chamado() {
     fetchStatus();
   }, [chamado]);
 
+   // Busca a categoria do chamado
   useEffect(() => {
     const fetchCategoria = async () => {
       try {
@@ -79,6 +99,7 @@ function Chamado() {
     fetchCategoria();
   }, [chamado]);
 
+  // Busca o histórico de status do chamado
   useEffect(() => {
     const fetchHistoricoStatus = async () => {
       try {
@@ -104,6 +125,7 @@ function Chamado() {
     fetchHistoricoStatus();
   }, [id_ticket]);
 
+  // Decodifica o token de autenticação e armazena os dados do usuário logado
   useEffect(() => {
     const token = Cookies.get('token');
     if (token) {
@@ -116,10 +138,11 @@ function Chamado() {
     }
   }, []);
 
+   // Envia uma nova resposta para o chamado
   const sendResposta = async () => {
     try {
       if (!resposta || !resposta.trim()) {
-        alert('A resposta não pode estar vazia.');
+        handleOpenPopup('A resposta não pode estar vazia.');
         return;
       }
       console.log(usuario)
@@ -128,17 +151,20 @@ function Chamado() {
         id_ticket,
         id_usuario: usuario.id,
       });
+        //aqui vai ter uma função para enviar para o email do requisitante.
 
-      alert('Resposta enviada com sucesso!');
+         // Atualiza a lista de respostas e limpa o campo
+      handleOpenPopup('Mensagem Enviada com sucesso!')
       setRespostas((prevRespostas) => [...prevRespostas, response.data.respostaCriada]);
       console.log(response.data)
       setResposta('');
     } catch (error) {
       console.error('Erro ao enviar a resposta:', error);
-      alert('Erro ao enviar a resposta. Tente novamente.');
+      handleOpenPopup('Erro ao enviar a resposta. Tente novamente.');
     }
   };
 
+   // Função para imprimir os detalhes do chamado
   const handlePrint = () => {
     const printContent = `
       <html>
@@ -225,14 +251,17 @@ function Chamado() {
     return `${dia}/${mes}/${ano}, ${horas}:${minutos}`;
   };
 
+  // Formata a data em um formato legível
   const handleEditChamado = () => {
     navigate(`/criarChamado/${chamado.id_ticket}`);
   };
 
   return (
     <PaginaPadrao>
+       {/* Layout principal */}
       <div className={styles.containerDivCards}>
         <div className={styles.containerFirstCard}>
+           {/* Card de informações do chamado */}
           <Card>
             <div className={styles.containerChamadoView}>
               <h3 className={styles.titleAssunto}>{chamado.assunto}</h3>
@@ -245,7 +274,7 @@ function Chamado() {
               <p className={stylesGlobal.paragrafoGlobal}>{chamado.descricao}</p>
             </div>
           </Card>
-
+             {/* Card de lista de tarefas */}
           <Card>
             <div className={styles.containerListaTarefas}>
               <h3 className={styles.titleLista}>Lista de Tarefas</h3>
@@ -266,13 +295,13 @@ function Chamado() {
               </div>
             </div>
           </Card>
-
+                 {/* Expandir lista de respostas */}
           <ExpandirLista title="Respostas do chamado">
             {!respostas.length ? (
               <span>Não existe respostas</span>
             ) : (
               respostas.map((item) => (
-                <Card key={item.id_resposta}>
+                <Card key={item.id_resposta} >
                   <div className={styles.responsesCard}>
                     <div className={styles.responsesCardDivFirst}>
                       <div>
@@ -296,7 +325,7 @@ function Chamado() {
               ))
             )}
           </ExpandirLista>
-
+             {/* Card para envio de respostas */}
           <Card>
             <div className={styles.containerListaTarefas}>
               <h3>Envie uma resposta</h3>
@@ -316,7 +345,10 @@ function Chamado() {
             </div>
           </Card>
         </div>
+
+         {/* Cards da direita */}
         <div className={styles.containerSecondCard}>
+           {/* Card com opções */}
           <Card>
             <div className={styles.editPrintContainer}>
               <div>
@@ -329,7 +361,7 @@ function Chamado() {
               </div>
             </div>
           </Card>
-
+             {/* Card detalhes do chamado */}
           <Card>
             <div className={styles.containerDivFirst}>
               <span className={styles.titleLista}>Detalhes do Chamado</span>
@@ -377,7 +409,7 @@ function Chamado() {
               </div>
             </div>
           </Card>
-
+               {/* Card de histórico de status */}
           <Card>
             <div className={styles.containerDivFirst}>
               <span className={styles.titleLista}>Histórico Status</span>
@@ -406,6 +438,23 @@ function Chamado() {
           </Card>
         </div>
       </div>
+
+       {/* Popup de mensagem, ele só é exibido quando chamado*/}
+      <Popup
+        openPopup={isPopupOpen}
+        onClose={handleClosePopup}
+        autoCloseTime={3000} // Fecha automaticamente após 5 segundos (opcional)
+      >
+        <div className={styles.containerDivFirst}>
+              <span className={styles.titleLista}>Mensagem!</span>
+            </div>
+            <div className={styles.containerDivTwo}>
+            <span className={styles.spanDetalhes}>
+                    {message}
+                  </span>
+            </div>
+        
+      </Popup>
     </PaginaPadrao>
   );
 }

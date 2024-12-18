@@ -11,8 +11,8 @@ import PaginaPadrao from '../../components/paginaPadrao';
 
 function CriarChamado() {
 
-  const { id_ticket } = useParams(); // Captura o parâmetro da URL
-
+  const  id_ticket  = useParams(); // Captura o parâmetro da URL
+  console.log(id_ticket.id)
   return (
     <PaginaPadrao>
       <Card>
@@ -88,8 +88,11 @@ function CriarChamado() {
               <option value='Clayton'>Clayton</option>
             </select>
           </div>
-
-          <button type='button' className={styles.buttonEnviar}>Enviar</button>
+            {
+              !id_ticket.id ? <button type='button' className={styles.buttonEnviar}>Enviar</button>:
+              <button type='button' className={styles.buttonEnviar}>Salvar</button>
+            }
+          
         </form>
       </Card>
     </PaginaPadrao>
