@@ -1,5 +1,5 @@
 // Importação das dependências necessárias
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import styles from './style.module.css';
 import stylesGlobal from '../../styles/styleGlobal.module.css';
@@ -18,7 +18,7 @@ import api from '../../services/api';
 function Chamado() {
   const navigate = useNavigate();  // Navegação entre páginas
   const { id_ticket } = useParams(); // Captura o parâmetro da URL
-
+  
    // Estados para armazenar dados e controlar o comportamento do componente
   const [chamado, setChamado] = useState({});
   const [listaTarefaTicket, setListaTarefaTicket] = useState([]);
@@ -30,7 +30,7 @@ function Chamado() {
   const [usuario, setUsuario] = useState({});
   const [message, setMessage] = useState('')
   const [isPopupOpen, setIsPopupOpen] = useState(false);
-
+const hasFetched = useRef(false);
 
    // Funções para controlar o Popup
   const handleOpenPopup = (mensagem) => {
@@ -46,6 +46,7 @@ function Chamado() {
       try {
         const response = await api.get(`/tickets/${id_ticket}`);
         setChamado(response.data.ticket);
+        console.log(response.data.ticket)
         if (response.data.respostas.length > 0) {
           setRespostas(response.data.respostas);
         }
@@ -55,6 +56,7 @@ function Chamado() {
     };
     fetchChamado();
   }, [id_ticket]);
+
 
   // Busca a lista de tarefas associadas ao chamado
   useEffect(() => {
@@ -256,6 +258,40 @@ function Chamado() {
     navigate(`/criarChamado/${chamado.id_ticket}`);
   };
 
+
+  useEffect(() => {
+    const fetchUserAtribuido = async () => {
+        try {
+            // Cria uma cópia dos chamados para não mutar o estado diretamente
+            const chamadosAtualizados = [...chamado];
+            console.log(chamado)
+            // Cria um array de promessas para buscar os usuários simultaneamente
+            const promessas = chamadosAtualizados.map(async (item) => {
+                const response = await api.get(`/usuarios/${item.atribuido_a}`);
+                item.nome_usuarioAtribuido = response.data.nomeUser;
+                return item;
+            });
+              
+            // Aguarda todas as requisições terminarem
+            const chamadosComUsuarios = await Promise.all(promessas);
+
+            // Atualiza o estado de chamados com os nomes dos usuários
+            setChamado(chamadosComUsuarios);
+
+        } catch (error) {
+            console.error('Erro ao buscar usuário:', error);
+        }
+    };
+
+    // Verifica se chamados não está vazio e se a requisição já foi feita
+    if (chamado.length > 0 && !hasFetched.current) {
+        fetchUserAtribuido();
+        // Marca como verdadeiro para impedir novas requisições
+        hasFetched.current = true;
+    }
+
+}, [chamado]); // Isso vai ser executado sempre que o estado "chamados" mudar
+
   return (
     <PaginaPadrao>
        {/* Layout principal */}
@@ -270,6 +306,14 @@ function Chamado() {
                 <p className={stylesGlobal.paragrafoGlobal}>
                   {chamado.nome_requisitante}
                 </p>
+             
+              </div>
+              <div className={styles.autor}>
+                <span className={styles.span}>Email:</span>
+                <p className={stylesGlobal.paragrafoGlobal}>
+                  {chamado.email}
+                </p>
+             
               </div>
               <p className={stylesGlobal.paragrafoGlobal}>{chamado.descricao}</p>
             </div>
@@ -404,7 +448,7 @@ function Chamado() {
               <div>
                 <span>Atribuído a:</span>
                 <span className={styles.spanDetalhes}>
-                  {chamado.atribuido_a}
+                  {chamado.nome_usuarioAtribuido}
                 </span>
               </div>
             </div>

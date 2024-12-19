@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './style.module.css';
 import stylesGlobal from '../../styles/styleGlobal.module.css';
@@ -18,6 +18,7 @@ function Chamados() {
     const [filteredChamados, setFilteredChamados] = useState([]);
     const [usuario, setUsuario] = useState({});
     const [busca, setBusca] = useState('');
+    const hasFetched = useRef(false);
     const [filtro, setFiltro] = useState({
         prioridade: '',
         status: '',
@@ -61,8 +62,8 @@ function Chamados() {
 
     const atualizarContadores = (dados) => {
         setContadorTodos(dados.length);
-        setContadorAtMim(dados.filter(chamado => chamado.atribuido_a === usuario.nome_usuario).length);
-        setContadorAtAOutros(dados.filter(chamado => chamado.atribuido_a !== usuario.nome_usuario).length);
+        setContadorAtMim(dados.filter(chamado => chamado.atribuido_a === usuario.id).length);
+        setContadorAtAOutros(dados.filter(chamado => chamado.atribuido_a !== usuario.id).length);
         setContadorNaoAt(dados.filter(chamado => !chamado.atribuido_a).length);
     };
 
@@ -102,6 +103,42 @@ function Chamados() {
         navigate(`/chamado/${chamado.id_ticket}`);
     };
 
+    //buscar no do usuário atribuido ao ticket
+
+    useEffect(() => {
+        const fetchUserAtribuido = async () => {
+            try {
+                // Cria uma cópia dos chamados para não mutar o estado diretamente
+                const chamadosAtualizados = [...chamados];
+
+                // Cria um array de promessas para buscar os usuários simultaneamente
+                const promessas = chamadosAtualizados.map(async (chamado) => {
+                    const response = await api.get(`/usuarios/${chamado.atribuido_a}`);
+                    chamado.nome_usuarioAtribuido = response.data.nomeUser;
+                    return chamado;
+                });
+
+                // Aguarda todas as requisições terminarem
+                const chamadosComUsuarios = await Promise.all(promessas);
+
+                // Atualiza o estado de chamados com os nomes dos usuários
+                setChamados(chamadosComUsuarios);
+
+            } catch (error) {
+                console.error('Erro ao buscar usuário:', error);
+            }
+        };
+
+        // Verifica se chamados não está vazio e se a requisição já foi feita
+        if (chamados.length > 0 && !hasFetched.current) {
+            fetchUserAtribuido();
+            // Marca como verdadeiro para impedir novas requisições
+            hasFetched.current = true;
+        }
+
+    }, [chamados]); // Isso vai ser executado sempre que o estado "chamados" mudar
+
+    
     return (
         <PaginaPadrao>
             <div className={styles.containerCards}>
@@ -118,13 +155,13 @@ function Chamados() {
                                 type="button"
                                 value={`Atribuído a mim (${contadorAtMim})`}
                                 className={styles.buttonChamados}
-                                onClick={() => setFilteredChamados(chamados.filter(chamado => chamado.atribuido_a === usuario.nome_usuario))}
+                                onClick={() => setFilteredChamados(chamados.filter(chamado => chamado.atribuido_a === usuario.id))}
                             />
                             <input
                                 type="button"
                                 value={`Atribuído a outros (${contadorAtAOutros})`}
                                 className={styles.buttonChamados}
-                                onClick={() => setFilteredChamados(chamados.filter(chamado => chamado.atribuido_a !== usuario.nome_usuario))}
+                                onClick={() => setFilteredChamados(chamados.filter(chamado => chamado.atribuido_a !== usuario.id))}
                             />
                             <input
                                 type="button"
@@ -150,7 +187,7 @@ function Chamados() {
                                 {filteredChamados.map(chamado => (
                                     <tr key={chamado.id_ticket} onClick={() => handleChamadoClick(chamado)}>
                                         <td>{chamado.codigo_ticket}</td>
-                                        <td>{chamado.atribuido_a || 'Não atribuído'}</td>
+                                        <td>{chamado.nome_usuarioAtribuido || 'Não atribuído'}</td>
                                         <td>{chamado.nome_requisitante || 'N/A'}</td>
                                         <td>{chamado.assunto}</td>
                                         <td>{chamado.status}</td>

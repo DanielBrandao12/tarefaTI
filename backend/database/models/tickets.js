@@ -40,8 +40,8 @@ module.exports = (sequelize, DataTypes) =>{
       allowNull: true
     },
     atribuido_a: {
-      type: DataTypes.STRING,
-      allowNull: true
+      type: DataTypes.INTEGER,
+      allowNull: false
     },
 
     id_categoria: {

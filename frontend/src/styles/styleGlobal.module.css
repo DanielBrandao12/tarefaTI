@@ -108,3 +108,34 @@
   
   border-top: 1px solid #7E0000;
 }
+
+.itemLista {
+  display: flex;
+  flex-wrap: wrap; /* Permite quebrar para a próxima linha se necessário */
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.itemListaItem {
+  display: inline-flex; /* Para largura dinâmica */
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px 10px;
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  min-width: 80px; /* Largura mínima reduzida */
+  width: auto; /* Permite que o tamanho do item seja dinâmico */
+  max-width: calc(100% - 20px); /* Impede que ultrapasse o container */
+  word-wrap: break-word; /* Quebra palavras longas */
+}
+
+.itemListaItem span {
+  flex-grow: 1; /* Permite que o texto ocupe o espaço necessário */
+}
+
+.removeIcon {
+  cursor: pointer;
+  color: red;
+  margin-left: 10px;
+}

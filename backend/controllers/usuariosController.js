@@ -1,5 +1,6 @@
 const { Usuarios } = require('../database/models');
 const bcrypt = require("bcrypt");
+const { use } = require('../routes');
 
 // Função auxiliar para verificação de duplicidade de e-mail e nome de usuário
 const checkDuplicate = async (email, nome_usuario, id = null) => {
@@ -29,6 +30,37 @@ const checkDuplicate = async (email, nome_usuario, id = null) => {
 // Função auxiliar para hash da senha
 const hashPassword = async (senha) => {
     return bcrypt.hash(senha, 10);
+};
+
+//get usuario por id
+// Get usuário por ID
+const getUserId = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        // Verificar se o ID é válido
+        if (!id) {
+            return res.status(400).json({ message: "ID não fornecido." });
+        }
+
+        // Procurar o usuário pelo ID
+        const user = await Usuarios.findByPk(id);
+
+        // Verificar se o usuário foi encontrado
+        if (!user) {
+            return res.status(404).json({ message: "Usuário não encontrado." });
+        }
+
+        // Retornar as informações do usuário
+        return res.status(200).json({
+            message: "Usuário encontrado com sucesso!",
+            nomeUser: user.nome_usuario,
+        });
+    } catch (error) {
+        // Tratar erros inesperados
+        console.error(error);
+        return res.status(500).json({ message: "Erro interno do servidor." });
+    }
 };
 
 // Criação de usuário
@@ -134,7 +166,10 @@ const updateUser = async (req, res) => {
     }
 };
 
+
+
 module.exports = {
     createUser,
     updateUser,
+    getUserId
 };
