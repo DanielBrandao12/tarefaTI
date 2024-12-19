@@ -262,35 +262,28 @@ const hasFetched = useRef(false);
   useEffect(() => {
     const fetchUserAtribuido = async () => {
         try {
-            // Cria uma cópia dos chamados para não mutar o estado diretamente
-            const chamadosAtualizados = [...chamado];
-            console.log(chamado)
-            // Cria um array de promessas para buscar os usuários simultaneamente
-            const promessas = chamadosAtualizados.map(async (item) => {
-                const response = await api.get(`/usuarios/${item.atribuido_a}`);
-                item.nome_usuarioAtribuido = response.data.nomeUser;
-                return item;
-            });
-              
-            // Aguarda todas as requisições terminarem
-            const chamadosComUsuarios = await Promise.all(promessas);
-
-            // Atualiza o estado de chamados com os nomes dos usuários
-            setChamado(chamadosComUsuarios);
-
+            // Verifica se o chamado tem um 'id_usuario' atribuído
+            if (chamado.atribuido_a) {
+                const response = await api.get(`/usuarios/${chamado.atribuido_a}`);
+                setChamado((prevChamado) => ({
+                    ...prevChamado,
+                    nome_usuarioAtribuido: response.data.nomeUser,
+                }));
+            }
         } catch (error) {
             console.error('Erro ao buscar usuário:', error);
         }
     };
 
-    // Verifica se chamados não está vazio e se a requisição já foi feita
-    if (chamado.length > 0 && !hasFetched.current) {
+    // Verifica se o chamado foi carregado antes de buscar o usuário
+    if (chamado.id_ticket && !hasFetched.current) {
         fetchUserAtribuido();
         // Marca como verdadeiro para impedir novas requisições
         hasFetched.current = true;
     }
 
-}, [chamado]); // Isso vai ser executado sempre que o estado "chamados" mudar
+}, [chamado]); // Esse useEffect será executado sempre que 'chamado' for alterado
+
 
   return (
     <PaginaPadrao>
