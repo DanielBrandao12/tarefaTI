@@ -100,7 +100,7 @@ function Chamados() {
     }, [busca, filtro, chamados]);
 
     const handleChamadoClick = (chamado) => {
-        navigate(`/chamado/${chamado.id_ticket}`);
+        navigate(`/t/${chamado.id_ticket}`);
     };
 
     //buscar no do usuário atribuido ao ticket

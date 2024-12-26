@@ -14,12 +14,13 @@ import Card from '../../components/card';
 import PaginaPadrao from '../../components/paginaPadrao';
 import Popup from '../../components/popup';
 import Cookies from 'js-cookie';
-import {jwtDecode} from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
 
 import api from '../../services/api';
 
 function CriarChamado() {
   const id_ticket = useParams(); // Captura o parâmetro da URL
+  const [ticket, setTicket] = useState('')
   const [tarefa, setTarefa] = useState('');
   const [listaTarefa, setListaTarefa] = useState([]);
   const [categorias, setCategorias] = useState([]);
@@ -36,7 +37,17 @@ function CriarChamado() {
   const [idUser, setIdUser] = useState('');
   const [message, setMessage] = useState('');
   const [popupVisible, setPopupVisible] = useState(false);
+  const [error, setError] = useState({
+    idCategoria: false,
+    nomeReq: false,
+    emailReq: false,
+    assunto: false,
+    descri: false,
+    prioridade: false,
+    idStatus: false,
+    atribuir: false,
 
+  });
   // Decodificar o token e carregar dados do usuário
   useEffect(() => {
     const token = Cookies.get('token');
@@ -95,8 +106,18 @@ function CriarChamado() {
 
   const createTicket = async () => {
     if (!idCategoria || !nomeReq || !assunto || !emailReq || !descri || !prioridade || !idStatus || !atribuir) {
-      setMessage('Por favor, preencha todos os campos obrigatórios!');
-      setPopupVisible(true);
+      setError({
+        idCategoria: !idCategoria,
+        nomeReq: !nomeReq,
+        emailReq: !emailReq,
+        assunto: !assunto,
+        descri: !descri,
+        prioridade: !prioridade,
+        idStatus: !idStatus,
+        atribuir: !atribuir,
+      })
+      //setMessage('Por favor, preencha todos os campos obrigatórios!');
+      //setPopupVisible(true);
       return;
     }
 
@@ -136,6 +157,35 @@ function CriarChamado() {
       setPopupVisible(true);
     }
   };
+  const updateTicket = async () => {
+ 
+  };
+  useEffect(() => {
+    const getTicketId =  async () =>{
+      
+      try {
+      const response = await api.get(`/tickets/${id_ticket.id}`)
+
+      setTicket(response.data.ticket)
+        console.log(ticket)
+        setIdCategoria(ticket.id_categoria)
+        setNomeReq(ticket.nome_requisitante)
+        setEmailReq(ticket.email)
+        setAssunto(ticket.assunto)
+        setDescri(ticket.descricao)
+        //adicionar o esquema da lista de tarefa!!
+        setPrioridade(ticket.nivel_prioridade)
+        setIdStatus(ticket.id_status)
+        setAtribuir(ticket.atribuido_a)
+      } catch (error) {
+        console.error('Erro ao buscar ticket:', error);
+      }
+    };
+
+    getTicketId();
+  
+  }, [ticket]);
+
 
   const addItemLista = () => {
     if (!tarefa.trim()) {
@@ -156,15 +206,15 @@ function CriarChamado() {
 
   const clearStates = () => {
 
-      setIdCategoria('')
-      setNomeReq('')
-      setEmailReq('')
-      setAssunto('')
-      setDescri('')
-      setPrioridade('')
-      setListaTarefa([])
-      setIdStatus('')
-      setAtribuir('')
+    setIdCategoria('')
+    setNomeReq('')
+    setEmailReq('')
+    setAssunto('')
+    setDescri('')
+    setPrioridade('')
+    setListaTarefa([])
+    setIdStatus('')
+    setAtribuir('')
   }
   return (
     <PaginaPadrao>
@@ -173,64 +223,125 @@ function CriarChamado() {
         <form className={styles.formChamado}>
           <div className={styles.fieldGroup}>
             <label>Categoria:</label>
-            <select
-              name="Categoria"
-              className={stylesGlobal.selectChamado}
-              value={idCategoria}
-              onChange={(e) => setIdCategoria(e.target.value)}
-              defaultValue=""
-            >
-              <option value="" disabled>
-                Selecione Categoria
-              </option>
-              {categorias.map((categoria) => (
-                <option key={categoria.id_categoria} value={categoria.id_categoria}>
-                  {categoria.nome}
+            <div className={stylesGlobal.containerMessageInput}>
+              <select
+                name="Categoria"
+                className={[stylesGlobal.selectChamado, error.idCategoria && stylesGlobal.errorInput,].join(' ')}
+                value={idCategoria}
+                onChange={(e) => {
+                  setIdCategoria(e.target.value)
+                  setError((prev) => ({ ...prev, idCategoria: false }))
+                }}
+                defaultValue=""
+              >
+                <option value="" disabled>
+                  Selecione Categoria
                 </option>
-              ))}
-            </select>
+                {categorias.map((categoria) => (
+                  <option key={categoria.id_categoria} value={categoria.id_categoria}>
+                    {categoria.nome}
+                  </option>
+                ))}
+              </select>
+              {error.idCategoria && (
+                <span className={stylesGlobal.errorMessage}>Campo obrigatório</span>
+              )}
+            </div>
           </div>
 
           <div className={styles.fieldGroup}>
             <label>Nome Requisitante:</label>
-            <input
-              type="text"
-              placeholder="Digite o nome"
-              className={stylesGlobal.inputTextChamado}
-              value={nomeReq}
-              onChange={(e) => setNomeReq(e.target.value)}
-            />
+            <div className={stylesGlobal.containerMessageInput}>
+              <input
+                type="text"
+                placeholder="Digite o nome"
+
+                className={[stylesGlobal.inputTextChamado, error.nomeReq && stylesGlobal.errorInput,].join(' ')}
+                value={nomeReq}
+                onChange={(e) => {
+                  const value = e.target.value
+                  setNomeReq(value === "" ? "" : value)
+                  setError((prev) => ({ ...prev, nomeReq: value === "" }))
+                }}
+              />
+
+              {error.nomeReq && (
+                <span className={stylesGlobal.errorMessage}>Campo obrigatório</span>
+              )}
+            </div>
           </div>
 
           <div className={styles.fieldGroup}>
             <label>Email Requisitante:</label>
-            <input
-              type="email"
-              placeholder="Digite o email"
-              className={stylesGlobal.inputTextChamado}
-              value={emailReq}
-              onChange={(e) => setEmailReq(e.target.value)}
-            />
+            <div className={stylesGlobal.containerMessageInput}>
+
+
+              <input
+                type="email"
+                placeholder="Digite o email"
+                className={[
+                  stylesGlobal.inputTextChamado,
+                  error.emailReq && stylesGlobal.errorInput,
+                ].join(" ")}
+                value={emailReq}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  const emailRegex =
+                    /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Expressão regular para validação de e-mail
+                  const isValid = emailRegex.test(value);
+                  setEmailReq(value);
+                  setError((prev) => ({
+                    ...prev,
+                    emailReq: value === "" || !isValid,
+                  }));
+                }}
+              />
+              {error.emailReq && (
+                <span className={stylesGlobal.errorMessage}>Campo obrigatório. Por favor, insira um endereço de e-mail válido.</span>
+
+              )}
+            </div>
           </div>
 
           <div className={styles.fieldGroup}>
             <label>Assunto:</label>
-            <input
-              type="text"
-              placeholder="Assunto"
-              className={stylesGlobal.inputTextChamado}
-              value={assunto}
-              onChange={(e) => setAssunto(e.target.value)}
-            />
+            <div className={stylesGlobal.containerMessageInput}>
+
+              <input
+                type="text"
+                placeholder="Assunto"
+                className={[stylesGlobal.inputTextChamado, error.assunto && stylesGlobal.errorInput,].join(' ')}
+                value={assunto}
+                onChange={(e) => {
+                  const value = e.target.value
+                  setAssunto(value === "" ? "" : value)
+                  setError((prev) => ({ ...prev, assunto: value === "" }))
+                }}
+              />
+
+              {error.assunto && (
+                <span className={stylesGlobal.errorMessage}>Campo obrigatório</span>
+              )}
+            </div>
           </div>
 
           <div className={styles.fieldGroup}>
             <label>Descrição:</label>
-            <ReactQuill
-              className={styles.reactQuill}
-              value={descri}
-              onChange={(value) => setDescri(value)}
-            />
+            <div className={stylesGlobal.containerMessageInput}>
+
+              <ReactQuill
+                className={styles.reactQuill}
+                value={descri}
+                onChange={(value) => {
+                  setDescri(value === "" ? "" : value)
+                  setError((prev) => ({ ...prev, descri: value === "" }))
+
+                }}
+              />
+              {error.descri && (
+                <span className={stylesGlobal.errorMessage}>Campo obrigatório</span>
+              )}
+            </div>
           </div>
 
           <div className={styles.fieldGroup}>
@@ -273,59 +384,89 @@ function CriarChamado() {
 
           <div className={styles.fieldGroup}>
             <label>Prioridade:</label>
-            <select
-              name="Nível de prioridade"
-              className={stylesGlobal.selectChamado}
-              value={prioridade}
-              onChange={(e) => setPrioridade(e.target.value)}
-            >
-              <option value="" disabled>
-                Nível de prioridade
-              </option>
-              <option value="Prioridade Baixa">Baixa</option>
-              <option value="Prioridade Média">Média</option>
-              <option value="Prioridade Alta">Alta</option>
-            </select>
+            <div className={stylesGlobal.containerMessageInput}>
+
+
+
+              <select
+                name="Nível de prioridade"
+                className={[stylesGlobal.selectChamado, error.prioridade && stylesGlobal.errorInput,].join(' ')}
+                value={prioridade}
+                onChange={(e) => {
+                  setPrioridade(e.target.value)
+                  setError((prev) => ({ ...prev, prioridade: false }))
+                }}
+              >
+                <option value="" disabled>
+                  Nível de prioridade
+                </option>
+                <option value="Prioridade Baixa">Baixa</option>
+                <option value="Prioridade Média">Média</option>
+                <option value="Prioridade Alta">Alta</option>
+              </select>
+
+              {error.prioridade && (
+                <span className={stylesGlobal.errorMessage}>Campo obrigatório</span>
+              )}
+            </div>
           </div>
 
           <div className={styles.fieldGroup}>
             <label>Status:</label>
-            <select
-              name="Status"
-              className={stylesGlobal.selectChamado}
-              value={idStatus}
-              onChange={(e) => setIdStatus(e.target.value)}
-              defaultValue=''
-            >
-              <option value="" disabled>
-                Selecione Status
-              </option>
-              {status.map((item) => (
-                <option key={item.id_status} value={item.id_status}>
-                  {item.nome}
+            <div className={stylesGlobal.containerMessageInput}>
+              <select
+                name="Status"
+
+                className={[stylesGlobal.selectChamado, error.idStatus && stylesGlobal.errorInput,].join(' ')}
+                value={idStatus}
+                onChange={(e) => {
+                  setIdStatus(e.target.value)
+                  setError((prev) => ({ ...prev, idStatus: false }))
+                }}
+                defaultValue=''
+              >
+                <option value="" disabled>
+                  Selecione Status
                 </option>
-              ))}
-            </select>
+                {status.map((item) => (
+                  <option key={item.id_status} value={item.id_status}>
+                    {item.nome}
+                  </option>
+                ))}
+              </select>
+              {error.idStatus && (
+                <span className={stylesGlobal.errorMessage}>Campo obrigatório</span>
+              )}
+            </div>
           </div>
 
           <div className={styles.fieldGroup}>
             <label>Atribuir para:</label>
-            <select
-              name="Atribuir para"
-              className={stylesGlobal.selectChamado}
-              value={atribuir}
-              onChange={(e) => setAtribuir(e.target.value)}
-              defaultValue=''
-            >
-              <option value="" disabled>
-                Atribuir para
-              </option>
-              {users.map((item) => (
-                <option key={item.id_usuario} value={item.id_usuario}>
-                  {item.nome_usuario}
+            <div className={stylesGlobal.containerMessageInput}>
+              <select
+                name="Atribuir para"
+
+                className={[stylesGlobal.selectChamado, error.atribuir && stylesGlobal.errorInput,].join(' ')}
+                value={atribuir}
+                onChange={(e) => {
+                  setAtribuir(e.target.value)
+                  setError((prev) => ({ ...prev, atribuir: false }))
+                }}
+                defaultValue=''
+              >
+                <option value="" disabled>
+                  Atribuir para
                 </option>
-              ))}
-            </select>
+                {users.map((item) => (
+                  <option key={item.id_usuario} value={item.id_usuario}>
+                    {item.nome_usuario}
+                  </option>
+                ))}
+              </select>
+              {error.atribuir && (
+                <span className={stylesGlobal.errorMessage}>Campo obrigatório</span>
+              )}
+            </div>
           </div>
 
           {!id_ticket.id ? (
@@ -339,14 +480,14 @@ function CriarChamado() {
           )}
         </form>
       </Card>
-      
-        <Popup onClose={closePopup} openPopup={popupVisible} autoCloseTime={3000}>
-          <div className={stylesGlobal.divPopup}>
-            <span>Mensagem!</span>
-              {message}
-          </div>
-        </Popup>
-  
+
+      <Popup onClose={closePopup} openPopup={popupVisible} autoCloseTime={3000}>
+        <div className={stylesGlobal.divPopup}>
+          <span>Mensagem!</span>
+          {message}
+        </div>
+      </Popup>
+
     </PaginaPadrao>
   );
 }

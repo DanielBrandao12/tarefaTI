@@ -255,7 +255,7 @@ const hasFetched = useRef(false);
 
   // Formata a data em um formato legível
   const handleEditChamado = () => {
-    navigate(`/criarChamado/${chamado.id_ticket}`);
+    navigate(`/editarChamado/${chamado.id_ticket}`);
   };
 
 

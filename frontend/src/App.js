@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 
 import CreateTarefa from './scenes/createTarefa';
 import Tarefas from './scenes/tarefas';
@@ -20,14 +20,17 @@ function App() {
       <Route path="/login" element={<Login />} />
         <Route path="/" element={<PrivateRoute element={<CreateTarefa />} />} />
         <Route path="/tarefas" element={<PrivateRoute element={<Tarefas />} />} />
-        <Route path="/chamado/:id_ticket" element={<PrivateRoute element={<Chamado />} />} />
+        <Route path="/t/:id_ticket" element={<PrivateRoute element={<Chamado />} />} />
         <Route path="/chamados" element={<PrivateRoute element={<Chamados />} />} />
-        <Route path="/criarChamado/:id" element={<PrivateRoute element={<CriarChamado />} />} />
+        <Route path="/editarChamado/:id" element={<PrivateRoute element={<CriarChamado />} />} />
         <Route path="/criarChamado" element={<PrivateRoute element={<CriarChamado />} />} />
         <Route path="/category" element={<PrivateRoute element={<Category />} />} />
         <Route path="/relatorio" element={<PrivateRoute element={<Relatorio />} />} />
         <Route path="/newticket" element={<PrivateRoute element={<CriarChamadoUser />} />} />
         <Route path="/relatorioInventario" element={<PrivateRoute element={<RelatorioInventario />} />} />
+
+          {/* Redirecionamentos para compatibilidade com rotas antigas */}
+          <Route path="/chamado/:id_ticket" element={<Navigate to="/t/:id_ticket" replace />} />
       </Routes>
     </BrowserRouter>
   );

@@ -149,3 +149,21 @@
   font-size: 25px;
   color: #B20000;
 }
+
+.errorInput {
+  border: 2px solid red;
+}
+
+.errorMessage {
+  margin-left: 10px;
+  color: red;
+  font-size: 0.7rem;
+  
+}
+
+.containerMessageInput{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  
+}
