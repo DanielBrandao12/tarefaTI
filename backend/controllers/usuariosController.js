@@ -33,6 +33,22 @@ const hashPassword = async (senha) => {
 };
 
 //get usuario por id
+// Get usuário all
+const getUserAll = async (req, res) => {
+    try {
+        // Procurar todos os usuários, retornando apenas 'id' e 'nome_usuario'
+        const users = await Usuarios.findAll({
+            attributes: ['id_usuario','nome_completo', 'email', 'nome_usuario'], // Seleciona apenas os campos necessários
+        });
+
+        // Retornar usuários com os campos especificados
+        return res.status(200).json(users);
+    } catch (error) {
+        // Tratar erros inesperados
+        console.error(error);
+        return res.status(500).json({ message: "Erro interno do servidor." });
+    }
+};
 // Get usuário por ID
 const getUserId = async (req, res) => {
     try {
@@ -171,5 +187,6 @@ const updateUser = async (req, res) => {
 module.exports = {
     createUser,
     updateUser,
-    getUserId
+    getUserId,
+    getUserAll
 };

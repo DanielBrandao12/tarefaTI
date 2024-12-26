@@ -42,15 +42,15 @@ const createTickets = async (req, res) => {
         //quando o post vier da pagina do usuário  de criação de ticket a categoria vai ser 
         // aguardando aprovação id da categoria!
         const {
-            id_categoria,
-            nome_requisitante,
+            idCategoria,
+            nomeReq,
             assunto,
-            email,
-            descricao,
-            nivel_prioridade,
-            lista_tarefa, // Supondo que isso seja uma string
-            id_status,
-            atribuido_a,
+            emailReq,
+            descri,
+            prioridade,
+            listaTarefa,
+            idStatus,
+            atribuir,
             id_usuario
         } = req.body;
 
@@ -59,22 +59,22 @@ const createTickets = async (req, res) => {
         const ticketCriado = await Tickets.create({
             codigo_ticket,
             assunto,
-            email,
-            nome_requisitante,
-            descricao,
-            nivel_prioridade,
+            email:emailReq,
+            nome_requisitante:nomeReq,
+            descricao:descri,
+            nivel_prioridade:prioridade,
             data_criacao: new Date(),
-            atribuido_a,
-            id_categoria,
+            atribuido_a:atribuir,
+            id_categoria:idCategoria,
             id_usuario,
-            id_status
+            id_status:idStatus
         });
 
         //If para só criar uma lista se existir uma
-        if(lista_tarefa){
+        if(listaTarefa){
 
             // Verifica se lista_tarefa é uma string e tenta converter para um array
-            let tarefasArray = Array.isArray(lista_tarefa) ? lista_tarefa : JSON.parse(lista_tarefa);
+            let tarefasArray = Array.isArray(listaTarefa) ? listaTarefa : JSON.parse(listaTarefa);
            
             // Criação das tarefas
            await tarefasArray.forEach((item) => {
@@ -88,7 +88,7 @@ const createTickets = async (req, res) => {
 
         //cria um historico sempre que o status for alterado
         //Para controle do andamento do atendimento
-        createHistorico( ticketCriado.id_ticket, id_status, id_usuario)
+        createHistorico( ticketCriado.id_ticket, idStatus, id_usuario)
 
         return res.status(201).json({
             message: 'Ticket criado com sucesso!',
