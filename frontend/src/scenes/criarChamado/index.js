@@ -48,6 +48,8 @@ function CriarChamado() {
     atribuir: false,
 
   });
+  
+
   // Decodificar o token e carregar dados do usuário
   useEffect(() => {
     const token = Cookies.get('token');
@@ -61,6 +63,14 @@ function CriarChamado() {
       }
     }
   }, []);
+
+  //verifica quando o id do ticket é null
+  //limpa os estados caso for null
+  useEffect(() => {
+      if(!id_ticket.id){
+        clearStates()
+      }
+  }, [id_ticket.id])
 
   // Buscar todas as categorias
   useEffect(() => {
@@ -143,7 +153,7 @@ function CriarChamado() {
       );
 
       if (response.status === 201) {
-        setMessage('Chamado criado com sucesso!');
+        setMessage('Ticket criado com sucesso!');
         setPopupVisible(true);
         clearStates()
       } else {
@@ -157,36 +167,113 @@ function CriarChamado() {
       setPopupVisible(true);
     }
   };
-  const updateTicket = async () => {
- 
-  };
-  useEffect(() => {
-    const getTicketId =  async () =>{
-      
-      try {
-      const response = await api.get(`/tickets/${id_ticket.id}`)
 
-      setTicket(response.data.ticket)
-        console.log(ticket)
-        setIdCategoria(ticket.id_categoria)
-        setNomeReq(ticket.nome_requisitante)
-        setEmailReq(ticket.email)
-        setAssunto(ticket.assunto)
-        setDescri(ticket.descricao)
-        //adicionar o esquema da lista de tarefa!!
-        setPrioridade(ticket.nivel_prioridade)
-        setIdStatus(ticket.id_status)
-        setAtribuir(ticket.atribuido_a)
+  const updateTicket = async () => {
+    const isUnchanged =
+    idCategoria === ticket.id_categoria &&
+    nomeReq === ticket.nome_requisitante &&
+    emailReq === ticket.email &&
+    assunto === ticket.assunto &&
+    descri === ticket.descricao &&
+    prioridade === ticket.nivel_prioridade &&
+    idStatus === ticket.id_status &&
+    atribuir === ticket.atribuido_a 
+   
+
+  const verificaStatus = idStatus === ticket.id_status ? idStatus : null
+  if (isUnchanged) {
+    setMessage('Nenhuma alteração detectada. Por favor faça uma alteração antes de salvar!');
+    setPopupVisible(true);
+    return;
+  }
+
+    try {
+      // Verifica se existe um ID válido para o ticket
+      if (!id_ticket) {
+        throw new Error('ID do ticket não fornecido.');
+      }
+  
+      // Faz a requisição PUT para atualizar o ticket
+      const response = await api.put(`/tickets/updateTicket`, {
+          id_ticket:id_ticket.id,
+          id_categoria:idCategoria,
+          nome_requisitante:nomeReq,
+          email:emailReq,
+          assunto,
+          descricao:descri,
+          nivel_prioridade:prioridade,
+          id_status:verificaStatus,
+          atribuido_a:atribuir,
+          id_usuario: idUser.id
+      });
+  
+      // Verifica o status da resposta para garantir sucesso
+      if (response.status === 200) {
+        //console.log('Ticket atualizado com sucesso:', response.data);
+        // Aqui você pode adicionar lógica adicional, como atualizar o estado do ticket
+        setMessage('Ticket Alterado com sucesso!');
+        setPopupVisible(true);
+      } else {
+        console.warn('Falha ao atualizar o ticket. Código de status:', response.status);
+
+      }
+    } catch (error) {
+      console.error('Erro ao atualizar o ticket:', error);
+    }
+  };
+
+
+//função para buscar lista de tarefas do ticket
+//para usar caso for editar
+const fetchChamadoListaTarefa = async () => {
+  try {
+    const response = await api.get(`/tickets/listaTarefa/${id_ticket.id}`);
+    
+    // Verifique se há dados antes de processá-los
+    if (response.data && Array.isArray(response.data)) {
+      const tarefas = response.data.map(item => item.assunto); // Extrai os "assunto"
+      setListaTarefa(tarefas); // Atualiza o estado com a lista completa de assuntos
+    } else {
+      console.warn('Nenhuma tarefa encontrada ou o formato dos dados é inválido.');
+    }
+
+    console.log(listaTarefa); // Certifique-se de que isso é necessário, pois pode exibir o estado antigo devido à natureza assíncrona do setState
+  } catch (error) {
+    console.error('Erro ao buscar lista de tarefas:', error);
+  }
+};
+
+  //função para buscar ticket pelo id
+  useEffect(() => {
+    const getTicketId = async () => {
+      if (!id_ticket.id) return; // Verifica se há um ID válido antes de continuar.
+  
+      try {
+        const response = await api.get(`/tickets/${id_ticket.id}`);
+        const fetchedTicket = response.data.ticket;
+  
+        setTicket(fetchedTicket);
+        setIdCategoria(fetchedTicket.id_categoria);
+        setNomeReq(fetchedTicket.nome_requisitante);
+        setEmailReq(fetchedTicket.email);
+        setAssunto(fetchedTicket.assunto);
+        setDescri(fetchedTicket.descricao);
+        // Adicionar o esquema da lista de tarefa
+        fetchChamadoListaTarefa()
+        
+        setPrioridade(fetchedTicket.nivel_prioridade);
+        setIdStatus(fetchedTicket.id_status);
+        setAtribuir(fetchedTicket.atribuido_a);
       } catch (error) {
         console.error('Erro ao buscar ticket:', error);
       }
     };
-
-    getTicketId();
   
-  }, [ticket]);
+    getTicketId();
+  }, [id_ticket.id]); // Executa o efeito apenas quando `id_ticket.id` muda.
 
 
+  //adicionar item na lista
   const addItemLista = () => {
     if (!tarefa.trim()) {
       setMessage('A tarefa não pode estar vazia!');
@@ -195,15 +282,18 @@ function CriarChamado() {
     }
 
     setListaTarefa((prevLista) => [...prevLista, tarefa]);
+    console.log(listaTarefa)
     setTarefa(''); // Limpa o campo de entrada após adicionar a tarefa
   };
 
+  //remove item da lista
   const removeItemLista = (indexToRemove) => {
     setListaTarefa((prevLista) => prevLista.filter((_, index) => index !== indexToRemove));
   };
-
+  //fecha popup
   const closePopup = () => setPopupVisible(false);
 
+  //limpa estados
   const clearStates = () => {
 
     setIdCategoria('')
@@ -367,7 +457,10 @@ function CriarChamado() {
                 <div className={stylesGlobal.itemLista}>
                   {listaTarefa.map((item, index) => (
                     <div key={index} className={stylesGlobal.itemListaItem}>
-                      <span>{item}</span>
+                      {
+                        item.assunto ? <span>{item.assunto}</span>:<span>{item}</span>
+                      }
+                     
                       <FontAwesomeIcon
                         icon={faTimes}
                         className={stylesGlobal.removeIcon}
@@ -474,7 +567,7 @@ function CriarChamado() {
               Enviar
             </button>
           ) : (
-            <button type="button" className={styles.buttonEnviar}>
+            <button type="button" className={styles.buttonEnviar} onClick={updateTicket}>
               Salvar
             </button>
           )}

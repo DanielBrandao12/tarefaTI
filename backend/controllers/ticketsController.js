@@ -122,6 +122,7 @@ const updateTicket = async (req, res) => {
             id_status,
             atribuido_a,
             id_usuario
+         
         } = req.body;
 
         // Validação básica (você pode usar uma biblioteca para isso)
@@ -149,6 +150,8 @@ const updateTicket = async (req, res) => {
             where: { id_ticket }
         });
 
+        
+ 
         if(id_status) {
 
             createHistorico( id_ticket, id_status, id_usuario)
