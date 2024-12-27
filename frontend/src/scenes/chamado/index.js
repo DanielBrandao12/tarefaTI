@@ -308,7 +308,15 @@ const hasFetched = useRef(false);
                 </p>
              
               </div>
-              <p className={stylesGlobal.paragrafoGlobal}>{chamado.descricao}</p>
+              
+              <span className={styles.span}>Descrição:</span>
+              <div className={styles.descri}>
+              <p className={stylesGlobal.paragrafoGlobal}>
+
+              <p style={{marginLeft:'15px'}} dangerouslySetInnerHTML={{__html:chamado.descricao}}/>
+              </p>
+
+              </div>
             </div>
           </Card>
              {/* Card de lista de tarefas */}

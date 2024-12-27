@@ -136,8 +136,7 @@ const updateTicket = async (req, res) => {
             return res.status(404).json({ message: "Ticket não encontrado." });
         }
 
-        // Atualizar o ticket
-        const ticketAlterado = await Tickets.update({
+        const updateData = {
             assunto,
             email,
             nome_requisitante,
@@ -145,14 +144,20 @@ const updateTicket = async (req, res) => {
             nivel_prioridade,
             atribuido_a,
             id_categoria,
-            id_status
-        }, {
-            where: { id_ticket }
-        });
+        };
+        // Adicionar `id_status` apenas se estiver presente
+if (id_status) {
+    updateData.id_status = id_status;
+}
+         // Atualizar o ticket com os dados criados
+    const ticketAlterado = await Tickets.update(updateData, {
+        where: { id_ticket }
+    });
+
 
         
  
-        if(id_status) {
+        if(updateData.id_status) {
 
             createHistorico( id_ticket, id_status, id_usuario)
         }

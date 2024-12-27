@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import {  useParams, useNavigate } from 'react-router-dom';
 
 import styles from './style.module.css';
 import stylesGlobal from '../../styles/styleGlobal.module.css';
@@ -19,6 +19,7 @@ import { jwtDecode } from 'jwt-decode';
 import api from '../../services/api';
 
 function CriarChamado() {
+  const navigate = useNavigate();
   const id_ticket = useParams(); // Captura o parâmetro da URL
   const [ticket, setTicket] = useState('')
   const [tarefa, setTarefa] = useState('');
@@ -48,7 +49,7 @@ function CriarChamado() {
     atribuir: false,
 
   });
-  
+
 
   // Decodificar o token e carregar dados do usuário
   useEffect(() => {
@@ -67,9 +68,9 @@ function CriarChamado() {
   //verifica quando o id do ticket é null
   //limpa os estados caso for null
   useEffect(() => {
-      if(!id_ticket.id){
-        clearStates()
-      }
+    if (!id_ticket.id) {
+      clearStates()
+    }
   }, [id_ticket.id])
 
   // Buscar todas as categorias
@@ -169,89 +170,97 @@ function CriarChamado() {
   };
 
   const updateTicket = async () => {
-    const isUnchanged =
-    idCategoria === ticket.id_categoria &&
-    nomeReq === ticket.nome_requisitante &&
-    emailReq === ticket.email &&
-    assunto === ticket.assunto &&
-    descri === ticket.descricao &&
-    prioridade === ticket.nivel_prioridade &&
-    idStatus === ticket.id_status &&
-    atribuir === ticket.atribuido_a 
-   
 
-  const verificaStatus = idStatus === ticket.id_status ? idStatus : null
-  if (isUnchanged) {
-    setMessage('Nenhuma alteração detectada. Por favor faça uma alteração antes de salvar!');
-    setPopupVisible(true);
-    return;
-  }
+    //verifica se teve alguma alteração
+    const isUnchanged =
+      idCategoria === ticket.id_categoria &&
+      nomeReq === ticket.nome_requisitante &&
+      emailReq === ticket.email &&
+      assunto === ticket.assunto &&
+      descri === ticket.descricao &&
+      prioridade === ticket.nivel_prioridade &&
+      idStatus === ticket.id_status &&
+      atribuir === ticket.atribuido_a
+
+    //verificar se o status foi alterado senão, não passar nada
+    const verificaStatus = idStatus === ticket.id_status ? null : idStatus
+
+    //caso não tenha alteração ele da um aviso ao clicar no salvar
+    if (isUnchanged) {
+      setMessage('Nenhuma alteração detectada. Por favor faça uma alteração antes de salvar!');
+      setPopupVisible(true);
+      return;
+    }
 
     try {
       // Verifica se existe um ID válido para o ticket
       if (!id_ticket) {
         throw new Error('ID do ticket não fornecido.');
       }
-  
+
       // Faz a requisição PUT para atualizar o ticket
       const response = await api.put(`/tickets/updateTicket`, {
-          id_ticket:id_ticket.id,
-          id_categoria:idCategoria,
-          nome_requisitante:nomeReq,
-          email:emailReq,
-          assunto,
-          descricao:descri,
-          nivel_prioridade:prioridade,
-          id_status:verificaStatus,
-          atribuido_a:atribuir,
-          id_usuario: idUser.id
+        id_ticket: id_ticket.id,
+        id_categoria: idCategoria,
+        nome_requisitante: nomeReq,
+        email: emailReq,
+        assunto,
+        descricao: descri,
+        nivel_prioridade: prioridade,
+        id_status: verificaStatus,
+        atribuido_a: atribuir,
+        id_usuario: idUser.id
       });
-  
-      // Verifica o status da resposta para garantir sucesso
-      if (response.status === 200) {
-        //console.log('Ticket atualizado com sucesso:', response.data);
-        // Aqui você pode adicionar lógica adicional, como atualizar o estado do ticket
-        setMessage('Ticket Alterado com sucesso!');
-        setPopupVisible(true);
-      } else {
-        console.warn('Falha ao atualizar o ticket. Código de status:', response.status);
 
-      }
+   // Verifica o status da resposta para garantir sucesso
+if (response.status === 200) {
+  // Exibe a mensagem de sucesso
+  setMessage('Ticket Alterado com sucesso!');
+  setPopupVisible(true);
+  
+  // Aguarda um tempo (exemplo: 2 segundos) antes de redirecionar
+  setTimeout(() => {
+    navigate(`/t/${id_ticket.id}`);
+  }, 2000); // 2000 milissegundos = 2 segundos
+
+} else {
+  console.warn('Falha ao atualizar o ticket. Código de status:', response.status);
+}
     } catch (error) {
       console.error('Erro ao atualizar o ticket:', error);
     }
   };
 
 
-//função para buscar lista de tarefas do ticket
-//para usar caso for editar
-const fetchChamadoListaTarefa = async () => {
-  try {
-    const response = await api.get(`/tickets/listaTarefa/${id_ticket.id}`);
-    
-    // Verifique se há dados antes de processá-los
-    if (response.data && Array.isArray(response.data)) {
-      const tarefas = response.data.map(item => item.assunto); // Extrai os "assunto"
-      setListaTarefa(tarefas); // Atualiza o estado com a lista completa de assuntos
-    } else {
-      console.warn('Nenhuma tarefa encontrada ou o formato dos dados é inválido.');
-    }
+  //função para buscar lista de tarefas do ticket
+  //para usar caso for editar
+  const fetchChamadoListaTarefa = async () => {
+    try {
+      const response = await api.get(`/tickets/listaTarefa/${id_ticket.id}`);
 
-    console.log(listaTarefa); // Certifique-se de que isso é necessário, pois pode exibir o estado antigo devido à natureza assíncrona do setState
-  } catch (error) {
-    console.error('Erro ao buscar lista de tarefas:', error);
-  }
-};
+      // Verifique se há dados antes de processá-los
+      if (response.data && Array.isArray(response.data)) {
+        const tarefas = response.data.map(item => item.assunto); // Extrai os "assunto"
+        setListaTarefa(tarefas); // Atualiza o estado com a lista completa de assuntos
+      } else {
+        console.warn('Nenhuma tarefa encontrada ou o formato dos dados é inválido.');
+      }
+
+      console.log(listaTarefa); // Certifique-se de que isso é necessário, pois pode exibir o estado antigo devido à natureza assíncrona do setState
+    } catch (error) {
+      console.error('Erro ao buscar lista de tarefas:', error);
+    }
+  };
 
   //função para buscar ticket pelo id
   useEffect(() => {
     const getTicketId = async () => {
       if (!id_ticket.id) return; // Verifica se há um ID válido antes de continuar.
-  
+
       try {
         const response = await api.get(`/tickets/${id_ticket.id}`);
         const fetchedTicket = response.data.ticket;
-  
+
         setTicket(fetchedTicket);
         setIdCategoria(fetchedTicket.id_categoria);
         setNomeReq(fetchedTicket.nome_requisitante);
@@ -260,7 +269,7 @@ const fetchChamadoListaTarefa = async () => {
         setDescri(fetchedTicket.descricao);
         // Adicionar o esquema da lista de tarefa
         fetchChamadoListaTarefa()
-        
+
         setPrioridade(fetchedTicket.nivel_prioridade);
         setIdStatus(fetchedTicket.id_status);
         setAtribuir(fetchedTicket.atribuido_a);
@@ -268,7 +277,7 @@ const fetchChamadoListaTarefa = async () => {
         console.error('Erro ao buscar ticket:', error);
       }
     };
-  
+
     getTicketId();
   }, [id_ticket.id]); // Executa o efeito apenas quando `id_ticket.id` muda.
 
@@ -458,9 +467,9 @@ const fetchChamadoListaTarefa = async () => {
                   {listaTarefa.map((item, index) => (
                     <div key={index} className={stylesGlobal.itemListaItem}>
                       {
-                        item.assunto ? <span>{item.assunto}</span>:<span>{item}</span>
+                        item.assunto ? <span>{item.assunto}</span> : <span>{item}</span>
                       }
-                     
+
                       <FontAwesomeIcon
                         icon={faTimes}
                         className={stylesGlobal.removeIcon}

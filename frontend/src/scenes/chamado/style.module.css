@@ -37,6 +37,10 @@
     align-items: center;
 }
 
+.descri{
+    border: 1px solid #b20000;
+    border-radius: 2px;
+}
 .span {
     font-size: 17px;
     color: #b20000;
