@@ -41,7 +41,7 @@ module.exports = (sequelize, DataTypes) =>{
     },
     atribuido_a: {
       type: DataTypes.INTEGER,
-      allowNull: false
+      allowNull: true
     },
 
     id_categoria: {

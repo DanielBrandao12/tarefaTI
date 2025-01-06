@@ -23,7 +23,7 @@ const maquinaRouter = require('./routes/maquinaRoute')
 const historicoStatusRouter = require('./routes/historicoStatusRoute')
 const respostaRouter = require('./routes/respostaRoute')
 const statusRouter = require('./routes/statusRoute') 
-
+const emailService = require('./services/emailService')
 
 const app = express();
 
@@ -75,6 +75,13 @@ app.use('/maquinas', maquinaRouter)
 app.use('/historicoStatus', historicoStatusRouter)
 app.use('/resposta', respostaRouter)
 app.use('/status', statusRouter)
+
+
+// Verificar e-mails periodicamente (a cada 5 minutos)
+setInterval(async () => {
+  console.log('Verificando novos e-mails...');
+  await emailService.checkEmails();
+},  5 * 60 * 1000); // 5 minutos em milissegundos
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

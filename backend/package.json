@@ -18,9 +18,12 @@
     "express-validator": "^7.2.0",
     "http-errors": "~1.6.3",
     "http-proxy-middleware": "^3.0.2",
+    "imap-simple": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
+    "mailparser": "^3.7.2",
     "morgan": "~1.9.1",
     "mysql2": "^3.11.3",
+    "nodemailer": "^6.9.16",
     "sequelize": "^6.37.3",
     "sequelize-auto": "^0.8.8"
   }

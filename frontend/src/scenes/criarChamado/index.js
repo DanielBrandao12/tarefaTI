@@ -22,8 +22,8 @@ function CriarChamado() {
   const navigate = useNavigate();
   const id_ticket = useParams(); // Captura o parâmetro da URL
   const [ticket, setTicket] = useState('')
-  const [tarefa, setTarefa] = useState('');
-  const [listaTarefa, setListaTarefa] = useState([]);
+  //const [tarefa, setTarefa] = useState('');
+ // const [listaTarefa, setListaTarefa] = useState([]);
   const [categorias, setCategorias] = useState([]);
   const [status, setStatus] = useState([]);
   const [users, setUsers] = useState([]);
@@ -145,7 +145,7 @@ function CriarChamado() {
           assunto,
           descri,
           prioridade,
-          listaTarefa,
+          //listaTarefa,
           idStatus,
           atribuir,
           id_usuario: idUser.id
@@ -234,6 +234,7 @@ if (response.status === 200) {
 
   //função para buscar lista de tarefas do ticket
   //para usar caso for editar
+  /*
   const fetchChamadoListaTarefa = async () => {
     try {
       const response = await api.get(`/tickets/listaTarefa/${id_ticket.id}`);
@@ -251,7 +252,7 @@ if (response.status === 200) {
       console.error('Erro ao buscar lista de tarefas:', error);
     }
   };
-
+*/
   //função para buscar ticket pelo id
   useEffect(() => {
     const getTicketId = async () => {
@@ -267,9 +268,7 @@ if (response.status === 200) {
         setEmailReq(fetchedTicket.email);
         setAssunto(fetchedTicket.assunto);
         setDescri(fetchedTicket.descricao);
-        // Adicionar o esquema da lista de tarefa
-        fetchChamadoListaTarefa()
-
+       // fetchChamadoListaTarefa()
         setPrioridade(fetchedTicket.nivel_prioridade);
         setIdStatus(fetchedTicket.id_status);
         setAtribuir(fetchedTicket.atribuido_a);
@@ -283,6 +282,7 @@ if (response.status === 200) {
 
 
   //adicionar item na lista
+  /*
   const addItemLista = () => {
     if (!tarefa.trim()) {
       setMessage('A tarefa não pode estar vazia!');
@@ -294,11 +294,15 @@ if (response.status === 200) {
     console.log(listaTarefa)
     setTarefa(''); // Limpa o campo de entrada após adicionar a tarefa
   };
-
+*/
   //remove item da lista
+  /*
   const removeItemLista = (indexToRemove) => {
     setListaTarefa((prevLista) => prevLista.filter((_, index) => index !== indexToRemove));
   };
+  */
+
+
   //fecha popup
   const closePopup = () => setPopupVisible(false);
 
@@ -311,7 +315,7 @@ if (response.status === 200) {
     setAssunto('')
     setDescri('')
     setPrioridade('')
-    setListaTarefa([])
+   // setListaTarefa([])
     setIdStatus('')
     setAtribuir('')
   }
@@ -442,7 +446,8 @@ if (response.status === 200) {
               )}
             </div>
           </div>
-
+        {/*
+            Não utilizado no momento
           <div className={styles.fieldGroup}>
             <label>Criar Lista de Tarefas:</label>
             <div className={stylesGlobal.containerInputAdd}>
@@ -483,6 +488,7 @@ if (response.status === 200) {
               )}
             </div>
           </div>
+        */}
 
           <div className={styles.fieldGroup}>
             <label>Prioridade:</label>

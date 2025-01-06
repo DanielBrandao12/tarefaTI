@@ -21,7 +21,7 @@ function Chamado() {
   
    // Estados para armazenar dados e controlar o comportamento do componente
   const [chamado, setChamado] = useState({});
-  const [listaTarefaTicket, setListaTarefaTicket] = useState([]);
+ // const [listaTarefaTicket, setListaTarefaTicket] = useState([]);
   const [status, setStatus] = useState('');
   const [categoria, setCategoria] = useState('');
   const [respostas, setRespostas] = useState([]);
@@ -59,6 +59,7 @@ const hasFetched = useRef(false);
 
 
   // Busca a lista de tarefas associadas ao chamado
+  /*
   useEffect(() => {
     const fetchChamadoListaTarefa = async () => {
       try {
@@ -70,7 +71,7 @@ const hasFetched = useRef(false);
     };
     fetchChamadoListaTarefa();
   }, [id_ticket]);
-
+*/
    // Busca o status atual do chamado
   useEffect(() => {
     const fetchStatus = async () => {
@@ -199,24 +200,10 @@ const hasFetched = useRef(false);
           <p><span>Status:</span> ${status}</p>
           <p><span>Categoria:</span> ${categoria}</p>
           <p><span>Prioridade:</span> ${chamado.nivel_prioridade}</p>
-          <p><span>Atribuído a:</span> ${chamado.atribuido_a}</p>
+          <p><span>Atribuído a:</span> ${chamado.nome_usuarioAtribuido}</p>
         </div>
   
-        <div class="divider"></div>
-  
-        <div class="ticket-section">
-          <h3>Lista de Tarefas</h3>
-          ${listaTarefaTicket.length > 0
-        ? listaTarefaTicket
-          .map(
-            (item) => `
-                  <p><span>•</span> ${item.assunto}</p>
-                `
-          )
-          .join("")
-        : "<p>Não existe lista de tarefas disponível.</p>"
-      }
-        </div>
+        
   
         <div class="divider"></div>
   
@@ -319,7 +306,7 @@ const hasFetched = useRef(false);
               </div>
             </div>
           </Card>
-             {/* Card de lista de tarefas */}
+             {/* Card de lista de tarefas 
           <Card>
             <div className={styles.containerListaTarefas}>
               <h3 className={styles.titleLista}>Lista de Tarefas</h3>
@@ -340,6 +327,7 @@ const hasFetched = useRef(false);
               </div>
             </div>
           </Card>
+          */}
                  {/* Expandir lista de respostas */}
           <ExpandirLista title="Respostas do chamado">
             {!respostas.length ? (

@@ -106,6 +106,96 @@ const createTickets = async (req, res) => {
     }
 }
 
+const parseRemetente = (remetente) => {
+    const regex = /^(.*?)(?:\s<(.+?)>)?$/; // Expressão regular para capturar nome e e-mail
+    const match = remetente.match(regex);
+  
+    if (match) {
+      return {
+        nome: match[1].replace(/"/g, '').trim(), // Nome do remetente
+        email: match[2] || '', // E-mail do remetente (pode ser vazio)
+      };
+    }
+  
+    return { nome: '', email: '' }; // Retorna valores vazios se não houver correspondência
+  };
+
+const criarChamadoPorEmail = async (emailData) => {
+    try {
+        let codigo_ticket;
+
+        // Gera um código até encontrar um que não existe no banco de dados
+        do {
+            codigo_ticket = gerarCodigoTicket();
+        } while (await verificarCodigoUnico(codigo_ticket));
+
+        // Extraindo dados do e-mail
+        const {
+            remetente,
+            assunto,
+            mensagem,
+        
+        } = emailData;
+
+        const { nome, email } = parseRemetente(remetente);
+        // Definindo dados do ticket
+        const ticketData = {
+            idCategoria: null, // Categoria padrão para tickets de e-mail
+            nomeReq: nome,
+            assunto: assunto || "Sem assunto",
+            emailReq: email,
+            descri: mensagem || "Sem conteúdo no corpo do e-mail",
+            prioridade: "", // Prioridade padrão
+            idStatus: 1, // Status padrão: Aguardando aprovação
+            atribuir: null, // Sem atribuição inicial
+            id_usuario: null // Associado ao sistema ou usuário padrão
+        };
+
+        const {
+            idCategoria,
+            nomeReq,
+            assunto: ticketAssunto,
+            emailReq,
+            descri,
+            prioridade,
+            idStatus,
+            atribuir,
+            id_usuario
+        } = ticketData;
+
+        const ticketCriado = await Tickets.create({
+            codigo_ticket,
+            assunto: ticketAssunto,
+            email: emailReq,
+            nome_requisitante: nomeReq,
+            descricao: descri,
+            nivel_prioridade: prioridade,
+            data_criacao: new Date(),
+            atribuido_a: atribuir,
+            id_categoria: idCategoria,
+            id_usuario,
+            id_status: idStatus
+        });
+
+   
+        // Cria um histórico sempre que o status for alterado
+        createHistorico(ticketCriado.id_ticket, idStatus, id_usuario);
+
+        return {
+            message: 'Chamado criado com sucesso!',
+            ticketCriado
+        };
+    } catch (error) {
+        // Log de erro para depuração
+        console.error("Erro ao criar chamado: ", error);
+
+        // Resposta de erro
+        return {
+            message: error.message || "Erro ao criar chamado, tente novamente mais tarde."
+        };
+    }
+};
+
 
 
 //Função para editar ticket um ou mais de um campo
@@ -300,5 +390,6 @@ module.exports = {
     getTickets,
     getTicketsId,
     getListaTarefaTicket,
+    criarChamadoPorEmail
    
 }
