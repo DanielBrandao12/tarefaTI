@@ -81,7 +81,7 @@ app.use('/status', statusRouter)
 setInterval(async () => {
   console.log('Verificando novos e-mails...');
   await emailService.checkEmails();
-},  5 * 60 * 1000); // 5 minutos em milissegundos
+},  1 * 30 * 1000); // 5 minutos em milissegundos
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
