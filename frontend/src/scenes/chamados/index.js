@@ -36,6 +36,7 @@ function Chamados() {
                 console.error('Erro ao decodificar o token:', error);
             }
         }
+     
     }, []);
 
     // Buscar chamados do backend e atualizar contadores
@@ -62,8 +63,9 @@ function Chamados() {
 
     const atualizarContadores = (dados) => {
         setContadorTodos(dados.length);
-        setContadorAtMim(dados.filter(chamado => chamado.atribuido_a === usuario.id).length);
-        setContadorAtAOutros(dados.filter(chamado => chamado.atribuido_a !== usuario.id).length);
+      
+        setContadorAtMim(dados.filter(chamado => parseInt(chamado.atribuido_a) === usuario.id).length);
+        setContadorAtAOutros(dados.filter(chamado =>parseInt(chamado.atribuido_a) && parseInt(chamado.atribuido_a) !== usuario.id).length);
         setContadorNaoAt(dados.filter(chamado => !chamado.atribuido_a).length);
     };
 
@@ -113,8 +115,11 @@ function Chamados() {
 
                 // Cria um array de promessas para buscar os usuários simultaneamente
                 const promessas = chamadosAtualizados.map(async (chamado) => {
-                    const response = await api.get(`/usuarios/${chamado.atribuido_a}`);
-                    chamado.nome_usuarioAtribuido = response.data.nomeUser;
+                    if(chamado.atribuido_a){
+
+                        const response = await api.get(`/usuarios/${chamado.atribuido_a}`);
+                        chamado.nome_usuarioAtribuido = response.data.nomeUser;
+                    }
                     return chamado;
                 });
 
@@ -155,13 +160,13 @@ function Chamados() {
                                 type="button"
                                 value={`Atribuído a mim (${contadorAtMim})`}
                                 className={styles.buttonChamados}
-                                onClick={() => setFilteredChamados(chamados.filter(chamado => chamado.atribuido_a === usuario.id))}
+                                onClick={() => setFilteredChamados(chamados.filter(chamado => parseInt(chamado.atribuido_a) === usuario.id))}
                             />
                             <input
                                 type="button"
                                 value={`Atribuído a outros (${contadorAtAOutros})`}
                                 className={styles.buttonChamados}
-                                onClick={() => setFilteredChamados(chamados.filter(chamado => chamado.atribuido_a !== usuario.id))}
+                                onClick={() => setFilteredChamados(chamados.filter(chamado =>parseInt(chamado.atribuido_a) && parseInt(chamado.atribuido_a) !== usuario.id))}
                             />
                             <input
                                 type="button"

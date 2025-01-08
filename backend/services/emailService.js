@@ -139,7 +139,7 @@ const criarChamadoPorEmail = async (emailData) => {
         let codigo_ticket;
         do {
             codigo_ticket = gerarCodigoTicket();
-            console.log(codigo_ticket)
+           
         } while (await verificarCodigoUnico(codigo_ticket));
 
         const ticketData = {
