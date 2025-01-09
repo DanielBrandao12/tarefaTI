@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
-import {  useNavigate } from 'react-router-dom';
+import {  useNavigate, Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChevronDown, faChevronUp, faUserPen, faUserPlus, faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
+import { faChevronDown, faChevronUp, faUserPen, faUserPlus, faRightFromBracket, faUser } from '@fortawesome/free-solid-svg-icons';
 import styles from './style.module.css';
+import Cookies from 'js-cookie';
+import { confirmAlert } from 'react-confirm-alert'; // Importa a função confirmAlert
+import api from '../../services/api';
 
 function Header() {
     const navigate = useNavigate(); // Hook para navegação programática
@@ -19,6 +22,41 @@ function Header() {
     const handleChamado =() => {
         navigate('/criarChamado')
     }
+
+
+    const handleRemoveToken = async () => {
+        try {
+            // Solicitar logout ao backend
+            await api.get('/login/logout');
+            
+            // Remover cookies
+            Cookies.remove('connect.sid', { path: '/' });
+            Cookies.remove('token', { path: '/' });
+
+            // Redirecionar para a página de login após logout
+            navigate('/login');
+        } catch (error) {
+            console.error('Erro ao fazer logout:', error);
+            // Lidar com erros, talvez mostrar uma mensagem ao usuário
+        }
+    };
+
+    const confirmaCloncuir = () => {
+        confirmAlert({
+            title: 'Confirmação',
+            message: 'Deseja fazer logout?',
+            buttons: [
+                {
+                    label: 'Sim',
+                    onClick: handleRemoveToken
+                },
+                {
+                    label: 'Não'
+                }
+            ]
+        });
+    };
+
 
     return (
         <div className={styles.containerPainel}>
@@ -52,11 +90,22 @@ function Header() {
                     </div>
                     <p>Criar Novo usuário</p>
                 </div>
+                <div className={styles.titleOption}>
+                    <div>
+                        <FontAwesomeIcon icon={faUser} />
+                    </div>
+                    <p>Usuários</p>
+                </div>
                 <div className={styles.titleOptionLogout}>
                     <div>
                         <FontAwesomeIcon icon={faRightFromBracket} />
                     </div>
-                    <p>Logout</p>
+
+                    {/*Fazer mudanças no hover*/ }
+                      <Link className={styles.link} onClick={(e) => { e.preventDefault(); confirmaCloncuir(); }}>
+                                            Sair
+                        </Link>
+                  
                 </div>
 
 

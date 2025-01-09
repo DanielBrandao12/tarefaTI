@@ -1,6 +1,6 @@
 const { Usuarios } = require('../database/models');
 const bcrypt = require("bcrypt");
-const { use } = require('../routes');
+
 
 // Função auxiliar para verificação de duplicidade de e-mail e nome de usuário
 const checkDuplicate = async (email, nome_usuario, id = null) => {
@@ -82,10 +82,10 @@ const getUserId = async (req, res) => {
 // Criação de usuário
 const createUser = async (req, res) => {
     try {
-        const { nome_completo, nome_usuario, email, senha } = req.body;
+        const { nome_completo, nome_usuario, email, senha, perfil } = req.body;
 
         // Validação básica de entrada
-        if (!nome_completo || !nome_usuario || !email || !senha) {
+        if (!nome_completo || !nome_usuario || !email || !senha || !perfil) {
             return res.status(400).json({ message: "Todos os campos são obrigatórios." });
         }
 
@@ -106,7 +106,8 @@ const createUser = async (req, res) => {
             nome_completo,
             nome_usuario,
             email,
-            senha_hash: senhaBcrypt
+            senha_hash: senhaBcrypt,
+            perfil
         });
 
         // Remover a senha da resposta
@@ -133,7 +134,7 @@ const createUser = async (req, res) => {
 const updateUser = async (req, res) => {
     try {
         const { id } = req.params; // ID do usuário a ser atualizado
-        const { nome_completo, nome_usuario, email, senha } = req.body;
+        const { nome_completo, nome_usuario, email, senha, perfil } = req.body;
 
         // Verificar se o usuário existe
         const user = await Usuarios.findByPk(id);
@@ -154,6 +155,7 @@ const updateUser = async (req, res) => {
         user.nome_completo = nome_completo || user.nome_completo;
         user.nome_usuario = nome_usuario || user.nome_usuario;
         user.email = email || user.email;
+        user.perfil = perfil || user.perfil;
 
         // Atualizar a senha, se fornecida
         if (senha) {

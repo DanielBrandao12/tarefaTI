@@ -7,38 +7,6 @@ import api from '../../services/api';
 function Menu() {
     const navigate = useNavigate(); // Hook para navegação programática
 
-    const handleRemoveToken = async () => {
-        try {
-            // Solicitar logout ao backend
-            await api.get('/login/logout');
-            
-            // Remover cookies
-            Cookies.remove('connect.sid', { path: '/' });
-            Cookies.remove('token', { path: '/' });
-
-            // Redirecionar para a página de login após logout
-            navigate('/login');
-        } catch (error) {
-            console.error('Erro ao fazer logout:', error);
-            // Lidar com erros, talvez mostrar uma mensagem ao usuário
-        }
-    };
-
-    const confirmaCloncuir = () => {
-        confirmAlert({
-            title: 'Confirmação',
-            message: 'Deseja fazer logout?',
-            buttons: [
-                {
-                    label: 'Sim',
-                    onClick: handleRemoveToken
-                },
-                {
-                    label: 'Não'
-                }
-            ]
-        });
-    };
 
     return (
         <div className='nav'>
@@ -48,18 +16,16 @@ function Menu() {
             </div>
             <div className='container-nav-options'>
                 <div>
+                    <Link className='link' to={'/'}>Início</Link>
                     <Link className='link' to={'/chamados'}>Chamados</Link>
-                    <Link className='link' to={'/'}>Recebidos</Link>
-                    <Link className='link' to={'/category'}>Categorias</Link>
                     <Link className='link' to={'/relatorio'}>Relátorios</Link>
-                    <Link className='link' to={'/newticket'}>Criar</Link>
-                    <Link className='link' to={'/relatorioInventario'}>Inventario</Link>
+                    <Link className='link' to={'/category'}>Categorias</Link>
+                    <Link className='link' to={'/'}>Status</Link>
+                   {/* <Link className='link' to={'/newticket'}>Teste</Link>*/}
+                    {/*<Link className='link' to={'/relatorioInventario'}>Inventario</Link>*/}
               
                 </div>
           
-                    <Link className='link sair' onClick={(e) => { e.preventDefault(); confirmaCloncuir(); }}>
-                        Sair
-                    </Link>
             
             </div>
         </div>

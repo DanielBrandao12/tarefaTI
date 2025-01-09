@@ -4,10 +4,11 @@ const { imapConfig } = require('../config/imapConfig');
 const transporter = require('../config/nodemailerConfig');
 const { Tickets, Historico_status, Respostas } = require('../database/models');
 
-async function checkEmails() {
+const checkEmails = async () => {
+    let connection; // Inicializa a variável fora do try
     try {
         console.log('Iniciando a conexão IMAP...');
-        const connection = await Imap.connect(imapConfig);
+        connection = await Imap.connect(imapConfig);
         console.log('Conexão estabelecida com sucesso!');
 
         await connection.openBox('INBOX');
@@ -23,70 +24,67 @@ async function checkEmails() {
         }
 
         for (const message of messages) {
-          const all = message.parts.find(part => part.which === '');
-          if (!all) {
-              console.error('Não foi possível encontrar o corpo do e-mail.');
-              continue;
-          }
-      
-          const parsed = await simpleParser(all.body);
-          console.log(`Processando e-mail de: ${parsed.from?.text || 'Desconhecido'}`);
-      
-          const chamado = {
-              remetente: parsed.from?.text || 'Desconhecido',
-              assunto: parsed.subject || 'Sem assunto',
-              mensagem: parsed.text || 'Sem conteúdo no corpo do e-mail',
-          };
-      
-          const { nome, email } = parseRemetente(chamado.remetente);
-      
-          // Tentar extrair o código do ticket do assunto do e-mail
-          const codigoTicket = extrairCodigoTicket(chamado.assunto);
-          console.log(chamado.assunto)
-          try {
-            
-              if (codigoTicket) {
-                  // Verificar se o ticket já existe no banco de dados
-                  const ticketExistente = await getTicketPorCodigo(codigoTicket);
-                  console.log(ticketExistente)
-                  if (ticketExistente) {
-                      console.log(`O ticket ${codigoTicket} já existe. Não será criado um novo chamado.`);
-                     // await enviarRespostaAutomatica(chamado.remetente, codigoTicket);
-                      //aqui ele vai pegar a mensagem recebida e guarda na tabela de respostas
-                    await  createResposta(
-                        ticketExistente.dataValues.id_ticket,
-                        ticketExistente.dataValues.descricao
-                      )
-                   
-                      // Marca o e-mail como lido
-                      await connection.addFlags(message.attributes.uid, ['\\Seen']);
-                      continue; // Não prossegue para criação
-                  }
-              }
-      
-              // Criar novo chamado se não houver código válido no assunto
-              const ticketCriado = await criarChamadoPorEmail(chamado);
-              console.log(`Chamado criado com sucesso para: ${chamado.remetente} (Ticket: ${ticketCriado.ticketCriado.codigo_ticket})`);
+            try {
+                const all = message.parts.find(part => part.which === '');
+                if (!all) {
+                    console.error('Não foi possível encontrar o corpo do e-mail.');
+                    continue;
+                }
 
-              
-      
-              // Enviar resposta automática com o código do ticket criado
-              await enviarRespostaAutomatica(chamado.remetente, ticketCriado.ticketCriado.codigo_ticket);
-              //essa resposta colocar tambem na tabela
-              // Marca o e-mail como lido após processamento
-              await connection.addFlags(message.attributes.uid, ['\\Seen']);
-          } catch (error) {
-              console.error(`Erro ao processar o e-mail de ${chamado.remetente}:`, error);
-              continue;
-          }
-      }
-      
-        await connection.end();
-        console.log('Conexão IMAP encerrada com sucesso!');
+                const parsed = await simpleParser(all.body);
+                console.log(`Processando e-mail de: ${parsed.from?.text || 'Desconhecido'}`);
+
+                const chamado = {
+                    remetente: parsed.from?.text || 'Desconhecido',
+                    assunto: parsed.subject || 'Sem assunto',
+                    mensagem: parsed.text || 'Sem conteúdo no corpo do e-mail',
+                };
+
+                const codigoTicket = extrairCodigoTicket(chamado.assunto);
+
+                if (codigoTicket) {
+                    const ticketExistente = await getTicketPorCodigo(codigoTicket);
+
+                    if (ticketExistente) {
+                        console.log(`O ticket ${codigoTicket} já existe. Não será criado um novo chamado.`);
+                        const mensagem = obterMensagemCurta(chamado.mensagem);
+                        await createResposta(ticketExistente.dataValues.id_ticket, mensagem);
+                        await connection.addFlags(message.attributes.uid, ['\\Seen']);
+                        continue;
+                    }
+                }
+
+                const ticketCriado = await criarChamadoPorEmail(chamado);
+                console.log(`Chamado criado com sucesso para: ${chamado.remetente} (Ticket: ${ticketCriado.ticketCriado.codigo_ticket})`);
+                await enviarRespostaAutomatica(chamado.remetente, ticketCriado.ticketCriado.codigo_ticket);
+                await connection.addFlags(message.attributes.uid, ['\\Seen']);
+            } catch (error) {
+                console.error(`Erro ao processar o e-mail:`, error);
+            }
+        }
     } catch (error) {
         console.error('Erro ao verificar e-mails:', error);
+    } finally {
+        if (connection) {
+            await connection.end(); // Garante que a conexão será encerrada
+            console.log('Conexão IMAP encerrada com sucesso!');
+        }
     }
+};
+
+const obterMensagemCurta = (mensagemCompleta) => {
+    const delimitador = '______________________________'; // Identifica o padrão dos sublinhados
+    const indiceDelimitador = mensagemCompleta.indexOf(delimitador);
+
+    if (indiceDelimitador !== -1) {
+        // Captura o conteúdo antes do delimitador
+        return mensagemCompleta.substring(0, indiceDelimitador).trim();
+    }
+
+    // Caso o delimitador não seja encontrado, retorna a mensagem inteira
+    return mensagemCompleta.trim();
 }
+
 
 const createResposta = async (id_ticket, descricao) => {
   try {
@@ -117,6 +115,9 @@ const extrairCodigoTicket = (assunto) => {
     return match ? match[1] : null;  // Retorna o código se encontrado, caso contrário retorna null
 };
 
+
+
+//Função para extreir nome e email do remente
 const parseRemetente = (remetente) => {
     const regex = /^(.*?)(?:\s<(.+?)>)?$/;
     const match = remetente.match(regex);
@@ -130,6 +131,8 @@ const parseRemetente = (remetente) => {
 
     return { nome: '', email: '' };
 };
+
+
 
 const criarChamadoPorEmail = async (emailData) => {
     try {
@@ -216,7 +219,9 @@ const enviarRespostaAutomatica = async (remetente, codigoTicket) => {
             from: 'servicedesk@fatecbpaulista.edu.br',
             to: remetente,
             subject: `Chamado Recebido - ${codigoTicket}`,
-            text: `Obrigado por entrar em contato. Seu chamado foi registrado com o código: ${codigoTicket}`,
+            text: `Agradecemos por entrar em contato! Seu chamado foi registrado com sucesso e recebeu o código: ${codigoTicket}.
+             Para acompanhar o andamento ou enviar novas informações, basta responder a este e-mail. Estamos à disposição para ajudar!`
+
         });
         console.log(`Resposta automática enviada para: ${remetente}`);
     } catch (mailError) {

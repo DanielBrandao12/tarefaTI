@@ -24,6 +24,10 @@ module.exports = (sequelize, DataTypes) => {
     nome_usuario: {
       type: DataTypes.STRING,
       allowNull: true
+    },
+    perfil: {
+      type: DataTypes.STRING,
+      allowNull: true
     }
   }, {
     sequelize,
