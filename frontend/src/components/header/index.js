@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import {  useNavigate, Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronDown, faChevronUp, faUserPen, faUserPlus, faRightFromBracket, faUser } from '@fortawesome/free-solid-svg-icons';
 import styles from './style.module.css';
@@ -19,7 +19,7 @@ function Header() {
         setDisplayEdit(isEditing ? 'none' : 'flex');
     };
 
-    const handleChamado = () => {
+    const handleChamado =() => {
         navigate('/criarChamado')
     }
 
@@ -28,7 +28,7 @@ function Header() {
         try {
             // Solicitar logout ao backend
             await api.get('/login/logout');
-
+            
             // Remover cookies
             Cookies.remove('connect.sid', { path: '/' });
             Cookies.remove('token', { path: '/' });
@@ -97,14 +97,16 @@ function Header() {
                     </div>
                     <p>Usuários</p>
                 </div>
-                <div className={styles.titleOptionLogout} >
+                <div className={styles.titleOptionLogout} onClick={(e) => { e.preventDefault(); confirmaCloncuir(); }}>
                     <div>
                         <FontAwesomeIcon icon={faRightFromBracket} />
                     </div>
-                    <p  >
-                        Sair
-                    </p>
 
+                  
+                      <p  >
+                                            Sair
+                        </p>
+                  
                 </div>
 
 
