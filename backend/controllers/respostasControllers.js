@@ -1,5 +1,5 @@
 const {Respostas} = require('../database/models')
-
+const transporter = require('../config/nodemailerConfig');
 const getResposta = async (req, res) => {
     try {
         const {id_ticket} = req.body
@@ -25,15 +25,16 @@ const getResposta = async (req, res) => {
 
 const createResposta = async (req, res) => {
     try {
-        const {id_ticket, id_usuario, resposta} = req.body
+        const {id_ticket, id_usuario, resposta, codigoTicket, remetente} = req.body
 
         const respostaCriada =  await Respostas.create({
             data_hora: new Date(),
             conteudo:resposta,
             id_usuario,
-            id_ticket
+            id_ticket,
         })
 
+        enviarRespostaAutomatica(remetente, codigoTicket, resposta )
 
         return res.status(201).json({
             message: 'Resposta criada com sucesso!',
@@ -52,7 +53,21 @@ const createResposta = async (req, res) => {
 }
 
 
+const enviarRespostaAutomatica = async (remetente, codigoTicket, mensagem) => {
+    try {
+  
+        await transporter.sendMail({
+            from: 'servicedesk@fatecbpaulista.edu.br',
+            to: remetente,
+            subject: `Atualização do chamado - ${codigoTicket}`,
+            html: mensagem
 
+        });
+        console.log(`Resposta automática enviada para: ${remetente}`);
+    } catch (mailError) {
+        console.error(`Erro ao enviar resposta automática para ${remetente}:`, mailError);
+    }
+};
 module.exports = {
     createResposta,
     getResposta,

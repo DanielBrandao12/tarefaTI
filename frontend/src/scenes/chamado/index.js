@@ -46,7 +46,7 @@ const hasFetched = useRef(false);
       try {
         const response = await api.get(`/tickets/${id_ticket}`);
         setChamado(response.data.ticket);
-        console.log(response.data.ticket)
+       
         if (response.data.respostas.length > 0) {
           setRespostas(response.data.respostas);
         }
@@ -142,7 +142,7 @@ const hasFetched = useRef(false);
   }, []);
 
    // Envia uma nova resposta para o chamado
-  const sendResposta = async () => {
+  const sendResposta = async (codigoTicket, remetente) => {
     try {
       if (!resposta || !resposta.trim()) {
         handleOpenPopup('A resposta não pode estar vazia.');
@@ -153,6 +153,8 @@ const hasFetched = useRef(false);
         resposta,
         id_ticket,
         id_usuario: usuario.id,
+        codigoTicket,
+        remetente
       });
         //aqui vai ter uma função para enviar para o email do requisitante.
 
@@ -166,6 +168,7 @@ const hasFetched = useRef(false);
       handleOpenPopup('Erro ao enviar a resposta. Tente novamente.');
     }
   };
+
 
    // Função para imprimir os detalhes do chamado
   const handlePrint = () => {
@@ -372,7 +375,7 @@ const hasFetched = useRef(false);
                   type="button"
                   className="button-padrao"
                   value="Enviar"
-                  onClick={sendResposta}
+                  onClick={()=>sendResposta(chamado.codigo_ticket, chamado.email)}
                 />
               </div>
             </div>

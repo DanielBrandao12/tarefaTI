@@ -110,7 +110,7 @@ const createResposta = async (id_ticket, descricao) => {
 
 // Função para extrair o código do ticket do assunto do e-mail
 const extrairCodigoTicket = (assunto) => {
-    const regex = /RE: Chamado Recebido - (\d{11})/;  // Expressão regular para extrair o código do ticket
+    const regex = /(\d{11})/;  // Expressão regular para extrair o código do ticket
     const match = assunto.match(regex);
     return match ? match[1] : null;  // Retorna o código se encontrado, caso contrário retorna null
 };
@@ -218,7 +218,7 @@ const enviarRespostaAutomatica = async (remetente, codigoTicket) => {
         await transporter.sendMail({
             from: 'servicedesk@fatecbpaulista.edu.br',
             to: remetente,
-            subject: `Chamado Recebido - ${codigoTicket}`,
+            subject: `Chamado Criado - ${codigoTicket}`,
             text: `Agradecemos por entrar em contato! Seu chamado foi registrado com sucesso e recebeu o código: ${codigoTicket}.
              Para acompanhar o andamento ou enviar novas informações, basta responder a este e-mail. Estamos à disposição para ajudar!`
 

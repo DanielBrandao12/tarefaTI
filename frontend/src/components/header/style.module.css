@@ -137,23 +137,8 @@
     
 }
 
-.titleOptionLogout .link:hover {
-    color: #b20000; /* Define a nova cor do link */
-}
 
-.link{
-    display: flex;
-    align-items: center;
- 
-    width: 100%;
-    height: 50px;
-    cursor: pointer;    
-    text-decoration: none;
-   
 
-    font-size: 15px;
-    color: #fff;
-}
 
 
 /* Define um top mínimo para telas menores */
