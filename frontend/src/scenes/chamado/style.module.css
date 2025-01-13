@@ -22,7 +22,7 @@
 .containerChamadoView {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 12px;
 }
 
 .titleAssunto {
@@ -38,11 +38,11 @@
 }
 
 .descri{
-    border: 1px solid #b20000;
+    border: 1px solid #b2000025;
     border-radius: 2px;
 }
 .span {
-    font-size: 17px;
+    font-size: 15px;
     color: #b20000;
     font-weight: bold;
     padding: 10px;
@@ -196,7 +196,7 @@
 
 
 .reactQuill {
-    height: 300px;
+    height: 200px;
     color: #b20000;
     margin-bottom: 50px;
   }

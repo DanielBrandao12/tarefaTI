@@ -366,6 +366,8 @@ if (response.status === 200) {
                   setNomeReq(value === "" ? "" : value)
                   setError((prev) => ({ ...prev, nomeReq: value === "" }))
                 }}
+
+                disabled={!!id_ticket.id}
               />
 
               {error.nomeReq && (
@@ -398,6 +400,7 @@ if (response.status === 200) {
                     emailReq: value === "" || !isValid,
                   }));
                 }}
+                disabled={!!id_ticket.id}
               />
               {error.emailReq && (
                 <span className={stylesGlobal.errorMessage}>Campo obrigatório. Por favor, insira um endereço de e-mail válido.</span>
@@ -420,6 +423,7 @@ if (response.status === 200) {
                   setAssunto(value === "" ? "" : value)
                   setError((prev) => ({ ...prev, assunto: value === "" }))
                 }}
+                disabled={!!id_ticket.id}
               />
 
               {error.assunto && (
@@ -440,6 +444,7 @@ if (response.status === 200) {
                   setError((prev) => ({ ...prev, descri: value === "" }))
 
                 }}
+                readOnly={!!id_ticket.id}
               />
               {error.descri && (
                 <span className={stylesGlobal.errorMessage}>Campo obrigatório</span>

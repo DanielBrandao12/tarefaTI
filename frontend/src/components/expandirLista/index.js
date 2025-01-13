@@ -22,7 +22,7 @@ function ExpandirLista({children, title }) {
         </div>
         {
             isOptions && 
-            <div>
+            <div className={styles.containerChildren}>
             {children}
 
        </div>

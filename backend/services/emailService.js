@@ -3,6 +3,7 @@ const { simpleParser } = require('mailparser');
 const { imapConfig } = require('../config/imapConfig');
 const transporter = require('../config/nodemailerConfig');
 const { Tickets, Historico_status, Respostas } = require('../database/models');
+const cheerio = require('cheerio');
 
 const checkEmails = async () => {
     let connection; // Inicializa a variável fora do try
@@ -37,9 +38,9 @@ const checkEmails = async () => {
                 const chamado = {
                     remetente: parsed.from?.text || 'Desconhecido',
                     assunto: parsed.subject || 'Sem assunto',
-                    mensagem: parsed.text || 'Sem conteúdo no corpo do e-mail',
+                    mensagem: parsed.html || 'Sem conteúdo no corpo do e-mail',
                 };
-
+            
                 const codigoTicket = extrairCodigoTicket(chamado.assunto);
 
                 if (codigoTicket) {
@@ -47,7 +48,7 @@ const checkEmails = async () => {
 
                     if (ticketExistente) {
                         console.log(`O ticket ${codigoTicket} já existe. Não será criado um novo chamado.`);
-                        const mensagem = obterMensagemCurta(chamado.mensagem);
+                        const mensagem = getDivFirst(chamado.mensagem);
                         await createResposta(ticketExistente.dataValues.id_ticket, mensagem);
                         await connection.addFlags(message.attributes.uid, ['\\Seen']);
                         continue;
@@ -72,19 +73,14 @@ const checkEmails = async () => {
     }
 };
 
-const obterMensagemCurta = (mensagemCompleta) => {
-    const delimitador = '______________________________'; // Identifica o padrão dos sublinhados
-    const indiceDelimitador = mensagemCompleta.indexOf(delimitador);
 
-    if (indiceDelimitador !== -1) {
-        // Captura o conteúdo antes do delimitador
-        return mensagemCompleta.substring(0, indiceDelimitador).trim();
-    }
+const getDivFirst = (mensagem) =>{
+    const $ = cheerio.load(mensagem);
 
-    // Caso o delimitador não seja encontrado, retorna a mensagem inteira
-    return mensagemCompleta.trim();
+    // Seleciona a primeira <div>
+    const firstDiv = $('div').first().html();
+    return firstDiv
 }
-
 
 const createResposta = async (id_ticket, descricao) => {
   try {
@@ -219,11 +215,10 @@ const enviarRespostaAutomatica = async (remetente, codigoTicket) => {
             from: 'servicedesk@fatecbpaulista.edu.br',
             to: remetente,
             subject: `Chamado Criado - ${codigoTicket}`,
-            text: `Agradecemos por entrar em contato! Seu chamado foi registrado com sucesso e recebeu o código: ${codigoTicket}.
-             Para acompanhar o andamento ou enviar novas informações, basta responder a este e-mail. Estamos à disposição para ajudar!`
+            text: `Agradecemos por entrar em contato! Seu chamado foi registrado com sucesso e recebeu o código: ${codigoTicket}. Para acompanhar o andamento ou enviar novas informações, basta responder a este e-mail. Estamos à disposição para ajudar!`
 
         });
-        console.log(`Resposta automática enviada para: ${remetente}`);
+        //console.log(`Resposta automática enviada para: ${remetente}`);
     } catch (mailError) {
         console.error(`Erro ao enviar resposta automática para ${remetente}:`, mailError);
     }

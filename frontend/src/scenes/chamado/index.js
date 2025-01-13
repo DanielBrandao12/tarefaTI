@@ -55,7 +55,7 @@ const hasFetched = useRef(false);
       }
     };
     fetchChamado();
-  }, [id_ticket]);
+  }, [id_ticket, resposta]);
 
 
   // Busca a lista de tarefas associadas ao chamado
@@ -336,8 +336,10 @@ const hasFetched = useRef(false);
             {!respostas.length ? (
               <span>Não existe respostas</span>
             ) : (
-              respostas.map((item) => (
-                <Card key={item.id_resposta} >
+              respostas
+              .sort((a, b) => new Date(b.data_hora) - new Date(a.data_hora)) // Ordena por data mais recente
+              .map((item) => (
+                <Card key={item.id_resposta}>
                   <div className={styles.responsesCard}>
                     <div className={styles.responsesCardDivFirst}>
                       <div>
