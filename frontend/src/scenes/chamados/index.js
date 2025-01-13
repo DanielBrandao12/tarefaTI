@@ -226,9 +226,9 @@ function Chamados() {
                                 onChange={(e) => setFiltro({ ...filtro, prioridade: e.target.value })}
                             >
                                 <option value="">Escolha a prioridade</option>
-                                <option value="Baixo">Baixa</option>
-                                <option value="Médio">Média</option>
-                                <option value="Alto">Alta</option>
+                                <option value="Prioridade Baixa">Baixa</option>
+                                <option value="Prioridade Média">Média</option>
+                                <option value="Prioridade Alta">Alta</option>
                             </select>
                             <label className={styles.labelFilter}>Status:</label>
                             <select

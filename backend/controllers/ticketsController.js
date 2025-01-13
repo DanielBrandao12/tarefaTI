@@ -1,6 +1,6 @@
 
 const { Tickets, ListaTarefa, Historico_status, View_Ticket, View_Respostas } = require('../database/models');
-
+const transporter = require('../config/nodemailerConfig');
 
 // Função que gera um código de ticket com a data e um número aleatório
 const gerarCodigoTicket = () => {
@@ -89,6 +89,13 @@ const createTickets = async (req, res) => {
         //cria um historico sempre que o status for alterado
         //Para controle do andamento do atendimento
         createHistorico( ticketCriado.id_ticket, idStatus, id_usuario)
+
+        await transporter.sendMail({
+            from: 'servicedesk@fatecbpaulista.edu.br',
+            to: ticketCriado.email,
+            subject: `Chamado Criado - ${ticketCriado.codigo_ticket}`,
+            text: `Agradecemos por entrar em contato! Seu chamado foi registrado com sucesso e recebeu o código: ${ticketCriado.codigo_ticket}. Para acompanhar o andamento ou enviar novas informações, basta responder a este e-mail. Estamos à disposição para ajudar!`
+        })
 
         return res.status(201).json({
             message: 'Ticket criado com sucesso!',

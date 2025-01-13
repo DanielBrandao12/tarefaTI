@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {  useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 
 import styles from './style.module.css';
 import stylesGlobal from '../../styles/styleGlobal.module.css';
@@ -23,7 +23,7 @@ function CriarChamado() {
   const id_ticket = useParams(); // Captura o parâmetro da URL
   const [ticket, setTicket] = useState('')
   //const [tarefa, setTarefa] = useState('');
- // const [listaTarefa, setListaTarefa] = useState([]);
+  // const [listaTarefa, setListaTarefa] = useState([]);
   const [categorias, setCategorias] = useState([]);
   const [status, setStatus] = useState([]);
   const [users, setUsers] = useState([]);
@@ -49,6 +49,7 @@ function CriarChamado() {
     atribuir: false,
 
   });
+  const [isLoading, setIsLoading] = useState(false); // Estado para o loading
 
 
   // Decodificar o token e carregar dados do usuário
@@ -126,11 +127,11 @@ function CriarChamado() {
         prioridade: !prioridade,
         idStatus: !idStatus,
         atribuir: !atribuir,
-      })
-      //setMessage('Por favor, preencha todos os campos obrigatórios!');
-      //setPopupVisible(true);
+      });
       return;
     }
+
+    setIsLoading(true); // Ativa o loading
 
     try {
       const token = Cookies.get('token');
@@ -145,10 +146,9 @@ function CriarChamado() {
           assunto,
           descri,
           prioridade,
-          //listaTarefa,
           idStatus,
           atribuir,
-          id_usuario: idUser.id
+          id_usuario: idUser.id,
         },
         { headers }
       );
@@ -156,7 +156,7 @@ function CriarChamado() {
       if (response.status === 201) {
         setMessage('Ticket criado com sucesso!');
         setPopupVisible(true);
-        clearStates()
+        clearStates();
       } else {
         console.error('Erro ao criar o chamado:', response.data);
         setMessage('Ocorreu um problema ao criar o chamado.');
@@ -166,6 +166,8 @@ function CriarChamado() {
       console.error('Erro ao enviar os dados:', error);
       setMessage('Erro ao criar o chamado. Tente novamente mais tarde.');
       setPopupVisible(true);
+    } finally {
+      setIsLoading(false); // Desativa o loading
     }
   };
 
@@ -212,20 +214,20 @@ function CriarChamado() {
         id_usuario: idUser.id
       });
 
-   // Verifica o status da resposta para garantir sucesso
-if (response.status === 200) {
-  // Exibe a mensagem de sucesso
-  setMessage('Ticket Alterado com sucesso!');
-  setPopupVisible(true);
-  
-  // Aguarda um tempo (exemplo: 2 segundos) antes de redirecionar
-  setTimeout(() => {
-    navigate(`/t/${id_ticket.id}`);
-  }, 2000); // 2000 milissegundos = 2 segundos
+      // Verifica o status da resposta para garantir sucesso
+      if (response.status === 200) {
+        // Exibe a mensagem de sucesso
+        setMessage('Ticket Alterado com sucesso!');
+        setPopupVisible(true);
 
-} else {
-  console.warn('Falha ao atualizar o ticket. Código de status:', response.status);
-}
+        // Aguarda um tempo (exemplo: 2 segundos) antes de redirecionar
+        setTimeout(() => {
+          navigate(`/t/${id_ticket.id}`);
+        }, 2000); // 2000 milissegundos = 2 segundos
+
+      } else {
+        console.warn('Falha ao atualizar o ticket. Código de status:', response.status);
+      }
     } catch (error) {
       console.error('Erro ao atualizar o ticket:', error);
     }
@@ -268,7 +270,7 @@ if (response.status === 200) {
         setEmailReq(fetchedTicket.email);
         setAssunto(fetchedTicket.assunto);
         setDescri(fetchedTicket.descricao);
-       // fetchChamadoListaTarefa()
+        // fetchChamadoListaTarefa()
         setPrioridade(fetchedTicket.nivel_prioridade);
         setIdStatus(fetchedTicket.id_status);
         setAtribuir(fetchedTicket.atribuido_a);
@@ -315,12 +317,18 @@ if (response.status === 200) {
     setAssunto('')
     setDescri('')
     setPrioridade('')
-   // setListaTarefa([])
+    // setListaTarefa([])
     setIdStatus('')
     setAtribuir('')
   }
   return (
     <PaginaPadrao>
+      {isLoading && (
+        <div className={stylesGlobal.loadingOverlay}>
+          <div className={stylesGlobal.spinner}></div>
+      
+        </div>
+      )}
       <Card>
         <h1 className={styles.titleFormChamado}>{id_ticket.id ? 'Editar Chamado' : 'Abrir Chamado'}</h1>
         <form className={styles.formChamado}>
@@ -451,7 +459,7 @@ if (response.status === 200) {
               )}
             </div>
           </div>
-        {/*
+          {/*
             Não utilizado no momento
           <div className={styles.fieldGroup}>
             <label>Criar Lista de Tarefas:</label>
