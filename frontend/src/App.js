@@ -12,6 +12,7 @@ import Category from './scenes/category';
 import Relatorio from './scenes/relatorio';
 import CriarChamadoUser from './scenes/newticket';
 import RelatorioInventario from './scenes/relatorioInventario';
+import Status from './scenes/status';
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
         <Route path="/relatorio" element={<PrivateRoute element={<Relatorio />} />} />
         <Route path="/newticket" element={<PrivateRoute element={<CriarChamadoUser />} />} />
         <Route path="/relatorioInventario" element={<PrivateRoute element={<RelatorioInventario />} />} />
+        <Route path="/status" element={<PrivateRoute element={<Status />} />} />
 
           {/* Redirecionamentos para compatibilidade com rotas antigas */}
           <Route path="/chamado/:id_ticket" element={<Navigate to="/t/:id_ticket" replace />} />

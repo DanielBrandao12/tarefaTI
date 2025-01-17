@@ -198,7 +198,7 @@ function Category() {
                         )}
                     </div>
 
-                    <label>Status</label>
+                    <label>Situação</label>
                     <div className={style.containerMessageInput}>
 
 
@@ -212,7 +212,7 @@ function Category() {
                             ].join(' ')}
                             onChange={handleStatusChange}
                         >
-                            <option value="">Selecione Status</option>
+                            <option value="">Escolha um opção</option>
                             <option value="Ativo">Ativar</option>
                             <option value="Desativado">Desativar</option>
                         </select>
@@ -254,11 +254,11 @@ function Category() {
                             <thead>
                                 <tr>
                                     <th>ID</th>
-                                    <th>Nome</th>
+                                    <th>Categoria</th>
                                     <th>Criado por</th>
-                                    <th>Status</th>
+                                    <th>Situação</th>
                                     <th>Data - Hora</th>
-                                    <th></th>
+                                    <th>Editar</th>
                                 </tr>
                             </thead>
                             <tbody className={stylesGlobal.tbody}>
@@ -284,7 +284,7 @@ function Category() {
                                                     pointerEvents: isEditIconDisabled ? 'none' : 'auto',
                                                 }}
                                             />
-                                            <FontAwesomeIcon icon={faTrashCan} className={style.icon} onClick={()=>deleteCategory(categorys.id_categoria, categorys.status)} />
+                                            {/*<FontAwesomeIcon icon={faTrashCan} className={style.icon} onClick={()=>deleteCategory(categorys.id_categoria, categorys.status)} />*/}
                                         </td>
                                     </tr>
                                 ))}

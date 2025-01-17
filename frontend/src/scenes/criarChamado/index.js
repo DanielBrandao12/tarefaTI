@@ -79,7 +79,7 @@ function CriarChamado() {
     const fetchCategorias = async () => {
       try {
         const response = await api.get('/categoria');
-        setCategorias(response.data);
+        setCategorias(response.data.filter((item)=>( item.status != 'Desativado')));
       } catch (error) {
         console.error('Erro ao buscar categorias:', error);
       }
