@@ -1,0 +1,25 @@
+.containerAddStatus{
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 50px;
+    margin-top: 25px;
+    margin-left: 20px;
+    padding: 15px;
+    color: #900000;
+}
+
+.containerAddStatus h3{
+    font-size: 23px;
+}
+
+
+.containerInputs{
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 10px;
+
+    width: 100%;
+}

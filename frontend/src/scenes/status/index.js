@@ -11,6 +11,27 @@ import stylesGlobal from '../../styles/styleGlobal.module.css';
 import style from './style.module.css';
 
 function Status() {
+     const [error, setError] = useState(false);
+     const [status, setStatus] = useState([])
+
+
+      useEffect(() => {
+
+
+          const getAllStatus = async () => {
+              try {
+                  const response = await api.get('/status/'); // Chama o endpoint para buscar categorias
+                  setStatus(response.data); // Armazena os dados na variável de estado
+                  setError(false); // Reseta o erro caso a requisição tenha sucesso
+              } catch (error) {
+                  console.error('Erro ao buscar status:', error);
+                  setError(true); // Sinaliza que houve um erro
+              }
+          };
+
+             getAllStatus(); 
+             console.log(status)
+         }, []);
 
 
 
@@ -23,17 +44,25 @@ function Status() {
                 <div>
                     <h3>Adicionar Status</h3>
                 </div>
-                <div>
+                <div className={style.containerInputs}>
                     <label>Status</label>
                     <div>
                         <input className={stylesGlobal.inputTextChamado} />
                     </div>
-                    <label>Status</label>
+                    <label>Situação</label>
                     <div>
                         <select className={stylesGlobal.selectChamado} >
-                                    <option value=''>Escolha uma opção</option>
-                            </select>
+                            <option value=''>Escolha uma opção</option>
+                            <option value='Ativo'>Ativar</option>
+                            <option value='Desativado'>Desativar</option>
+                        </select>
                     </div>
+                    <input
+                        type="button"
+                        value={'Adicionar Status'}
+                        className={stylesGlobal.buttonPadrao}
+
+                    />
                 </div>
 
             </div>
@@ -51,14 +80,18 @@ function Status() {
                             </tr>
                         </thead>
                         <tbody className={stylesGlobal.tbody}>
-                            <tr>
-                                <td>item 1</td>
-                                <td>item 1</td>
-                                <td>item 1</td>
+                               {status.map((item) => (
+                                     <tr key={item.id_status} >
+                        
+                                <td>{item.id_status}</td>
+                                <td>{item.nome}</td>
+                                <td>{item.ativo ? 'Ativado' : 'Desativado'}</td>
+
                                 <td >
                                     <FontAwesomeIcon icon={faEdit} />
                                 </td>
                             </tr>
+                               ))}
                         </tbody>
                     </table>
                 </div>
