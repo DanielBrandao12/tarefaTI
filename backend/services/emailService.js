@@ -50,6 +50,9 @@ const checkEmails = async () => {
                         console.log(`O ticket ${codigoTicket} já existe. Não será criado um novo chamado.`);
                         const mensagem = getDivFirst(chamado.mensagem);
                         await createResposta(ticketExistente.dataValues.id_ticket, mensagem);
+                        console.log(mensagem)
+                        //Quando vem com assinatura e caracteres eles traz os corpo de email todo
+                        //tratar para pegar apenas o texto da resposta
                         await connection.addFlags(message.attributes.uid, ['\\Seen']);
                         continue;
                     }
