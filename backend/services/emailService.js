@@ -48,9 +48,9 @@ const checkEmails = async () => {
 
                     if (ticketExistente) {
                         console.log(`O ticket ${codigoTicket} já existe. Não será criado um novo chamado.`);
+                        console.log(chamado.mensagem)
                         const mensagem = getDivFirst(chamado.mensagem);
                         await createResposta(ticketExistente.dataValues.id_ticket, mensagem);
-                        console.log(mensagem)
                         //Quando vem com assinatura e caracteres eles traz os corpo de email todo
                         //tratar para pegar apenas o texto da resposta
                         await connection.addFlags(message.attributes.uid, ['\\Seen']);
@@ -80,9 +80,18 @@ const checkEmails = async () => {
 const getDivFirst = (mensagem) =>{
     const $ = cheerio.load(mensagem);
 
-    // Seleciona a primeira <div>
-    const firstDiv = $('div').first().html();
-    return firstDiv
+    // Remove os elementos que correspondem à citação do e-mail anterior
+    $('blockquote, div.gmail_quote, .gmail_attr, #divRplyFwdMsg, .BodyFragment').remove();
+
+     // Seleciona o conteúdo dentro das divs que estão antes das citações
+     const resposta = $('body').children().filter(function() {
+        return $(this).text().trim().length > 0; // Filtra elementos com texto significativo
+    }).map(function() {
+        return $(this).html(); // Pega o HTML de cada um desses elementos
+    }).get().join(''); // Junta todos os conteúdos em uma string
+
+    // Retorna o conteúdo limpo
+    return resposta.trim();
 }
 
 const createResposta = async (id_ticket, descricao) => {

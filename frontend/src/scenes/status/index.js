@@ -25,7 +25,6 @@ function Status() {
   const [showModal, setShowModal] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
 
-  
   const getAllStatus = async () => {
     try {
       const response = await api.get("/status/"); // Chama o endpoint para buscar categorias

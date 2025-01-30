@@ -1,4 +1,4 @@
-.containerAddStatus{
+.containerAddStatus {
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
@@ -10,12 +10,12 @@
     color: #900000;
 }
 
-.containerAddStatus h3{
+.containerAddStatus h3 {
     font-size: 23px;
 }
 
 
-.containerInputs{
+.containerInputs {
     display: flex;
     justify-content: flex-start;
     align-items: center;
@@ -24,14 +24,14 @@
     width: 100%;
 }
 
-.icon{
+.icon {
     margin-left: 10px;
     margin-right: 10px;
 
     cursor: pointer;
 }
 
-.icon:hover{
+.icon:hover {
     font-size: 22px;
 }
 
@@ -48,7 +48,7 @@
     display: block;
 }
 
-.containerMessageInput{
+.containerMessageInput {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -68,3 +68,7 @@
     z-index: 999999;
     animation: fadeIn 0.3s ease-in-out;
 }
+
+
+
+
