@@ -3,9 +3,9 @@ import PaginaPadrao from "../../components/paginaPadrao";
 import Card from "../../components/card";
 
 import api from "../../services/api";
-import dayjs from "dayjs";
+
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEdit, faTrashCan } from "@fortawesome/free-solid-svg-icons";
+import { faEdit } from "@fortawesome/free-solid-svg-icons";
 
 import stylesGlobal from "../../styles/styleGlobal.module.css";
 import style from "./style.module.css";
@@ -25,6 +25,8 @@ function Status() {
   const [showModal, setShowModal] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
 
+
+  //Função que faz o get na tabela de status
   const getAllStatus = async () => {
     try {
       const response = await api.get("/status/"); // Chama o endpoint para buscar categorias
@@ -36,10 +38,12 @@ function Status() {
     }
   };
 
+  //useEffect para manter lista de status atualizada
   useEffect(() => {
     getAllStatus();
   }, []);
 
+  //ToggleEdit para controlar interações com o front para editar ou adicionar novo status
   const toggleEdit = (id, status, situacao) => {
     const isNewStatus = !id && !status && !situacao;
 
@@ -59,6 +63,8 @@ function Status() {
     }
   };
 
+
+  //createStatus criar novo item
   const createStatus = async () => {
     const hasError = !statusNome || !situacaoStatus;
     setError({
@@ -95,6 +101,8 @@ function Status() {
           <p>{modalMessage}</p>
         </div>
       )}
+
+
       <div className={style.containerAddStatus}>
         <div>
           <h3>{titleForm}</h3>
@@ -205,6 +213,7 @@ function Status() {
           </table>
         </div>
       </Card>
+
     </PaginaPadrao>
   );
 }
