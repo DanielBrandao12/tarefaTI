@@ -232,3 +232,52 @@
     width: 100%;
 
 }
+
+.selectDetalhes {
+    border: none;
+    outline: none;
+    color: gray;
+    cursor: pointer;
+    border-bottom: solid 1px gray;
+
+}
+
+.selectDetalhes:hover {
+    color: rgb(83, 83, 83);
+}
+
+.disabled {
+    color: gray;
+    pointer-events: none;  /* Impede qualquer interação com o elemento */
+    cursor: no-drop;   /* Muda o cursor para indicar que está desabilitado */
+  }
+
+  .buttonsDetalhes{
+    display: flex;
+    justify-content: space-around !important;
+    align-items: center;
+
+
+    margin: 30px 0 30px 0;
+  }
+
+
+  .buttonPadrao {
+  
+    background-color: #B20000;
+    
+    width: 40%;
+    min-height: 35px;
+    font-size: 15px;
+    
+    text-align: center;
+    color: #ffff;
+    border-style: none;
+    border-radius: 5px;
+    outline: none;
+    cursor: pointer;
+  }
+
+  .buttonPadrao:hover {
+    background-color: #7E0000;
+  }

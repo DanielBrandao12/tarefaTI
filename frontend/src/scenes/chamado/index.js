@@ -33,8 +33,11 @@ function Chamado() {
   const hasFetched = useRef(false);
   const [edit, setEdit] = useState(false);
   const [listStatus, setListStatus] = useState([]);
-  const [listCAtegorias, setListCategorias] = useState([]);
+  const [listCategorias, setListCategorias] = useState([]);
   const [listUsers, setListUsers] = useState([]);
+  const [statusNome, setStatusNome] = useState();
+  const [categoriaNome, setCategoriaNome] = useState();
+  const [usuarioAtribuido, setUsuarioAtribuido] = useState();
 
   // Funções para controlar o Popup
   const handleOpenPopup = (mensagem) => {
@@ -257,7 +260,7 @@ function Chamado() {
   // Formata a data em um formato legível
   const handleEditChamado = () => {
     //navigate(`/editarChamado/${chamado.id_ticket}`);
-    setEdit(!edit)
+    setEdit(!edit);
   };
 
   useEffect(() => {
@@ -320,6 +323,7 @@ function Chamado() {
       try {
         const response = await api.get("/usuarios");
         setListUsers(response.data);
+        console.log(listUsers);
       } catch (error) {
         console.error("Erro ao buscar usuários:", error);
       }
@@ -328,12 +332,11 @@ function Chamado() {
     fetchUsers();
   }, []);
 
-
-  const [selectFocus, setSelect] = useState(false)
+  const [selectFocus, setSelect] = useState(false);
 
   const handleSelect = () => {
-    setSelect(!selectFocus)
-  }
+    setSelect(!selectFocus);
+  };
   return (
     <PaginaPadrao>
       {/* Layout principal */}
@@ -448,8 +451,16 @@ function Chamado() {
           <Card>
             <div className={styles.editPrintContainer}>
               <div>
-                <FontAwesomeIcon icon={faPenToSquare} />
-                <span onClick={handleEditChamado}>Editar</span>
+                <FontAwesomeIcon
+                  icon={faPenToSquare}
+                  className={edit ? styles.disabled : ""}
+                />
+                <span
+                  onClick={edit ? null : handleEditChamado} // Não faz nada se 'edit' for true
+                  className={edit ? styles.disabled : ""} // Aplique a classe para aparência de desabilitado
+                >
+                  Editar
+                </span>
               </div>
               <div>
                 <FontAwesomeIcon icon={faPrint} />
@@ -510,41 +521,78 @@ function Chamado() {
                 <div className={styles.containerDivTwo}>
                   <div>
                     <span>Status:</span>
-                    <select value={status} onFocus={handleSelect} > 
-                    
-                     
-                      {
-                        !selectFocus ? <option >{status}</option> : null
-                      }
-                      
+                    <select
+                      className={styles.selectDetalhes}
+                      value={statusNome}
+                      onFocus={handleSelect}
+                      onChange={(e) => setStatusNome(e.target.value)}
+                      defaultValue=""
+                    >
+                      <option value={''} disabled>Selecione um opção</option>
                       {listStatus.map((item) => (
-                          <option key={item.id_status} value={item.id_status} style={item.nome === status ? {color:'green'} :{}}>
-                          {item.nome }
+                        <option
+                          key={item.id_status}
+                          value={item.id_status}
+                          style={item.nome === status ? { color: "green" } : {}}
+                        >
+                          {item.nome}
                         </option>
-                      ))
-                      }
-                      
-                      </select>
+                      ))}
+                    </select>
                   </div>
                   <div>
                     <span>Categoria:</span>
-                    <span className={styles.spanDetalhes}>{categoria}</span>
+                    <select
+                      className={styles.selectDetalhes}
+                      value={categoriaNome}
+                      onChange={(e) => setCategoriaNome(e.target.value)}
+                      defaultValue=""
+                    >
+                      <option value={''} disabled>Selecione um opção</option>
+                      {listCategorias.map((item) => (
+                        <option
+                          key={item.id_categoria}
+                          value={item.id_categoria}
+                          style={item.nome === categoria ? { color: "green" } : {}}
+                        >
+                          {item.nome}
+                        </option>
+                      ))}
+                    </select>
                   </div>
                   <div>
                     <span>Prioridade:</span>
-                    <span className={styles.spanDetalhes}>
-                      {chamado.nivel_prioridade}
-                    </span>
+                    <select className={styles.selectDetalhes}  defaultValue="">
+                    <option value={''} disabled>Selecione um opção</option>
+                      <option>Prioridade Baixa</option>
+                      <option>Prioridade Média</option>
+                      <option>Prioridade Alta</option>
+                    </select>
                   </div>
                   <div>
                     <span>Atribuído a:</span>
-                    <span className={styles.spanDetalhes}>
-                      {chamado.nome_usuarioAtribuido}
-                    </span>
+                    <select
+                      className={styles.selectDetalhes}
+                      value={usuarioAtribuido}
+                      onChange={(e) => setUsuarioAtribuido(e.target.value)}
+                       defaultValue=""
+                    >
+                      <option value={''} disabled>Selecione um opção</option>
+                      {listUsers.map((item) => (
+                        <option key={item.id_usuario} value={item.id_usuario}  style={item.nome_usuario === chamado.nome_usuarioAtribuido ? { color: "green" } : {}}>
+                          {item.nome_usuario}
+                        </option>
+                      ))}
+                    </select>
                   </div>
+            <div className={styles.buttonsDetalhes}>
+              <input type="button" className={styles.buttonPadrao} value={'Salvar'}/>
+              <input type="button" onClick={handleEditChamado} className={styles.buttonPadrao} value={'Cancelar'}/>
+            </div>
                 </div>
               )}
             </div>
+        
           </Card>
           {/* Card de histórico de status */}
           <Card>
