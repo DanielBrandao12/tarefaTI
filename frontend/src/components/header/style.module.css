@@ -5,7 +5,7 @@
     justify-content: space-between;
     align-items: center;
     
-    width: 82vw;
+    width: 86vw;
     height: 10vh;
     border-bottom: 1px #b20000 solid;
     box-shadow: 2px 2px 2px 1px rgba(126, 0, 0, 0.1)
@@ -137,9 +137,67 @@
     
 }
 
+.containerFormUser {
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Centraliza os itens no eixo vertical */
+    align-items: center;
+    width: 500px;
+    gap: 10px;
 
 
+}
+.blocoLabelInput{
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    gap: 10px;
+    width: 80%;
 
+    
+    
+}
+.containerFormUser h1{
+    color: #7E0000;
+}
+
+.containerFormUser input, 
+.containerFormUser select {
+    width: 100%;
+    max-width: 400px;
+    padding: 8px; /* Adiciona um padding uniforme */
+    box-sizing: border-box; /* Garante que padding e borda não alterem a largura total */
+    border: 1px solid #b20000; /* Define uma borda uniforme para ambos */
+    font-size: 16px; /* Mantém o mesmo tamanho de fonte para ambos */
+}
+
+.containerFormUser label {
+    margin-top: 5px;
+    font-size: 18px;
+    color: #7E0000;
+}
+
+.containerTitleUser {
+    padding: 10px;
+    margin-bottom: 15px;
+}
+
+.buttonPadrao {
+    margin-top: 10px;
+    background-color: #B20000;
+    min-width: 150px;
+    width: auto;
+    min-height: 40px;
+    font-size: 15px;
+    
+    text-align: center;
+    color: #ffff;
+    border-style: none;
+    border-radius: 5px;
+    padding: 0 10px 0 10px;
+    cursor: pointer;
+  }
+  
 
 /* Define um top mínimo para telas menores */
 @media (max-height: 500px) {
