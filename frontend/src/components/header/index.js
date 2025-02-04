@@ -34,6 +34,8 @@ function Header() {
   const [isCreatingUser, setIsCreatingUser] = useState(false);
   const [isEditingUser, setIsEditingUser] = useState(false);
   const [isUserListOpen, setIsUserListOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [message, setMessage] = useState("");
 
   const toggleEditUser = () => {
     setIsEditing(!isEditing);
@@ -72,25 +74,42 @@ function Header() {
 
   const [isOpen, setIsOpen] = useState(false);
 
+  const handleClosePopup = () => setIsOpen(false);
   const toggleCreateUser = () => {
     setIsOpen(!isOpen);
     if (!isOpen) toggleEditUser();
   };
 
   const postUser = async () => {
-    try {
-      let newErrors = {};
-      Object.keys(formData).forEach((field) => {
-        if (!formData[field].trim()) {
-          newErrors[field] = "Campo Obrigatório!";
-        }
-      });
-      if (formData.senha !== formData.confirmSenha) {
-        newErrors.confirmSenha = "As senhas não coincidem";
+    let newErrors = {};
+
+    // Validação de campos obrigatórios
+    Object.keys(formData).forEach((field) => {
+      if (!formData[field].trim()) {
+        newErrors[field] = "Campo Obrigatório!";
       }
+    });
+
+    // Validação do formato do e-mail
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      newErrors.email = "Formato de e-mail inválido!";
+    }
+
+    // Verifica se as senhas coincidem
+    if (formData.senha !== formData.confirmSenha) {
+      newErrors.confirmSenha = "As senhas não coincidem";
+    }
+
+    // Se houver erros, define os erros e interrompe a execução
+    if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       setValidated(true);
+      return;
+    }
 
+    setIsLoading(true);
+    try {
       const usuarioCriado = await api.post("/usuarios/createUser/", {
         nome_completo: formData.nomeC,
         nome_usuario: formData.nomeUser,
@@ -99,8 +118,76 @@ function Header() {
         perfil: formData.perfil,
       });
 
-      if(usuarioCriado) console.log('Usuário criado com sucesso')
-    } catch (error) {}
+      if (usuarioCriado) {
+        setIsLoading(false);
+        setIsCreatingUser(false);
+        setMessage(usuarioCriado.data.message);
+
+        //console.log(usuarioCriado);
+
+        setTimeout(() => {
+          handleClosePopup();
+          setMessage("");
+          setFormData({
+            nomeC: "",
+            email: "",
+            nomeUser: "",
+            senha: "",
+            confirmSenha: "",
+            perfil: "",
+          });
+        }, 2000);
+      }
+    } catch (error) {
+      setIsLoading(false);
+      console.error("Erro ao criar usuário:", error.response?.data);
+
+      if (error.response?.data) {
+        const { message, errors } = error.response.data; // Verifica se existem erros estruturados
+
+        // Caso a API retorne um array de erros
+        if (Array.isArray(errors)) {
+          errors.forEach((err) => {
+            if (err.toLowerCase().includes("email")) {
+              newErrors.email = "Este e-mail já está cadastrado!";
+            }
+            if (
+              err.toLowerCase().includes("usuário") ||
+              err.toLowerCase().includes("nome de usuário")
+            ) {
+              newErrors.nomeUser = "Este nome de usuário já está em uso!";
+            }
+          });
+        }
+
+        // Caso a API retorne uma única mensagem
+        else if (message) {
+          const mensagemErro = message.toLowerCase();
+          if (mensagemErro.includes("e-mail")) {
+            newErrors.email = message;
+            // Limpa os campos de email e nome de usuário
+            setFormData((prevFormData) => ({
+              ...prevFormData,
+              email: "",
+            }));
+          }
+          if (
+            mensagemErro.includes("Nome") ||
+            mensagemErro.includes("nome de usuário")
+          ) {
+            newErrors.nomeUser = "Este nome de usuário já está em uso!";
+            // Limpa os campos de email e nome de usuário
+            setFormData((prevFormData) => ({
+              ...prevFormData,
+              nomeUser: "",
+            }));
+          }
+        }
+
+        // Atualiza os erros na tela
+        setErrors(newErrors);
+      }
+    }
   };
 
   return (
@@ -167,13 +254,25 @@ function Header() {
           <p>Sair</p>
         </div>
       </div>
-      <Popup openPopup={isOpen} autoCloseTime={2000}>
+      <Popup openPopup={isOpen} onClose={handleClosePopup}>
+        {isLoading && (
+          <div className={styleGlobal.loadingOverlay}>
+            <div className={styleGlobal.spinner}></div>
+          </div>
+        )}
+
+        {message && (
+          <div className={styles.containerMessage}>
+            <span>Mensagem!</span>
+            <h1>{message}</h1>
+          </div>
+        )}
         {isCreatingUser && (
           <div className={styles.containerFormUser}>
             <h1>Cadastrar usuário</h1>
             {[
               { label: "Nome Completo", name: "nomeC" },
-              { label: "E-mail", name: "email"},
+              { label: "E-mail", name: "email" },
               { label: "Nome de Usuário", name: "nomeUser" },
               { label: "Senha", name: "senha", type: "password" },
               {

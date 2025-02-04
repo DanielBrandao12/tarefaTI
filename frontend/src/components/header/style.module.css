@@ -197,8 +197,25 @@
     padding: 0 10px 0 10px;
     cursor: pointer;
   }
-  
 
+  .containerMessage {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    width: 600px;
+    height: 300px;
+  }
+  
+  .containerMessage h1{
+    color: #7E0000;
+    font-size: 2.5rem;
+  }
+
+  .containerMessage span{
+    font-size: 2rem;
+  }
 /* Define um top mínimo para telas menores */
 @media (max-height: 500px) {
 
