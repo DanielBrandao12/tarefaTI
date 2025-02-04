@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faChevronDown,
@@ -12,19 +12,29 @@ import {
 import styles from "./style.module.css";
 import styleGlobal from "../../styles/styleGlobal.module.css";
 import Cookies from "js-cookie";
-import { confirmAlert } from "react-confirm-alert"; // Importa a função confirmAlert
-
+import { confirmAlert } from "react-confirm-alert";
 import Popup from "../popup";
-
 import api from "../../services/api";
 
 function Header() {
-  const navigate = useNavigate(); // Hook para navegação programática
+  const navigate = useNavigate();
 
-  const [displayEdit, setDisplayEdit] = useState(""); //define o display do ContainerEditUser
-  const [isEditing, setIsEditing] = useState(false); //Estado do icone arrow
+  const [displayEdit, setDisplayEdit] = useState("");
+  const [isEditing, setIsEditing] = useState(false);
+  const [formData, setFormData] = useState({
+    nomeC: "",
+    email: "",
+    nomeUser: "",
+    senha: "",
+    confirmSenha: "",
+    perfil: "",
+  });
+  const [errors, setErrors] = useState({});
+  const [validated, setValidated] = useState(false);
+  const [isCreatingUser, setIsCreatingUser] = useState(false);
+  const [isEditingUser, setIsEditingUser] = useState(false);
+  const [isUserListOpen, setIsUserListOpen] = useState(false);
 
-  //Expandir e esconder caixa para opções do usuário (ContainerEditUser)
   const toggleEditUser = () => {
     setIsEditing(!isEditing);
     setDisplayEdit(isEditing ? "none" : "flex");
@@ -34,20 +44,20 @@ function Header() {
     navigate("/criarChamado");
   };
 
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+    setErrors({ ...errors, [name]: "" });
+  };
+
   const handleRemoveToken = async () => {
     try {
-      // Solicitar logout ao backend
       await api.get("/login/logout");
-
-      // Remover cookies
       Cookies.remove("connect.sid", { path: "/" });
       Cookies.remove("token", { path: "/" });
-
-      // Redirecionar para a página de login após logout
       navigate("/login");
     } catch (error) {
       console.error("Erro ao fazer logout:", error);
-      // Lidar com erros, talvez mostrar uma mensagem ao usuário
     }
   };
 
@@ -56,16 +66,41 @@ function Header() {
     confirmAlert({
       title: "Confirmação",
       message: "Deseja fazer logout?",
-      buttons: [
-        {
-          label: "Sim",
-          onClick: handleRemoveToken,
-        },
-        {
-          label: "Não",
-        },
-      ],
+      buttons: [{ label: "Sim", onClick: handleRemoveToken }, { label: "Não" }],
     });
+  };
+
+  const [isOpen, setIsOpen] = useState(false);
+
+  const toggleCreateUser = () => {
+    setIsOpen(!isOpen);
+    if (!isOpen) toggleEditUser();
+  };
+
+  const postUser = async () => {
+    try {
+      let newErrors = {};
+      Object.keys(formData).forEach((field) => {
+        if (!formData[field].trim()) {
+          newErrors[field] = "Campo Obrigatório!";
+        }
+      });
+      if (formData.senha !== formData.confirmSenha) {
+        newErrors.confirmSenha = "As senhas não coincidem";
+      }
+      setErrors(newErrors);
+      setValidated(true);
+
+      const usuarioCriado = await api.post("/usuarios/createUser/", {
+        nome_completo: formData.nomeC,
+        nome_usuario: formData.nomeUser,
+        email: formData.email,
+        senha: formData.senha,
+        perfil: formData.perfil,
+      });
+
+      if(usuarioCriado) console.log('Usuário criado com sucesso')
+    } catch (error) {}
   };
 
   return (
@@ -78,7 +113,6 @@ function Header() {
           onClick={handleChamado}
         />
       </div>
-
       <div className={styles.containerDadosUser}>
         <div className={styles.containerCircle}>D</div>
         <div className={styles.user} onClick={toggleEditUser}>
@@ -93,19 +127,28 @@ function Header() {
         className={styles.containerEditUser}
         style={{ display: displayEdit }}
       >
-        <div className={styles.titleOption}>
+        <div
+          className={styles.titleOption}
+          onClick={() => (toggleCreateUser(), setIsEditingUser(true))}
+        >
           <div>
             <FontAwesomeIcon icon={faUserPen} />
           </div>
           <p>Editar Perfil</p>
         </div>
-        <div className={styles.titleOption}>
+        <div
+          className={styles.titleOption}
+          onClick={() => (toggleCreateUser(), setIsCreatingUser(true))}
+        >
           <div>
             <FontAwesomeIcon icon={faUserPlus} />
           </div>
           <p>Criar Novo usuário</p>
         </div>
-        <div className={styles.titleOption}>
+        <div
+          className={styles.titleOption}
+          onClick={() => (toggleCreateUser(), setIsUserListOpen(true))}
+        >
           <div>
             <FontAwesomeIcon icon={faUser} />
           </div>
@@ -121,60 +164,96 @@ function Header() {
           <div>
             <FontAwesomeIcon icon={faRightFromBracket} />
           </div>
-
           <p>Sair</p>
         </div>
       </div>
-      {/* Popup de mensagem, ele só é exibido quando chamado*/}
-      <Popup
-        openPopup={true}
-        autoCloseTime={2000} // Fecha automaticamente após 5 segundos (opcional)
-      >
-        <div className={styles.containerFormUser}>
-
-          <div className={styles.containerTitleUser}>
+      <Popup openPopup={isOpen} autoCloseTime={2000}>
+        {isCreatingUser && (
+          <div className={styles.containerFormUser}>
             <h1>Cadastrar usuário</h1>
+            {[
+              { label: "Nome Completo", name: "nomeC" },
+              { label: "E-mail", name: "email"},
+              { label: "Nome de Usuário", name: "nomeUser" },
+              { label: "Senha", name: "senha", type: "password" },
+              {
+                label: "Confirmar senha",
+                name: "confirmSenha",
+                type: "password",
+              },
+            ].map(({ label, name, type = "text" }) => (
+              <div className={styles.blocoLabelInput} key={name}>
+                <label>{label}</label>
+                <input
+                  type={type}
+                  name={name}
+                  value={formData[name]}
+                  onChange={handleInputChange}
+                  className={styleGlobal.inputTextChamado}
+                  required
+                />
+                {validated && errors[name] && (
+                  <span className={styleGlobal.errorMessage}>
+                    {errors[name]}
+                  </span>
+                )}
+              </div>
+            ))}
+            <div className={styles.blocoLabelInput}>
+              <label>Perfil</label>
+              <select
+                name="perfil"
+                value={formData.perfil}
+                onChange={handleInputChange}
+                className={styleGlobal.selectChamado}
+              >
+                <option value="" disabled>
+                  Selecione uma opção
+                </option>
+                <option>Admin</option>
+              </select>
+              {validated && errors.perfil && (
+                <span className={styleGlobal.errorMessage}>
+                  {errors.perfil}
+                </span>
+              )}
+            </div>
+            <input
+              type="button"
+              value="Salvar"
+              className={styles.buttonPadrao}
+              onClick={postUser}
+            />
+            <input
+              type="button"
+              value="Fechar"
+              className={styles.buttonPadrao}
+              onClick={() => (toggleCreateUser(), setIsCreatingUser(false))}
+            />
           </div>
-
-          <div className={styles.blocoLabelInput}>
-            <label>Nome Completo</label>
-            <input className={styleGlobal.inputTextChamado} />
+        )}
+        {isEditingUser && (
+          <div>
+            <h1>Editar usuário</h1>
+            <input
+              type="button"
+              value="Fechar"
+              className={styles.buttonPadrao}
+              onClick={() => (toggleCreateUser(), setIsEditingUser(false))}
+            />
           </div>
-
-          <div className={styles.blocoLabelInput}>
-            <label>E-mail</label>
-            <input className={styleGlobal.inputTextChamado} />
+        )}
+        {isUserListOpen && (
+          <div>
+            <h1>Listar usuários</h1>
+            <input
+              type="button"
+              value="Fechar"
+              className={styles.buttonPadrao}
+              onClick={() => (toggleCreateUser(), setIsUserListOpen(false))}
+            />
           </div>
-
-          <div className={styles.blocoLabelInput}>
-            <label>Nome de Usuário</label>
-            <input className={styleGlobal.inputTextChamado} />
-          </div>
-
-          <div className={styles.blocoLabelInput}>
-            <label>Senha</label>
-            <input className={styleGlobal.inputTextChamado} />
-          </div>
-
-          <div className={styles.blocoLabelInput}>
-            <label>Confirmar senha</label>
-            <input className={styleGlobal.inputTextChamado} />
-          </div>
-
-          <div className={styles.blocoLabelInput}>
-            <label>Perfil</label>
-            <select className={styleGlobal.selectChamado}>
-              <option value={""} disabled>
-                Selecione um opção
-              </option>
-              <option>Admin</option>
-            </select>
-          </div>
-
-          <div className={styles.blocoLabelInput}>    
-            <input type="button" value={'Salvar'} className={styles.buttonPadrao} />
-          </div>
-        </div>
+        )}
       </Popup>
     </div>
   );
