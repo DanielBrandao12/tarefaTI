@@ -70,7 +70,7 @@ const getUserId = async (req, res) => {
         // Retornar as informações do usuário
         return res.status(200).json({
             message: "Usuário encontrado com sucesso!",
-            nomeUser: user.nome_usuario,
+            nomeUser: user,
         });
     } catch (error) {
         // Tratar erros inesperados
@@ -134,7 +134,7 @@ const createUser = async (req, res) => {
 const updateUser = async (req, res) => {
     try {
         const { id } = req.params; // ID do usuário a ser atualizado
-        const { nome_completo, nome_usuario, email, senha, perfil } = req.body;
+        const { nome_completo, senha, perfil } = req.body;
 
         // Verificar se o usuário existe
         const user = await Usuarios.findByPk(id);
@@ -143,18 +143,18 @@ const updateUser = async (req, res) => {
         }
 
         // Verificação de duplicidade (excluindo o próprio usuário)
+        /*
         const { emailExists, usernameExists } = await checkDuplicate(email, nome_usuario, id);
         if (emailExists) {
             return res.status(400).json({ message: "E-mail já cadastrado." });
         }
         if (usernameExists) {
             return res.status(400).json({ message: "Nome de usuário já cadastrado." });
-        }
+        }*/
 
         // Atualizar dados do usuário
         user.nome_completo = nome_completo || user.nome_completo;
-        user.nome_usuario = nome_usuario || user.nome_usuario;
-        user.email = email || user.email;
+
         user.perfil = perfil || user.perfil;
 
         // Atualizar a senha, se fornecida
