@@ -4,6 +4,8 @@ const router = express.Router();
 const controller = require('../controllers/ticketsController');
 
 const emailService = require('../services/emailService');
+const notLoggedMiddlewares = require('../middlewares/notLoggedMiddlewares');
+
 
 // Rota para verificar e-mails
 router.get('/verificar-emails', async (req, res) => {
@@ -19,7 +21,7 @@ router.get('/verificar-emails', async (req, res) => {
 router.post('/createTicket', controller.createTickets)
 router.put('/updateTicket', controller.updateTicket)
 router.get('/', controller.getTickets)
-router.get('/:id',controller.getTicketsId)
+router.get('/:id',notLoggedMiddlewares,  controller.getTicketsId)
 router.get('/listaTarefa/:id', controller.getListaTarefaTicket)
 
 module.exports = router

@@ -76,6 +76,7 @@ function Header() {
     try {
       await api.get("/login/logout");
       Cookies.remove("connect.sid", { path: "/" });
+       Cookies.remove('authToken',{path: "/"});
       Cookies.remove("token", { path: "/" });
       navigate("/login");
     } catch (error) {
@@ -99,7 +100,7 @@ function Header() {
     setIsCreatingUser(false);
     setIsEditingUser(false);
     setIsUserListOpen(false);
-    
+    setErrors({})
     // Garantir que o reset do formulário ocorra corretamente
     setFormData({ 
       nomeC: "", 
