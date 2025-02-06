@@ -24,7 +24,7 @@ const historicoStatusRouter = require('./routes/historicoStatusRoute')
 const respostaRouter = require('./routes/respostaRoute')
 const statusRouter = require('./routes/statusRoute') 
 const emailService = require('./services/emailService')
-const verify = require('./routes/verifyRoute')
+
 const app = express();
 
 
@@ -64,7 +64,7 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/tarefas', usersTarefa)
 app.use('/login', usersLogin)
-app.use('/verify', verify)
+
 //Novas rotas service desk 2.0
 app.use('/usuarios', usuarioRouter)
 app.use('/tickets', ticketRouter)
