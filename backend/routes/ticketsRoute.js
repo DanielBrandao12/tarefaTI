@@ -5,6 +5,7 @@ const controller = require('../controllers/ticketsController');
 
 const emailService = require('../services/emailService');
 
+
 // Rota para verificar e-mails
 router.get('/verificar-emails', async (req, res) => {
   try {

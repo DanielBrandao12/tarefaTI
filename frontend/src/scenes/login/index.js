@@ -19,7 +19,7 @@ const Login = () => {
       }else{
 
        await api.post('/login', { nome_usuario, senha_hash });
-        navigate('/criarChamado');
+        navigate('/');
       }
       
     } catch (err) {
