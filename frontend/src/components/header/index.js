@@ -322,7 +322,7 @@ function Header() {
   };
   
   const getUser = async () =>{
-    const user = await api.get(`usuarios/${idUser.id}`)
+    const user = await api.get(`/usuarios/${idUser.id}`)
 
     
     setFormData({
@@ -335,7 +335,7 @@ function Header() {
     })
   }
   const getUserAll = async () =>{
-    const user = await api.get(`usuarios/`)
+    const user = await api.get(`/usuarios/`)
 console.log(user.data)
     setUserList(user.data)
   
@@ -502,12 +502,12 @@ console.log(user.data)
                                 key={item.id_usuario}
                                
                               >
-                               
-                              
+                         
                                 <td>{item.nome_completo}</td>
                                 <td>{item.email}</td>
                               </tr>
                             ))}
+                            
                         </tbody>
                       </table>
           

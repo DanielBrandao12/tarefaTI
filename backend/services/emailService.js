@@ -227,9 +227,24 @@ const enviarRespostaAutomatica = async (remetente, codigoTicket) => {
             from: 'servicedesk@fatecbpaulista.edu.br',
             to: remetente,
             subject: `Chamado Criado - ${codigoTicket}`,
-            text: `Agradecemos por entrar em contato! Seu chamado foi registrado com sucesso e recebeu o código: ${codigoTicket}. Para acompanhar o andamento ou enviar novas informações, basta responder a este e-mail. Estamos à disposição para ajudar!`
-
+            html: `
+                <div style="font-family: Verdana, sans-serif; font-size: 18px;">
+                    <p style=" text-align: center; font-weight: bold;">Agradecemos por entrar em contato!</p>
+                    
+                    <p style="font-size: 20px;  text-align: center;">Seu chamado foi registrado com sucesso e recebeu o código:
+                    <p style="font-size: 22px; font-weight: bold; text-align: center;">${codigoTicket}</p></p>
+                    
+                    
+                    
+                    <p style=" text-align: left;>Para acompanhar o andamento ou enviar novas informações, basta responder a este e-mail.</p>
+                    
+                    <p style=" text-align: left;>Estamos à disposição para ajudar!</p>
+                    
+                    <p style=" text-align: left; ">Equipe T.I Fatec Bragança Paulista.</p>
+                </div>
+            `
         });
+        
         //console.log(`Resposta automática enviada para: ${remetente}`);
     } catch (mailError) {
         console.error(`Erro ao enviar resposta automática para ${remetente}:`, mailError);

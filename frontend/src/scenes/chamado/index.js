@@ -275,7 +275,7 @@ function Chamado() {
           const response = await api.get(`/usuarios/${chamado.atribuido_a}`);
           setChamado((prevChamado) => ({
             ...prevChamado,
-            nome_usuarioAtribuido: response.data.nomeUser,
+            nome_usuarioAtribuido: response.data.nomeUser.nome_usuario,
           }));
           setUserAtt(response.data.nomeUser)
         }
@@ -330,8 +330,9 @@ function Chamado() {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await api.get("/usuarios");
+        const response = await api.get("/usuarios/");
         setListUsers(response.data);
+       
       
       } catch (error) {
         console.error("Erro ao buscar usuários:", error);
@@ -385,9 +386,10 @@ const salvarEdicao = async () => {
       if (dadosAtualizados.atribuido_a) {
         try {
           const userResponse = await api.get(`/usuarios/${dadosAtualizados.atribuido_a}`);
+          console.log(userResponse)
           setChamado((prevChamado) => ({
             ...prevChamado,
-            nome_usuarioAtribuido: userResponse.data.nomeUser,
+            nome_usuarioAtribuido: userResponse.data.nomeUser.nome_usuario
           }));
         } catch (error) {
           console.error("Erro ao buscar usuário atribuído:", error);

@@ -38,21 +38,28 @@ function Chamados() {
     }
   }, []);
 
-  // Buscar chamados do backend e atualizar contadores
-  useEffect(() => {
-    const fetchChamados = async () => {
-      try {
-        const response = await api.get("/tickets/");
-        setChamados(response.data);
-        setFilteredChamados(response.data); // Inicializa com todos os chamados
-        atualizarContadores(response.data);
-      } catch (error) {
-        console.error("Erro ao buscar tickets:", error);
-      }
-    };
+// Buscar chamados do backend e atualizar contadores
+useEffect(() => {
+  const fetchChamados = async () => {
+    try {
+      const response = await api.get("/tickets/");
+      setChamados(response.data);
+      setFilteredChamados(response.data); // Inicializa com todos os chamados
+      atualizarContadores(response.data);
+    } catch (error) {
+      console.error("Erro ao buscar tickets:", error);
+    }
+  };
 
-    fetchChamados();
-  }, []);
+  // Chama a função imediatamente
+  fetchChamados();
+
+  // Define um intervalo para chamar a função a cada 30 segundos
+  const interval = setInterval(fetchChamados, 30000);
+
+  // Limpa o intervalo quando o componente for desmontado
+  return () => clearInterval(interval);
+}, []);
 
   useEffect(() => {
     if (usuario && chamados.length > 0) {
@@ -132,7 +139,8 @@ function Chamados() {
         const promessas = chamadosAtualizados.map(async (chamado) => {
           if (chamado.atribuido_a) {
             const response = await api.get(`/usuarios/${chamado.atribuido_a}`);
-            chamado.nome_usuarioAtribuido = response.data.nomeUser;
+            console.log(response)
+            chamado.nome_usuarioAtribuido = response.data.nomeUser.nome_usuario;
           }
           return chamado;
         });
