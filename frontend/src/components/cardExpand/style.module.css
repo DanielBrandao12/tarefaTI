@@ -1,0 +1,36 @@
+.containerCardExpand{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+   
+}
+
+.containerDivFirst{
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    
+    width: 100%;
+}
+.containerDivTwo{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+
+
+}
+.containerDivTwo div{
+    display: flex;
+    justify-content: flex-start;
+    gap: 20px;
+    padding: 5px;
+    width: 100%;
+
+}
+
+.titleCardExpand{
+    font-size: 19px;
+}

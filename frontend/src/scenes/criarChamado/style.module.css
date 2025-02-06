@@ -1,0 +1,62 @@
+*::placeholder {
+  color: #b96868;
+}
+
+.formChamado {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 15px;
+  max-width: 1200px;
+  /* Aumentando a largura máxima */
+  margin: 20px auto;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  background: none;
+  /* Removendo o fundo cinza */
+}
+
+.titleFormChamado {
+  font-size: 24px;
+  color: #b20000;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.fieldGroup {
+  display: flex;
+  flex-direction: column;
+}
+
+.fieldGroup label {
+  font-size: 15px;
+  font-weight: bold;
+  color: #b20000;
+  margin-bottom: 5px;
+}
+
+
+
+.buttonEnviar {
+  padding: 10px 15px;
+  background-color: #b20000;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-top: 10px;
+}
+
+.buttonEnviar:hover {
+  background-color: #900000;
+  /* cor escura ao passar o mouse */
+}
+
+.reactQuill {
+  height: 300px;
+  color: #b20000;
+  margin-bottom: 50px;
+}
+

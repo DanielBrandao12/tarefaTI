@@ -1,0 +1,197 @@
+
+.inputTextChamado,
+.selectChamado {
+  border: 1px solid #b20000;
+  border-radius: 5px;
+  padding: 10px;
+  font-size: 15px;
+  color: #900000;
+}
+
+.inputTextChamado:focus,
+.selectChamado:focus {
+  outline: none;
+  border-color: #900000;
+  /* cor mais escura ao focar */
+}
+.containerInputAdd {
+    display: flex;
+    align-items: center;
+  }
+  
+  .containerIconPlus {
+    display: flex;
+    justify-content: center;
+  
+    position: relative;
+    top: 0;
+    right: 35px;
+    padding: 5px;
+    cursor: pointer;
+  }
+  
+  .positionIconPlus {
+    font-size: 17px;
+    color: #b20000;
+  
+  }
+
+  .paragrafoGlobal{
+    font-size: 16px;
+    color: #900000;
+    padding: 5px;
+  }
+
+  .table{
+    width: 100%;
+    font-size: 13px;
+    font-weight: 400;
+    text-align: center;
+    padding: 10px;
+  
+}
+.table thead {
+    height: 30px;
+    background-color: #b20000;
+    font-weight: 700;
+    line-height: normal;
+    letter-spacing: .1px;
+    color: #fff;
+   
+}
+.tbody {
+   
+    background-color: #b65151;
+    color: #fff;
+    text-align: center;
+    overflow-y: scroll;
+}
+
+.tbody tr{
+    height: 30px;
+    cursor: pointer;
+    
+}
+
+.tbody tr:hover{
+    background-color: #7E0000;
+    
+}
+
+.buttonPadrao {
+  margin-left: 35px;
+  background-color: #B20000;
+  min-width: 150px;
+  width: auto;
+  min-height: 35px;
+  font-size: 15px;
+  
+  text-align: center;
+  color: #ffff;
+  border-style: none;
+  border-radius: 5px;
+  padding: 0 10px 0 10px;
+  cursor: pointer;
+}
+
+.buttonPadrao:hover{
+  background-color: #7E0000;
+}
+
+
+.errorInput {
+  border: 2px solid red;
+}
+
+.line {
+  width: 80%;
+  
+  border-top: 1px solid #7E0000;
+}
+
+.itemLista {
+  display: flex;
+  flex-wrap: wrap; /* Permite quebrar para a próxima linha se necessário */
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.itemListaItem {
+  display: inline-flex; /* Para largura dinâmica */
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px 10px;
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  min-width: 80px; /* Largura mínima reduzida */
+  width: auto; /* Permite que o tamanho do item seja dinâmico */
+  max-width: calc(100% - 20px); /* Impede que ultrapasse o container */
+  word-wrap: break-word; /* Quebra palavras longas */
+}
+
+.itemListaItem span {
+  flex-grow: 1; /* Permite que o texto ocupe o espaço necessário */
+}
+
+.removeIcon {
+  cursor: pointer;
+  color: red;
+  margin-left: 10px;
+}
+
+
+.divPopup{
+  display: flex;
+  flex-direction: column;
+}
+.divPopup span {
+  font-size: 25px;
+  color: #B20000;
+}
+
+.errorInput {
+  border: 2px solid red;
+}
+
+.errorMessage {
+  margin-left: 10px;
+  color: red;
+  font-size: 0.7rem;
+  
+}
+
+.containerMessageInput{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  
+}
+
+.loadingOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.726);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.spinner {
+  border: 4px solid rgba(255, 255, 255, 0.3);
+  border-top: 4px solid #fff;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

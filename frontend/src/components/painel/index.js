@@ -1,13 +1,13 @@
+import React from 'react'
 
-import React from 'react';
-import './style.css';
+import styles from './style.module.css'
 
-function Painel({ children }) {
-    return (
-        <div className='container-painel'>
-            {children}
-        </div>
-    );
+function Painel({children}) {
+  return (
+    <div className={styles.Painel}>
+      {children}
+    </div>
+  )
 }
 
-export default Painel;
+export default Painel

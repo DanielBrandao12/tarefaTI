@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Leitor de Programas Instalados</title>
+  <style>
+    table { border-collapse: collapse; width: 100%; }
+    th, td { border: 1px solid black; padding: 8px; text-align: left; }
+  </style>
+</head>
+<body>
+  <h1>Programas Instalados</h1>
+  
+  <!-- Input para carregar arquivos -->
+  <input type="file" id="inputArquivo" multiple>
+  
+  <!-- Tabela para exibir os programas -->
+  <table id="tabelaProgramas">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Nome</th>
+        <th>Fornecedor</th>
+        <th>Versão</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- As novas entradas serão inseridas aqui -->
+    </tbody>
+  </table>
+  
+  <h2>JSON Gerado:</h2>
+  <pre id="jsonOutput"></pre>
+
+  <!-- Botão para baixar o JSON -->
+  <button id="baixarJson">Baixar JSON</button>
+
+  <script>
+    let programasJSON = [];
+    let proximoID = 1; // Variável para controlar o próximo ID
+
+    // Função para carregar o JSON salvo no localStorage
+    function carregarJSON() {
+      const jsonSalvo = localStorage.getItem('programasInstalados');
+      if (jsonSalvo) {
+        programasJSON = JSON.parse(jsonSalvo);
+        
+        // Atualiza o próximo ID com base no maior ID existente
+        if (programasJSON.length > 0) {
+          proximoID = Math.max(...programasJSON.map(p => p.id)) + 1;
+        }
+
+        atualizarTabela();
+        document.getElementById('jsonOutput').textContent = JSON.stringify(programasJSON, null, 2);
+      }
+    }
+
+    // Função para salvar o JSON no localStorage
+    function salvarJSON() {
+      localStorage.setItem('programasInstalados', JSON.stringify(programasJSON));
+    }
+
+    // Função para baixar o JSON como arquivo
+    function baixarJSON() {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(programasJSON, null, 2));
+      const downloadAnchorNode = document.createElement('a');
+      downloadAnchorNode.setAttribute("href", dataStr);
+      downloadAnchorNode.setAttribute("download", "programasInstalados.json");
+      document.body.appendChild(downloadAnchorNode); // Requerido para Firefox
+      downloadAnchorNode.click();
+      downloadAnchorNode.remove();
+    }
+
+    // Função para ler o arquivo
+    async function lerArquivo(file) {
+      const reader = new FileReader();
+      return new Promise((resolve, reject) => {
+        reader.onload = function(event) {
+          const text = event.target.result;
+          resolve(text);
+        };
+        reader.onerror = reject;
+        reader.readAsText(file);
+      });
+    }
+
+    // Função para verificar duplicatas e adicionar ao JSON
+    function adicionarAoJSON(data) {
+      const linhas = data.split('\n').slice(1); // Ignora cabeçalho
+      linhas.forEach((linha) => {
+        const [name, vendor, version] = linha.trim().split(/\s{2,}/); // Divide pelo espaço entre colunas
+
+        if (name && vendor && version) {
+          // Verificar se o item já existe no JSON (comparação por nome)
+          const existe = programasJSON.some(programa => programa.name === name);
+
+          if (!existe) {
+            // Adiciona ao array JSON com um novo ID
+            programasJSON.push({ id: proximoID++, name, vendor, version });
+          }
+        }
+      });
+    }
+
+    // Função para atualizar a tabela na página
+    function atualizarTabela() {
+      const tabela = document.getElementById('tabelaProgramas').querySelector('tbody');
+      tabela.innerHTML = ''; // Limpa a tabela
+
+      programasJSON.forEach((programa) => {
+        const novaLinha = tabela.insertRow();
+        novaLinha.insertCell(0).textContent = programa.id;
+        novaLinha.insertCell(1).textContent = programa.name;
+        novaLinha.insertCell(2).textContent = programa.vendor;
+        novaLinha.insertCell(3).textContent = programa.version;
+      });
+    }
+
+    // Evento de clique para ler o arquivo
+    document.getElementById('inputArquivo').addEventListener('change', async function(event) {
+      const files = event.target.files;
+      for (let file of files) {
+        const data = await lerArquivo(file);
+        adicionarAoJSON(data);
+        atualizarTabela();
+      }
+
+      // Salva no localStorage
+      salvarJSON();
+
+      // Exibe o JSON na tela
+      document.getElementById('jsonOutput').textContent = JSON.stringify(programasJSON, null, 2);
+    });
+
+    // Evento de clique para baixar o JSON
+    document.getElementById('baixarJson').addEventListener('click', function() {
+      baixarJSON();
+    });
+
+    // Carrega o JSON do localStorage ao iniciar
+    carregarJSON();
+  </script>
+</body>
+</html>

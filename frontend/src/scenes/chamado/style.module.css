@@ -1,0 +1,287 @@
+.containerDivCards {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    max-width: 85vw;
+}
+
+.containerFirstCard {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    width: 70vw;
+}
+
+.containerSecondCard {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    width: 30vw;
+}
+
+.containerChamadoView {
+    display: flex;
+    flex-direction: column;
+   
+    gap: 12px;
+}
+
+.titleAssunto {
+    font-size: 22px;
+    color: #b20000;
+    font-weight: bold;
+    padding: 10px;
+}
+
+.autor {
+    display: flex;
+    align-items: center;
+}
+
+.descri{
+    
+    border: 1px solid #b2000025;
+    border-radius: 2px;
+}
+.span {
+    font-size: 15px;
+    color: #b20000;
+    font-weight: bold;
+    padding: 10px;
+}
+.containerListaTarefas {
+    display: flex;
+    flex-direction: column;
+
+    padding: 16px;
+    gap: 10px;
+ 
+    
+   
+}
+
+.containerListaTarefas h3 {
+    color: #b20000; /* Cor do título */
+}
+
+.containerListaTarefas label {
+    color: #b20000;
+    font-size: 19px;
+    margin: 8px 0; /* Espaçamento entre os checkboxes */
+}
+
+
+.containerListaTarefas span{
+    font-size: 18px;
+}
+.containerCheckboxes {
+    display: flex;
+    flex-direction: row; /* Alinha os checkboxes verticalmente */
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px; /* Espaçamento superior */
+}
+
+.containerCheckboxes label {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px; /* Espaçamento entre os checkboxes */
+    font-size: 17px; /* Tamanho da fonte */
+    color: #b20000; /* Cor do texto */
+}
+
+.checkBox {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #b20000; /* Cor da borda */
+    border-radius: 4px; /* Bordas arredondadas */
+    margin-right: 8px; /* Espaçamento entre o checkbox e o texto */
+    cursor: pointer; /* Muda o cursor ao passar o mouse */
+    -webkit-appearance: none; /* Remove a aparência padrão */
+    appearance: none; /* Remove a aparência padrão */
+}
+
+.checkBox:checked {
+
+   
+    background-color: #b20000; /* Cor de fundo também */
+    border: none; /* Remove a borda quando marcado (opcional) */
+}
+
+.titleLista {
+    font-size: 25px;
+    padding: 5px;
+
+}
+
+.addContainer{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.editPrintContainer{
+    display: flex;
+    justify-content: space-around;
+    gap: 15px;
+    min-width:  15vw;
+    
+}
+
+
+.editPrintContainer div{
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: #b20000;
+    font-size: 18px;
+    cursor: pointer;
+}
+.editPrintContainer span{
+    font-size: 18px;
+}
+.editPrintContainer div:hover{
+    color: #7E0000 ;
+}
+.editPrintContainer span:hover{
+    color: #7E0000 ;
+}
+
+
+.statusContainer{
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    min-width: 350px;
+    padding: 10px;
+    
+}
+.statusContainer div{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+   gap: 5px;
+  
+}
+
+.statusContainer span{
+    font-size: 18px;
+}
+
+.responsesCard{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 10px;
+    font-size: 15px;
+}
+.responsesCard span{
+    font-size: 15px;
+}
+.responsesCardDivFirst{
+    display: flex;
+    justify-content: space-between;
+    
+
+
+   
+}
+.responsesCardDivTwo{
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.divisao{
+    border-bottom: 1px solid #b20000;
+    width: 100%;
+}
+
+
+.reactQuill {
+    height: 200px;
+    color: #b20000;
+    margin-bottom: 50px;
+  }
+  
+
+  .spanDetalhes{
+    font-size: 14px;
+    color: gray;
+    
+  }
+
+  .containerDivFirst{
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding: 10px 0 20px 0;
+    width: 100%;
+}
+.containerDivTwo{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  
+    width: 100%;
+
+
+}
+.containerDivTwo div{
+    display: flex;
+    justify-content: flex-start;
+    gap: 20px;
+    padding: 5px;
+    width: 100%;
+
+}
+
+.selectDetalhes {
+    border: none;
+    outline: none;
+    color: gray;
+    cursor: pointer;
+    border-bottom: solid 1px gray;
+
+}
+
+.selectDetalhes:hover {
+    color: rgb(83, 83, 83);
+}
+
+.disabled {
+    color: gray;
+    pointer-events: none;  /* Impede qualquer interação com o elemento */
+    cursor: no-drop;   /* Muda o cursor para indicar que está desabilitado */
+  }
+
+  .buttonsDetalhes{
+    display: flex;
+    justify-content: space-around !important;
+    align-items: center;
+
+
+    margin: 30px 0 30px 0;
+  }
+
+
+  .buttonPadrao {
+  
+    background-color: #B20000;
+    
+    width: 40%;
+    min-height: 35px;
+    font-size: 15px;
+    
+    text-align: center;
+    color: #ffff;
+    border-style: none;
+    border-radius: 5px;
+    outline: none;
+    cursor: pointer;
+  }
+
+  .buttonPadrao:hover {
+    background-color: #7E0000;
+  }

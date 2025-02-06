@@ -12,6 +12,19 @@ const usersRouter = require('./routes/users');
 
 const usersTarefa = require('./routes/routeTarefa')
 const usersLogin = require('./routes/login')
+
+//Novas rotas service desk 2.0
+const usuarioRouter =require('./routes/usuariosRoute')
+const ticketRouter = require('./routes/ticketsRoute')
+const listaTarefaRouter = require('./routes/listaTarefaRoute')
+const categoriaRouter = require('./routes/categoriasRoute')
+const relatorioInventarioRouter = require('./routes/relatorioInventarioRoute')
+const maquinaRouter = require('./routes/maquinaRoute')
+const historicoStatusRouter = require('./routes/historicoStatusRoute')
+const respostaRouter = require('./routes/respostaRoute')
+const statusRouter = require('./routes/statusRoute') 
+const emailService = require('./services/emailService')
+
 const app = express();
 
 
@@ -27,8 +40,8 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 // Configuração do CORS
 const corsOptions = {
-  origin: 'http://servicedesk:3000', // Substitua pelo domínio do seu frontend
-  //origin: 'http://localhost:3000', // Substitua pelo domínio do seu frontend
+ // origin: 'http://servicedesk:3000', // Substitua pelo domínio do seu frontend
+  origin: 'http://localhost:3000', // Substitua pelo domínio do seu frontend
 
   credentials: true, // Permite que cookies e outras credenciais sejam enviadas
 };
@@ -52,6 +65,24 @@ app.use('/users', usersRouter);
 app.use('/tarefas', usersTarefa)
 app.use('/login', usersLogin)
 
+//Novas rotas service desk 2.0
+app.use('/usuarios', usuarioRouter)
+app.use('/tickets', ticketRouter)
+app.use('/listaTarefa', listaTarefaRouter)
+app.use('/categoria', categoriaRouter)
+app.use('/relatorioInventario', relatorioInventarioRouter)
+app.use('/maquinas', maquinaRouter)
+app.use('/historicoStatus', historicoStatusRouter)
+app.use('/resposta', respostaRouter)
+app.use('/status', statusRouter)
+
+
+// Verificar e-mails periodicamente (a cada 5 minutos)
+setInterval(async () => {
+  console.log('Verificando novos e-mails...');
+  await emailService.checkEmails();
+},  1 * 30 * 1000); // 5 minutos em milissegundos
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
@@ -63,7 +94,7 @@ app.use(function(req, res, next) {
 app.use(function(err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
+  res.locals.error = req.app.get('env') === 'test' ? err : {};
 
   // render the error page
   res.status(err.status || 500);

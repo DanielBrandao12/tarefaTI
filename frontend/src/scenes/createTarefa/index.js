@@ -5,10 +5,11 @@ import './styleAlert.css';
 import api from '../../services/api';
 import './style.css';
 import Menu from '../../components/menu';
-import Painel from '../../components/painel';
+import Header from '../../components/header';
 import ModalConfirm from '../../components/modalConfirm';
 import Cookies from 'js-cookie';
 import { jwtDecode } from "jwt-decode";
+import PaginaPadrao from '../../components/paginaPadrao';
 
 function CreateTarefa() {
 
@@ -49,8 +50,9 @@ function CreateTarefa() {
         try {
           const decodedToken = jwtDecode(token);
         
-          setIdUser(decodedToken.id)
-          setUserLogado(decodedToken.nome)
+          setIdUser(decodedToken.id_usuario)
+          setUserLogado(decodedToken.nome_completo)
+       
         } catch (error) {
           console.error('Erro ao decodificar o token:', error);
         }
@@ -274,90 +276,8 @@ function CreateTarefa() {
     
 
     return (
-        <>
-            <main className="container-main">
-                <Menu />
-                <Painel >
-                    <header className='headerButton'>
-                        <button className='button-padrao' onClick={() => toggleForm('flex')}>Criar Tarefa</button>
-                    </header>
-                    <div className='sectionPainel'>
-                        <div className='container-filter'>
-                            <div className='title-filter'>
-                                <h1>Lista de Tarefas</h1>
-
-                            </div>
-                            <div className='filter'>
-                                <strong>Exibir: </strong>
-                                <select className='inputs' onChange={(event) => setPrioridadeNew(event.target.value)}>
-                                    <option value="">Todos</option>
-                                    <option value="Prioridade Alta">Prioridade Alta</option>
-                                    <option value="Prioridade Média">Prioridade Média</option>
-                                    <option value="Prioridade Baixa">Prioridade Baixa</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div className='container-scroll'>
-                            {dadosFiltrados.length > 0 ?
-                                dadosFiltrados.map((item) => (
-                                    <div key={item.id} className='container-tarefa' >
-
-                                        <div className='container-tarefa-check'>
-                                                {
-                                                    item.nivel_prioridade === 'Prioridade Alta' &&
-                                                     <h2 className='textPrioridade' style={{backgroundColor: 'rgba(126, 0, 0)'}} >{item.nivel_prioridade}</h2> 
-                                                }
-                                                {
-                                                    item.nivel_prioridade === 'Prioridade Média' &&
-                                                     <h2 className='textPrioridade' style={{backgroundColor: '#a4ad1e'}} >{item.nivel_prioridade}</h2> 
-                                                }
-                                                {
-                                                    item.nivel_prioridade === 'Prioridade Baixa' &&
-                                                     <h2 className='textPrioridade' style={{backgroundColor: '#174e12'}} >{item.nivel_prioridade}</h2> 
-                                                }
-                                            <div className='divTitle'>
-
-                                            <span onClick={() => editTarefa(item.id, item.nome, item.tarefa, item.nivel_prioridade, item.observacao)}>Editar</span>
-                                            <span onClick={() => confirmaCloncuir(item.id)}>Concluir</span>
-                                            </div>
-                                        </div>
-                                        <div className='container-info-tarefa'>
-                                            <div className='numeroTarefa'>
-                                                <div>
-                                                    <strong>Nº: </strong>
-                                                    <span>{item.id}</span>
-
-                                                </div>
-                                                <div>
-                                                    <strong>Data e Hora criação: </strong>
-                                                    <span>{formatDateTime(item.data_criacao)}</span>
-                                                </div>
-                                            </div>
-                                            <div className='info-first'>
-
-                                                <div>
-                                                    <strong>Nome: </strong>
-                                                    <span>{item.nome}</span>
-                                                </div>
-
-
-                                            </div>
-                                            <div >
-                                                <strong>Descrição: </strong>
-                                                <div className='container-descricao'>{formatTarefa(item.tarefa)}</div>
-                                            </div>
-                                            <div>
-                                                <strong>Observação: </strong>
-                                                <span>{item.observacao}</span>
-                                            </div>
-
-                                        </div>
-                                    </div>
-                                )) : <div>Nenhuma tarefa encontrada.</div>}
-                        </div>
-                    </div>
-                </Painel>
-            </main>
+        <PaginaPadrao>
+      
 
             <div className='container-form' style={{ display: changeCreate }}>
 
@@ -415,7 +335,7 @@ function CreateTarefa() {
             </div>
 
             <ModalConfirm  value={msg} container={alertConfirm}/>
-        </>
+        </PaginaPadrao>
     );
 }
 

@@ -1,0 +1,44 @@
+.containerInputAdd {
+    display: flex;
+    justify-content: flex-start;
+    padding: 15px;
+   
+
+}
+
+.inputConfig {
+
+    min-width: 50%;
+    border: 1px solid #b20000;
+    border-radius: 5px;
+    padding: 10px;
+    font-size: 15px;
+    color: #b20000;
+}
+
+.inputConfig:focus {
+    outline: none;
+    border-color: #900000;
+    /* cor mais escura ao focar */
+}
+
+.tdIcones{
+   
+    
+    width: 100px;
+    
+
+    
+   
+}
+
+.icon{
+    margin-left: 10px;
+    margin-right: 10px;
+    position: relative;
+    cursor: pointer;
+}
+
+.icon:hover{
+    font-size: 22px;
+}

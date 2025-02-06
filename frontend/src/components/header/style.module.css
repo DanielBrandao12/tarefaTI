@@ -1,0 +1,235 @@
+
+
+.containerPainel  {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    
+    width: 86vw;
+    height: 10vh;
+    border-bottom: 1px #b20000 solid;
+    box-shadow: 2px 2px 2px 1px rgba(126, 0, 0, 0.1)
+}
+.containerButtonchamado{
+    display: flex;
+    justify-content: flex-start;
+    
+}
+.containerCircle{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 32px;
+    height: 32px;
+
+    border-radius: 100%;
+    border: 1px #7E0000 solid;
+
+    background-color: #b20000;
+    color: #fff;
+    cursor: pointer;
+}
+
+.containerDadosUser {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+   
+    width: 200px;
+   
+}
+
+
+.user{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-right: 30px;
+    color: #b20000;
+    cursor: pointer;
+
+}
+
+.user span{
+    font-size: 18px;
+}
+
+
+/*Melhorar isso deppois*/
+.containerEditUser {
+    display: none; /* Inicialmente escondido */
+    flex-direction: column;
+    align-items: center;
+    position: absolute;
+    top: 6rem; /* Ajusta a altura com base na tela */
+    right: 0;
+    
+    width: 200px;
+    height: 200px;
+    background-color: #fff;
+    box-shadow: 5px 3px 7px 6px rgba(126, 0, 0, 0.3);
+    z-index: 9999;
+}
+
+.titleOption {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    width: 100%;
+    
+  
+    padding: 0 0 5px;
+    border-bottom: 1px #b20000 solid;
+
+    height: 40px;
+  
+    gap: 10px;
+    font-size: 14px;
+    color: #b20000;
+
+    cursor: pointer;
+}
+
+
+
+.titleOptionLogout {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    background-color: #b20000;
+  
+    padding: 0 0 5px;
+   
+
+    height: 40px;
+  
+    gap: 10px;
+    font-size: 14px;
+    color: #fff;
+
+    cursor: pointer;
+}
+
+.titleOption div, .titleOptionLogout div{
+    margin-left: 10px;
+}
+
+.titleOption p, .titleOptionLogout p{
+    font-weight: bold;
+}
+
+.containerEditUser .titleOption:hover{
+    background-color: #b20000;
+    color: #fff;
+        
+}
+.containerEditUser .titleOptionLogout:hover{
+    background-color: #fff;
+    color: #b20000;
+    border-bottom: 1px #b20000 solid;
+    border-top: 1px #b20000 solid;
+ 
+
+    
+}
+
+.containerFormUser {
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Centraliza os itens no eixo vertical */
+    align-items: center;
+    width: 500px;
+    gap: 10px;
+
+
+}
+.blocoLabelInput{
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    gap: 10px;
+    width: 80%;
+
+    
+    
+}
+.containerFormUser h1{
+    color: #7E0000;
+}
+
+.containerFormUser input, 
+.containerFormUser select {
+    width: 100%;
+    max-width: 400px;
+    padding: 8px; /* Adiciona um padding uniforme */
+    box-sizing: border-box; /* Garante que padding e borda não alterem a largura total */
+    border: 1px solid #b20000; /* Define uma borda uniforme para ambos */
+    font-size: 16px; /* Mantém o mesmo tamanho de fonte para ambos */
+}
+
+.containerFormUser label {
+    margin-top: 5px;
+    font-size: 18px;
+    color: #7E0000;
+}
+
+.containerTitleUser {
+    padding: 10px;
+    margin-bottom: 15px;
+}
+
+.buttonPadrao {
+    margin-top: 10px;
+    background-color: #B20000;
+    min-width: 150px;
+    width: auto;
+    min-height: 40px;
+    font-size: 15px;
+    
+    text-align: center;
+    color: #ffff;
+    border-style: none;
+    border-radius: 5px;
+    padding: 0 10px 0 10px;
+    cursor: pointer;
+  }
+
+  .containerMessage {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    width: 600px;
+    height: 300px;
+  }
+  
+  .containerMessage h1{
+    color: #7E0000;
+    font-size: 2.5rem;
+  }
+
+  .containerMessage span{
+    font-size: 2rem;
+  }
+/* Define um top mínimo para telas menores */
+@media (max-height: 500px) {
+
+    .containerPainel{
+        width: 100vw;
+    }
+    .containerEditUser {
+        top: 57px; /* Posição fixa para telas menores */
+    }
+}
+
+/* Opcional: Se você quiser ajustar o top em telas intermediárias */
+@media (min-height: 550px) and (max-height: 800px) {
+    .containerEditUser {
+        top: 4rem; /* Ajuste para telas entre 550px e 800px */
+    }
+}

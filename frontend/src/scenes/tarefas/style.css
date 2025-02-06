@@ -10,14 +10,7 @@
     flex-direction: column;
 }
 
-.container-painel header {
-    display: flex;
-    align-items:center;
-   justify-content: center;
-    width: 80vw;
-    height: 15vh;
-    border-bottom: 1px #B20000 solid;
-}
+
 .container-painel header button {
     margin-left: 35px;
     background-color: #B20000;

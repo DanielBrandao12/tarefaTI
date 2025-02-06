@@ -5,7 +5,7 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 
 import Menu from '../../components/menu';
-import Painel from '../../components/painel';
+import Header from '../../components/header';
 
 import api from '../../services/api';
 
@@ -77,7 +77,7 @@ function Tarefas() {
   return (
     <main className="container-main">
       <Menu />
-      <Painel>
+      <Header>
         <header className='headerTitle'>
           <h1>Lista de Tarefas Concluídas</h1>
         </header>
@@ -137,7 +137,7 @@ function Tarefas() {
             )}
           </div>
         </section>
-      </Painel>
+      </Header>
     </main>
   );
 }
