@@ -256,7 +256,7 @@ const enviarRespostaAutomatica = async (remetente, codigoTicket) => {
             attachments: [
                 {
                     filename: 'logo.png', // Nome do arquivo
-                    path: '../public/images/logo.png', // Caminho local do arquivo
+                    path: '../backend/public/images/logo.png', // Caminho local do arquivo
                     cid: 'logo' // Identificador usado no `src="cid:logo"`
                 }
             ]
