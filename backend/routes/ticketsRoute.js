@@ -20,7 +20,7 @@ router.get('/verificar-emails', async (req, res) => {
 
 router.post('/createTicket', controller.createTickets)
 router.put('/updateTicket', controller.updateTicket)
-router.get('/', controller.getTickets)
+router.get('/',notLoggedMiddlewares, controller.getTickets)
 router.get('/:id',notLoggedMiddlewares,  controller.getTicketsId)
 router.get('/listaTarefa/:id', controller.getListaTarefaTicket)
 

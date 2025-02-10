@@ -41,6 +41,7 @@ function Chamado() {
   const [nivelPrioridade, setNivelPrioridade] = useState()
   const [editOk, setEditOk] = useState(false)
   const [userAtt, setUserAtt] = useState()
+  const [anexos, setAnexos] = useState([])
   // Funções para controlar o Popup
   const handleOpenPopup = (mensagem) => {
     setMessage(mensagem);
@@ -65,6 +66,57 @@ function Chamado() {
     };
     fetchChamado();
   }, [id_ticket, resposta, editOk]);
+
+
+
+//
+useEffect(() => {
+  const fetchAnexos = async () => {
+    try {
+      const response = await api.get(`/anexo/${id_ticket}`);
+      console.log(response);
+      // Atualiza o estado com os dados dos anexos
+      setAnexos(response.data); // Ajuste conforme a resposta esperada
+    } catch (error) {
+      console.error("Erro ao buscar anexos:", error);
+    }
+  };
+
+  fetchAnexos();
+}, [id_ticket]); // A dependência de id_ticket garante que a função seja chamada quando id_ticket mudar
+
+const downloadFile = async (id) => {
+  try {
+    // Faz a requisição para pegar o arquivo com responseType como 'arraybuffer'
+    const response = await api.get(`/anexo/${id}`, { responseType: 'arraybuffer' });
+
+    // Cria um Blob a partir dos dados binários
+    const fileBlob = new Blob([response.data], { type: response.headers['content-type'] });
+
+    // Cria uma URL para o arquivo
+    const fileUrl = window.URL.createObjectURL(fileBlob);
+
+    // Cria um elemento de link para o download
+    const link = document.createElement('a');
+    link.href = fileUrl;
+
+    // Pega o nome do arquivo do cabeçalho 'Content-Disposition' 
+    const fileName = response.headers['content-disposition']
+      .split('filename=')[1]
+      .replace(/"/g, ''); // Remove as aspas do nome do arquivo
+
+    link.setAttribute('download', fileName); // Define o nome do arquivo para download
+
+    // Adiciona o link à página e simula um clique para iniciar o download
+    document.body.appendChild(link);
+    link.click();
+
+    // Remove o link após o download
+    document.body.removeChild(link);
+  } catch (error) {
+    console.error('Erro ao baixar o anexo', error);
+  }
+};
 
   // Busca a lista de tarefas associadas ao chamado
   /*
@@ -440,6 +492,23 @@ const salvarEdicao = async () => {
                     dangerouslySetInnerHTML={{ __html: chamado.descricao }}
                   />
                 </p>
+                <div>
+      <h3>Anexos:</h3>
+      {anexos && anexos.length > 0 ? (
+        <ul>
+          {anexos.map((anexo) => (
+            <li key={anexo.id}>
+              <span>{anexo.nome}</span>
+              <button onClick={() => downloadFile(anexo.id)}>
+                Baixar
+              </button>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p>Nenhum anexo encontrado.</p>
+      )}
+    </div>
               </div>
             </div>
           </Card>

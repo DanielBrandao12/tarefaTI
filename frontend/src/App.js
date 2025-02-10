@@ -13,13 +13,14 @@ import Relatorio from './scenes/relatorio';
 import CriarChamadoUser from './scenes/newticket';
 import RelatorioInventario from './scenes/relatorioInventario';
 import Status from './scenes/status';
+import Home from './scenes/home'
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
       <Route path="/login" element={<Login />} />
-        <Route path="/" element={<PrivateRoute element={<CreateTarefa />} />} />
+        <Route path="/" element={<PrivateRoute element={<Home />} />} />
         <Route path="/tarefas" element={<PrivateRoute element={<Tarefas />} />} />
         <Route path="/t/:id_ticket" element={<PrivateRoute element={<Chamado />} />} />
         <Route path="/chamados" element={<PrivateRoute element={<Chamados />} />} />

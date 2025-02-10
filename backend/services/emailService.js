@@ -2,7 +2,7 @@ const Imap = require('imap-simple');
 const { simpleParser } = require('mailparser');
 const { imapConfig } = require('../config/imapConfig');
 const transporter = require('../config/nodemailerConfig');
-const { Tickets, Historico_status, Respostas } = require('../database/models');
+const { Tickets, Historico_status, Respostas, Anexo } = require('../database/models');
 const cheerio = require('cheerio');
 
 const checkEmails = async () => {
@@ -35,12 +35,24 @@ const checkEmails = async () => {
                 const parsed = await simpleParser(all.body);
                 console.log(`Processando e-mail de: ${parsed.from?.text || 'Desconhecido'}`);
 
+                // Processa anexos
+                const anexos = parsed.attachments.map(att => ({
+                    nome: att.filename,
+                    tipo: att.contentType,
+                    tamanho: att.size,
+                    conteudoBase64: att.content.toString('base64') // Converte para Base64
+                }));
+                    
+                console.log(anexos.tamanho)
                 const chamado = {
                     remetente: parsed.from?.text || 'Desconhecido',
                     assunto: parsed.subject || 'Sem assunto',
-                    mensagem: parsed.html || 'Sem conteúdo no corpo do e-mail',
+                    mensagem: parsed.html || 'Sem mensagem',
+                    anexos: anexos || 'Sem anexo'
                 };
-            
+
+                //console.log(chamado.mensagem);
+                
                 const codigoTicket = extrairCodigoTicket(chamado.assunto);
 
                 if (codigoTicket) {
@@ -50,7 +62,7 @@ const checkEmails = async () => {
                         console.log(`O ticket ${codigoTicket} já existe. Não será criado um novo chamado.`);
                         console.log(chamado.mensagem)
                         const mensagem = getDivFirst(chamado.mensagem);
-                        await createResposta(ticketExistente.dataValues.id_ticket, mensagem);
+                        await createResposta(ticketExistente.dataValues.id_ticket, mensagem, chamado.anexos);
                         //Quando vem com assinatura e caracteres eles traz os corpo de email todo
                         //tratar para pegar apenas o texto da resposta
                         await connection.addFlags(message.attributes.uid, ['\\Seen']);
@@ -94,7 +106,7 @@ const getDivFirst = (mensagem) =>{
     return resposta.trim();
 }
 
-const createResposta = async (id_ticket, descricao) => {
+const createResposta = async (id_ticket, descricao, anexo) => {
   try {
       
 
@@ -105,7 +117,7 @@ const createResposta = async (id_ticket, descricao) => {
           id_ticket
       })
 
-
+      createAnexo(null, respostaCriada.id_resposta, anexo)
    
 
   } catch (error) {
@@ -144,7 +156,7 @@ const parseRemetente = (remetente) => {
 
 const criarChamadoPorEmail = async (emailData) => {
     try {
-        const { remetente, assunto, mensagem } = emailData;
+        const { remetente, assunto, mensagem, anexos } = emailData;
         const { nome, email } = parseRemetente(remetente);
 
         let codigo_ticket;
@@ -178,9 +190,11 @@ const criarChamadoPorEmail = async (emailData) => {
             id_usuario: ticketData.id_usuario,
             id_status: ticketData.idStatus
         });
-
+        console.log(anexos)
         createHistorico(ticketCriado.id_ticket, ticketData.idStatus, ticketData.id_usuario);
-
+        if(anexos) {
+            createAnexo(ticketCriado.id_ticket, null , anexos)
+        }
         return {
             message: 'Chamado criado com sucesso!',
             ticketCriado
@@ -192,6 +206,25 @@ const criarChamadoPorEmail = async (emailData) => {
         };
     }
 };
+
+const createAnexo = async (idTicket, idResposta, dadosAnexo) => {
+
+
+ const anexos = dadosAnexo.map(async (anexo) => {
+
+    await Anexo.create({
+        nome: anexo.nome,
+        tipo: anexo.tipo,
+        arquivo: anexo.conteudoBase64,
+        ticket_id: idTicket || null,
+        resposta_id: idResposta || null
+    })
+
+
+ }) 
+
+    console.log(anexos)
+}
 
 const getTicketPorCodigo = async (codigoTicket) => {
     if (!codigoTicket) return null;
@@ -224,7 +257,7 @@ const verificarCodigoUnico = async (codigo) => {
 const enviarRespostaAutomatica = async (remetente, codigoTicket) => {
     try {
         await transporter.sendMail({
-            from: 'servicedesk@fatecbpaulista.edu.br',
+            from: 'servicedesk2@fatecbpaulista.edu.br',
             to: remetente,
             subject: `Chamado Criado - ${codigoTicket}`,
             html: `
