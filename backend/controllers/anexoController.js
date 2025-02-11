@@ -29,4 +29,37 @@ const getAnexoId = async (req, res) => {
     }
 };
 
-module.exports = { getAnexoId };
+const getAnexos = async (req, res) => {
+    try {
+      const { id } = req.params;
+  
+      // Busca o anexo no banco de dados
+      const anexo = await Anexo.findByPk(id);
+  
+      if (!anexo) {
+        return res.status(404).json({ error: 'Anexo não encontrado' });
+      }
+  
+      // Pegamos os dados do anexo
+      const { arquivo, tipo, nome } = anexo;
+  
+      // Configura os cabeçalhos corretos para forçar o download
+      res.setHeader('Content-Type', tipo);
+      res.setHeader('Content-Disposition', `attachment; filename="${nome}"`);
+      res.setHeader('Content-Length', arquivo.length);
+  
+      // Envia o arquivo diretamente, sem converter novamente
+      res.send(arquivo);
+    } catch (error) {
+      console.error('Erro ao buscar anexo:', error);
+      res.status(500).json({ error: 'Erro interno do servidor' });
+    }
+  };
+  
+  
+  
+  
+module.exports = { 
+    getAnexoId,
+    getAnexos
+ };

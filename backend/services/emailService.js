@@ -40,9 +40,9 @@ const checkEmails = async () => {
                     nome: att.filename,
                     tipo: att.contentType,
                     tamanho: att.size,
-                    conteudoBase64: att.content.toString('base64') // Converte para Base64
-                }));
-                    
+                    arquivo: att.content // Não converta para base64 aqui
+                  }));
+
                 console.log(anexos.tamanho)
                 const chamado = {
                     remetente: parsed.from?.text || 'Desconhecido',
@@ -190,7 +190,7 @@ const criarChamadoPorEmail = async (emailData) => {
             id_usuario: ticketData.id_usuario,
             id_status: ticketData.idStatus
         });
-        console.log(anexos)
+        
         createHistorico(ticketCriado.id_ticket, ticketData.idStatus, ticketData.id_usuario);
         if(anexos) {
             createAnexo(ticketCriado.id_ticket, null , anexos)
@@ -208,23 +208,29 @@ const criarChamadoPorEmail = async (emailData) => {
 };
 
 const createAnexo = async (idTicket, idResposta, dadosAnexo) => {
-
-
- const anexos = dadosAnexo.map(async (anexo) => {
-
-    await Anexo.create({
-        nome: anexo.nome,
-        tipo: anexo.tipo,
-        arquivo: anexo.conteudoBase64,
-        ticket_id: idTicket || null,
-        resposta_id: idResposta || null
-    })
-
-
- }) 
-
-    console.log(anexos)
-}
+    try {
+      // Mapeia os anexos e cria as promessas para inserção no banco
+      const anexosPromises = dadosAnexo.map((anexo) => {
+        return Anexo.create({
+          nome: anexo.nome,
+          tipo: anexo.tipo,
+          arquivo: anexo.arquivo,
+          ticket_id: idTicket || null,
+          resposta_id: idResposta || null
+        });
+      });
+  
+      // Aguarda todas as promessas de criação de anexo
+      const anexosCriados = await Promise.all(anexosPromises);
+  
+      console.log('Anexos criados com sucesso:', anexosCriados);
+      return anexosCriados;
+    } catch (error) {
+      console.error('Erro ao criar anexos:', error);
+      throw new Error('Erro ao criar anexos');
+    }
+  };
+  
 
 const getTicketPorCodigo = async (codigoTicket) => {
     if (!codigoTicket) return null;
