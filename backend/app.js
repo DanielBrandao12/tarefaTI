@@ -24,6 +24,7 @@ const historicoStatusRouter = require('./routes/historicoStatusRoute')
 const respostaRouter = require('./routes/respostaRoute')
 const statusRouter = require('./routes/statusRoute') 
 const emailService = require('./services/emailService')
+const anexoRouter = require('./routes/anexoRoute')
 
 const app = express();
 
@@ -75,7 +76,7 @@ app.use('/maquinas', maquinaRouter)
 app.use('/historicoStatus', historicoStatusRouter)
 app.use('/resposta', respostaRouter)
 app.use('/status', statusRouter)
-
+app.use('/anexo', anexoRouter)
 
 // Verificar e-mails periodicamente (a cada 5 minutos)
 setInterval(async () => {
