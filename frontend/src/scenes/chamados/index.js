@@ -61,7 +61,6 @@ useEffect(() => {
   return () => clearInterval(interval);
 }, []);
 
-
   useEffect(() => {
     if (usuario && chamados.length > 0) {
       atualizarContadores(chamados);
@@ -128,37 +127,41 @@ useEffect(() => {
     navigate(`/t/${chamado.id_ticket}`);
   };
 
-// Buscar nomes dos usuários atribuídos
-useEffect(() => {
-  const fetchUserAtribuido = async () => {
-    try {
-      // Cria uma cópia dos chamados para não mutar o estado diretamente
-      const chamadosAtualizados = [...chamados];
+  //buscar no do usuário atribuido ao ticket
 
-      // Cria um array de promessas para buscar os usuários simultaneamente
-      const promessas = chamadosAtualizados.map(async (chamado) => {
-        if (chamado.atribuido_a) {
-          const response = await api.get(`/usuarios/${chamado.atribuido_a}`);
-          chamado.nome_usuarioAtribuido = response.data.nomeUser.nome_usuario;
-        }
-        return chamado;
-      });
+  useEffect(() => {
+    const fetchUserAtribuido = async () => {
+      try {
+        // Cria uma cópia dos chamados para não mutar o estado diretamente
+        const chamadosAtualizados = [...chamados];
 
-      // Aguarda todas as requisições terminarem
-      const chamadosComUsuarios = await Promise.all(promessas);
+        // Cria um array de promessas para buscar os usuários simultaneamente
+        const promessas = chamadosAtualizados.map(async (chamado) => {
+          if (chamado.atribuido_a) {
+            const response = await api.get(`/usuarios/${chamado.atribuido_a}`);
+            console.log(response)
+            chamado.nome_usuarioAtribuido = response.data.nomeUser.nome_usuario;
+          }
+          return chamado;
+        });
 
-      // Atualiza o estado de chamados com os nomes dos usuários
-      setChamados(chamadosComUsuarios);
-    } catch (error) {
-      console.error("Erro ao buscar usuário:", error);
+        // Aguarda todas as requisições terminarem
+        const chamadosComUsuarios = await Promise.all(promessas);
+
+        // Atualiza o estado de chamados com os nomes dos usuários
+        setChamados(chamadosComUsuarios);
+      } catch (error) {
+        console.error("Erro ao buscar usuário:", error);
+      }
+    };
+
+    // Verifica se chamados não está vazio e se a requisição já foi feita
+    if (chamados.length > 0 && !hasFetched.current) {
+      fetchUserAtribuido();
+      // Marca como verdadeiro para impedir novas requisições
+      hasFetched.current = true;
     }
-  };
-
-  // Verifica se chamados não está vazio
-  if (chamados.length > 0) {
-    fetchUserAtribuido();
-  }
-}, [chamados]); // Isso vai ser executado sempre que o estado "chamados" mudar
+  }, [chamados]); // Isso vai ser executado sempre que o estado "chamados" mudar
 
   return (
     <PaginaPadrao>
