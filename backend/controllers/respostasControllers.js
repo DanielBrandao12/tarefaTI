@@ -55,9 +55,9 @@ const createResposta = async (req, res) => {
 
 const enviarRespostaAutomatica = async (remetente, codigoTicket, mensagem) => {
     try {
-  
+        console.log(mensagem)
         await transporter.sendMail({
-            from: 'servicedesk@fatecbpaulista.edu.br',
+            from: 'servicedesk2@fatecbpaulista.edu.br',
             to: remetente,
             subject: `Atualização do chamado - ${codigoTicket}`,
             html: mensagem

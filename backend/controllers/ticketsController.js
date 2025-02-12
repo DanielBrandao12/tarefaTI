@@ -91,7 +91,7 @@ const createTickets = async (req, res) => {
         createHistorico( ticketCriado.id_ticket, idStatus, id_usuario)
 
         await transporter.sendMail({
-            from: 'servicedesk@fatecbpaulista.edu.br',
+            from: 'servicedesk2@fatecbpaulista.edu.br',
             to: ticketCriado.email,
             subject: `Chamado Criado - ${ticketCriado.codigo_ticket}`,
             text: `Agradecemos por entrar em contato! Seu chamado foi registrado com sucesso e recebeu o código: ${ticketCriado.codigo_ticket}. Para acompanhar o andamento ou enviar novas informações, basta responder a este e-mail. Estamos à disposição para ajudar!`

@@ -5,15 +5,38 @@ const transporter = require('../config/nodemailerConfig');
 const { Tickets, Historico_status, Respostas, Anexo } = require('../database/models');
 const cheerio = require('cheerio');
 
+const conectarIMAP = async () => {
+    try {
+        console.log('Tentando conectar ao IMAP...');
+        const connection = await Imap.connect(imapConfig);
+        
+        // Tratamento de erros na conexão
+        connection.on('error', (err) => {
+            console.error('Erro na conexão IMAP:', err);
+        });
+
+        connection.on('close', (hadError) => {
+            console.error('A conexão foi fechada', hadError ? 'devido a um erro' : 'normalmente');
+        });
+
+        return connection;
+    } catch (error) {
+        console.error('Erro ao conectar ao IMAP:', error);
+        console.log('Tentando reconectar em 5 segundos...');
+        await new Promise(resolve => setTimeout(resolve, 5000));
+        return conectarIMAP();
+    }
+};
+
 const checkEmails = async () => {
-    let connection; // Inicializa a variável fora do try
+    let connection;
     try {
         console.log('Iniciando a conexão IMAP...');
-        connection = await Imap.connect(imapConfig);
+        connection = await conectarIMAP();
         console.log('Conexão estabelecida com sucesso!');
 
         await connection.openBox('INBOX');
-        const searchCriteria = ['UNSEEN']; // Buscar apenas e-mails não lidos
+        const searchCriteria = ['UNSEEN'];
         const fetchOptions = { bodies: [''], struct: true };
 
         const messages = await connection.search(searchCriteria, fetchOptions);
@@ -41,18 +64,15 @@ const checkEmails = async () => {
                     tipo: att.contentType,
                     tamanho: att.size,
                     arquivo: att.content // Não converta para base64 aqui
-                  }));
+                }));
 
-                console.log(anexos.tamanho)
                 const chamado = {
                     remetente: parsed.from?.text || 'Desconhecido',
                     assunto: parsed.subject || 'Sem assunto',
                     mensagem: parsed.html || 'Sem mensagem',
-                    anexos: anexos || 'Sem anexo'
+                    anexos: anexos || null
                 };
 
-                //console.log(chamado.mensagem);
-                
                 const codigoTicket = extrairCodigoTicket(chamado.assunto);
 
                 if (codigoTicket) {
@@ -60,11 +80,8 @@ const checkEmails = async () => {
 
                     if (ticketExistente) {
                         console.log(`O ticket ${codigoTicket} já existe. Não será criado um novo chamado.`);
-                        console.log(chamado.mensagem)
                         const mensagem = getDivFirst(chamado.mensagem);
                         await createResposta(ticketExistente.dataValues.id_ticket, mensagem, chamado.anexos);
-                        //Quando vem com assinatura e caracteres eles traz os corpo de email todo
-                        //tratar para pegar apenas o texto da resposta
                         await connection.addFlags(message.attributes.uid, ['\\Seen']);
                         continue;
                     }
@@ -82,11 +99,12 @@ const checkEmails = async () => {
         console.error('Erro ao verificar e-mails:', error);
     } finally {
         if (connection) {
-            await connection.end(); // Garante que a conexão será encerrada
+            await connection.end();
             console.log('Conexão IMAP encerrada com sucesso!');
         }
     }
 };
+
 
 
 const getDivFirst = (mensagem) =>{
@@ -192,8 +210,9 @@ const criarChamadoPorEmail = async (emailData) => {
         });
         
         createHistorico(ticketCriado.id_ticket, ticketData.idStatus, ticketData.id_usuario);
-        if(anexos) {
+        if(anexos.length >0) {
             createAnexo(ticketCriado.id_ticket, null , anexos)
+           // console.log(anexos)
         }
         return {
             message: 'Chamado criado com sucesso!',

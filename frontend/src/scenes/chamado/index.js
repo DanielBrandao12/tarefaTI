@@ -61,16 +61,20 @@ function Chamado() {
         if (response.data.respostas.length > 0) {
           const respostasComAnexos = await Promise.all(
             response.data.respostas.map(async (resposta) => {
-              // Busca os anexos para cada resposta
-              const anexoR = await api.get(`/anexo/${resposta.id_resposta}`);
-              
-              // Inclui os anexos diretamente na resposta
-              return { ...resposta, anexos: anexoR.data };
+              try {
+                // Busca os anexos para cada resposta
+                const anexoR = await api.get(`/anexo/${resposta.id_resposta}`);
+                return { ...resposta, anexos: anexoR.data.length > 0 ? anexoR.data : [] };
+              } catch (error) {
+                console.error(`Erro ao buscar anexos para a resposta ${resposta.id_resposta}:`, error);
+                return { ...resposta, anexos: [] }; // Garante que a resposta será mostrada sem anexos
+              }
             })
           );
           
-          // Agora, todas as respostas terão o campo 'anexos' preenchido
           setRespostas(respostasComAnexos);
+        } else {
+          setRespostas([]); // Garante que o estado não fique indefinido
         }
       } catch (error) {
         console.error("Erro ao buscar tickets:", error);
@@ -79,6 +83,7 @@ function Chamado() {
     fetchChamado();
   }, [id_ticket, resposta, editOk]);
   
+
 
 
 
@@ -457,7 +462,7 @@ const salvarEdicao = async () => {
       id_ticket,
       id_categoria: categoriaNome || chamado.id_categoria,
       nivel_prioridade: nivelPrioridade || chamado.nivel_prioridade,
-      id_status: statusNome || chamado.id_status,
+      id_status: statusNome || null,
       atribuido_a: usuarioAtribuido || chamado.atribuido_a,
       id_usuario: usuario.id,
     };

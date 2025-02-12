@@ -49,6 +49,7 @@ function Header() {
         try {
           const decoded = jwtDecode(token);
           setIdUser(decoded);
+          console.log(idUser)
         } catch (error) {
           console.error('Erro ao decodificar o token:', error);
         }
@@ -335,6 +336,8 @@ function Header() {
       perfil: user.data.nomeUser.perfil,
     })
   }
+
+
   const getUserAll = async () =>{
     const user = await api.get(`/usuarios/`)
 console.log(user.data)
@@ -359,9 +362,9 @@ console.log(user.data)
         />
       </div>
       <div className={styles.containerDadosUser}>
-        <div className={styles.containerCircle}>D</div>
+        <div className={styles.containerCircle}>{idUser ?idUser.nome_usuario.charAt(0).toUpperCase(): null}</div>
         <div className={styles.user} onClick={toggleEditUser}>
-          <span>User 2.0</span>
+          <span>{idUser ? idUser.nome_usuario.toUpperCase(): null}</span>
           <FontAwesomeIcon
             icon={isEditing ? faChevronUp : faChevronDown}
             className="icon"
