@@ -67,12 +67,12 @@ const checkEmails = async () => {
                 }));
 
                 const chamado = {
-                    remetente: parsed.from?.text || 'Desconhecido',
+                    remetente: parsed.from?.text || parsed.from || 'Desconhecido',
                     assunto: parsed.subject || 'Sem assunto',
                     mensagem: parsed.html || 'Sem mensagem',
                     anexos: anexos || null
                 };
-
+                console.log(parsed.from)
                 const codigoTicket = extrairCodigoTicket(chamado.assunto);
 
                 if (codigoTicket) {
