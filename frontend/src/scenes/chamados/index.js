@@ -43,11 +43,26 @@ useEffect(() => {
   const fetchChamados = async () => {
     try {
       const response = await api.get("/tickets/");
-      setChamados(response.data);
-      setFilteredChamados(response.data); // Inicializa com todos os chamados
-      atualizarContadores(response.data);
+      const chamados = response.data;
+
+      // Cria um array de promessas para buscar os usuários atribuídos
+      const promessas = chamados.map(async (chamado) => {
+        if (chamado.atribuido_a) {
+          const responseUsuario = await api.get(`/usuarios/${chamado.atribuido_a}`);
+          chamado.nome_usuarioAtribuido = responseUsuario.data.nomeUser.nome_usuario;
+        }
+        return chamado;
+      });
+
+      // Aguarda todas as requisições terminarem
+      const chamadosComUsuarios = await Promise.all(promessas);
+
+      // Atualiza o estado com os chamados e os nomes dos usuários atribuídos
+      setChamados(chamadosComUsuarios);
+      setFilteredChamados(chamadosComUsuarios); // Inicializa com todos os chamados
+      atualizarContadores(chamadosComUsuarios);
     } catch (error) {
-      console.error("Erro ao buscar tickets:", error);
+      console.error("Erro ao buscar tickets ou usuários:", error);
     }
   };
 
@@ -60,6 +75,7 @@ useEffect(() => {
   // Limpa o intervalo quando o componente for desmontado
   return () => clearInterval(interval);
 }, []);
+
 
   useEffect(() => {
     if (usuario && chamados.length > 0) {
@@ -128,7 +144,7 @@ useEffect(() => {
   };
 
   //buscar no do usuário atribuido ao ticket
-
+/*
   useEffect(() => {
     const fetchUserAtribuido = async () => {
       try {
@@ -162,7 +178,7 @@ useEffect(() => {
       hasFetched.current = true;
     }
   }, [chamados]); // Isso vai ser executado sempre que o estado "chamados" mudar
-
+*/
   return (
     <PaginaPadrao>
       <div className={styles.containerCards}>

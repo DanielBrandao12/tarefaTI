@@ -459,7 +459,7 @@ const salvarEdicao = async () => {
       id_ticket,
       id_categoria: categoriaNome || chamado.id_categoria,
       nivel_prioridade: nivelPrioridade || chamado.nivel_prioridade,
-      id_status: statusNome || chamado.id_status,
+      id_status: statusNome || null,
       atribuido_a: usuarioAtribuido || chamado.atribuido_a,
       id_usuario: usuario.id,
     };
