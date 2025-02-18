@@ -4,8 +4,8 @@ import api from "../services/api";
 const useCategory = () => {
   // Estado para armazenar os erros de validação dos campos
   const [error, setError] = useState({
-    nomeCategoria: false,
-    statusCategoria: false,
+    nome: false,
+    status: false,
   });
 
   // Estado para armazenar as categorias
@@ -53,8 +53,8 @@ const useCategory = () => {
     // Verifica se há erros nos campos obrigatórios
     const hasError = !nomeCategoria || !statusCategoria;
     setError({
-      nomeCategoria: !nomeCategoria,
-      statusCategoria: !statusCategoria,
+      nome: !nomeCategoria,
+      status: !statusCategoria,
     });
 
     if (hasError) return; // Interrompe a execução se houver erros

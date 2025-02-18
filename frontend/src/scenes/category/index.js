@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
 import PaginaPadrao from "../../components/paginaPadrao";
 import Card from "../../components/card";
+import FormPadrao from "../../components/formPadrao";
 
 import dayjs from "dayjs";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -9,12 +10,10 @@ import { faEdit } from "@fortawesome/free-solid-svg-icons";
 import stylesGlobal from "../../styles/styleGlobal.module.css";
 import style from "./style.module.css";
 
-import useCategory from '../../hooks/useCategory'
+import useCategory from "../../hooks/useCategory";
 
 function Category() {
-
-
-  const {    
+  const {
     categorys,
     showModal,
     modalMessage,
@@ -30,17 +29,8 @@ function Category() {
     editCategory,
     createCategory,
     toggleEdit,
-    cancelEdit
+    cancelEdit,
   } = useCategory();
-
- 
-  
-  
-
-  const handleStatusChange = (event) => {
-    setStatusCategoria(event.target.value);
-    setError((prev) => ({ ...prev, statusCategoria: false }));
-  };
 
   function formatarDataHora(dataISO) {
     return dayjs(dataISO).format("DD/MM/YYYY HH:mm");
@@ -48,6 +38,7 @@ function Category() {
 
   //Alterar o modal para o popup!!
   return (
+    
     <PaginaPadrao>
       {/* Modal de mensagem */}
       {showModal && (
@@ -56,75 +47,19 @@ function Category() {
         </div>
       )}
 
-      <div className={style.positionCard}>
-        <div className={style.titleFormCatgory}>
-          <h3>{titleForm}</h3>
-        </div>
 
-        <div className={style.containerInputAdd}>
-          <label>Categoria</label>
-          <div className={style.containerMessageInput}>
-            <input
-              value={nomeCategoria}
-              className={[
-                style.inputConfig,
-                error.nomeCategoria && style.errorInput,
-              ].join(" ")}
-              onChange={(e) => {
-                setNomeCategoria(e.target.value);
-                setError((prev) => ({ ...prev, nomeCategoria: false }));
-              }}
-            />
-            {error.nomeCategoria && (
-              <span className={style.errorMessage}>Campo obrigatório</span>
-            )}
-          </div>
-
-          <label>Situação</label>
-          <div className={style.containerMessageInput}>
-            <select
-              value={statusCategoria}
-              name="Categoria"
-              className={[
-                stylesGlobal.selectChamado,
-                error.statusCategoria && style.errorInput,
-              ].join(" ")}
-              onChange={handleStatusChange}
-            >
-              <option value="">Escolha um opção</option>
-              <option value="Ativo">Ativar</option>
-              <option value="Desativado">Desativar</option>
-            </select>
-            {error.statusCategoria && (
-              <span className={style.errorMessage}>Escolha uma opção</span>
-            )}
-          </div>
-
-          {!showEdit ? (
-            <input
-              type="button"
-              value={titleForm}
-              className={stylesGlobal.buttonPadrao}
-              onClick={createCategory}
-            />
-          ) : (
-            <div>
-              <input
-                type="button"
-                value="Salvar"
-                onClick={() => editCategory()}
-                className={stylesGlobal.buttonPadrao}
-              />
-              <input
-                type="button"
-                value="Cancelar"
-                className={stylesGlobal.buttonPadrao}
-                onClick={cancelEdit}
-              />
-            </div>
-          )}
-        </div>
-      </div>
+      <FormPadrao
+        titleForm={titleForm}
+        nome={nomeCategoria}
+        setNome={setNomeCategoria}
+        status={statusCategoria}
+        setStatus={setStatusCategoria}
+        error={error}
+        setError={setError}
+        onSave={showEdit ? editCategory : createCategory}
+        onCancel={cancelEdit}
+        showEdit={showEdit}
+      />
 
       <div className={style.containerSepara}>
         <Card>

@@ -1,30 +1,4 @@
-.containerInputAdd {
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    gap: 20px;
-    margin-top: 25px;
-    margin-left: 20px;
-    padding: 15px;
-   color: #900000;
 
-}
-
-.inputConfig {
-
-    min-width: 20%;
-    border: 1px solid #b20000;
-    border-radius: 5px;
-    padding: 10px;
-    font-size: 15px;
-    color: #b20000;
-}
-
-.inputConfig:focus {
-    outline: none;
-    border-color: #900000;
-    /* cor mais escura ao focar */
-}
 
 .tdIcones{
    
@@ -47,29 +21,6 @@
     font-size: 22px;
 }
 
-
-
-.positionCard {
-    display: flex;
-    flex-direction: column;
-  
-    width: 82vw;
-    position: fixed;
-    background-color: #ffff;
-
-
-    }
-
-.containerSepara{
-    margin-top: 140px;
-}
-
-.titleFormCatgory{
-   
-    text-align: center;
-    color: #900000;
-    margin-top: 22px;
-}
 
 .modal {
     position: fixed;
@@ -96,22 +47,3 @@
     }
 }
 
-.errorInput {
-    border: 2px solid red;
-}
-
-.errorMessage {
-    position: absolute;
-    top: 90%;
-    margin-right: 10px;
-    color: red;
-    font-size: 0.7rem;
-    display: block;
-}
-
-.containerMessageInput{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: flex-end;
-}
