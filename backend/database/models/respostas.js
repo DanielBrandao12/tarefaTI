@@ -30,6 +30,10 @@ module.exports = (sequelize, DataTypes) =>{
         model: 'tickets',
         key: 'id_ticket'
       }
+    },
+    lida: {
+      type: DataTypes.BOOLEAN,
+      default: false,
     }
   }, {
     sequelize,
