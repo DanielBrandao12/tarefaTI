@@ -107,6 +107,17 @@
 }
 
 
+.chamadoNaoLido {
+    font-weight: bold;  /* Deixa em negrito */
+    background-color: #000000; /* Um tom leve de vermelho para destacar */
+  }
+  
+  .chamadoNaoLido:hover{
+    background-color: #b20000 !important; 
+  }
+
+
+
 @media (max-width: 1600px) {
     .buttonChamados{
       min-width: 150px;

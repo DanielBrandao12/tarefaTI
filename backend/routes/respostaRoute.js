@@ -9,7 +9,7 @@ const notLoggedMiddlewares = require('../middlewares/notLoggedMiddlewares');
 
 router.post('/createResposta', controller.createResposta)
 router.get('/getRespostas',notLoggedMiddlewares, controller.getResposta)
-router.put('/updateResposta/:id', controller.marcarComoLida )
+router.put('/updateResposta', controller.marcarComoLida )
 router.get('/getNaoLidas', controller.getRespostasNaoLidas)
 
 module.exports = router

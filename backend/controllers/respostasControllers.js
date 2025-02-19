@@ -54,6 +54,7 @@ const createResposta = async (req, res) => {
             conteudo:resposta,
             id_usuario,
             id_ticket,
+            lida: true
         })
 
         enviarRespostaAutomatica(remetente, codigoTicket, resposta )
@@ -77,34 +78,34 @@ const createResposta = async (req, res) => {
 
 const marcarComoLida = async (req, res) => {
     try {
-        const { id_resposta } = req.params;
+        const { ids } = req.body; // Recebe um array de IDs no body
 
-        // Verifica se o ID foi fornecido
-        if (!id_resposta) {
-            return res.status(400).json({ message: "ID da resposta é obrigatório." });
+        // Verifica se o array foi enviado e não está vazio
+        if (!ids || !Array.isArray(ids) || ids.length === 0) {
+            return res.status(400).json({ message: "IDs das respostas são obrigatórios." });
         }
 
-        // Atualiza o campo 'lida' para true
-        const [linhasAtualizadas] = await Respostas.update(
+        // Atualiza todas as respostas para 'lida: true'
+        const linhasAtualizadas = await Respostas.update(
             { lida: true },
             {
-                where: { id: id_resposta }
+                where: { id_resposta: ids } // Atualiza todas que estiverem na lista
             }
         );
 
         // Verifica se alguma linha foi afetada
-        if (linhasAtualizadas === 0) {
-            return res.status(404).json({ message: "Resposta não encontrada." });
+        if (linhasAtualizadas[0] === 0) {
+            return res.status(404).json({ message: "Nenhuma resposta encontrada para atualizar." });
         }
 
-        return res.status(200).json({ message: "Resposta marcada como lida com sucesso!" });
+        return res.status(200).json({ message: "Respostas marcadas como lidas com sucesso!" });
     } catch (error) {
         console.error("Erro ao marcar como lida: ", error);
         return res.status(500).json({
             message: error.message || "Erro ao marcar como lida, tente novamente mais tarde.",
         });
     }
-}
+};
 
 
 const enviarRespostaAutomatica = async (remetente, codigoTicket, mensagem) => {

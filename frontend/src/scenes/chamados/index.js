@@ -19,6 +19,9 @@ function Chamados() {
   const [usuario, setUsuario] = useState({});
   const [busca, setBusca] = useState("");
   const hasFetched = useRef(false);
+  const [mensagensNaoLidas, setMensagensNaoLidas] = useState({});
+  const [ticketsComMensagensNaoLidas, setTicketsComMensagensNaoLidas] =
+    useState([]);
   const [filtro, setFiltro] = useState({
     prioridade: "",
     status: "",
@@ -38,48 +41,72 @@ function Chamados() {
     }
   }, []);
 
-// Buscar chamados do backend e atualizar contadores
-useEffect(() => {
-  const fetchChamados = async () => {
+  // Buscar chamados do backend e atualizar contadores
+  useEffect(() => {
+    const fetchChamados = async () => {
+      try {
+        const response = await api.get("/tickets/");
+        const chamados = response.data;
+
+        // Cria um array de promessas para buscar os usuários atribuídos
+        const promessas = chamados.map(async (chamado) => {
+          if (chamado.atribuido_a) {
+            const responseUsuario = await api.get(
+              `/usuarios/${chamado.atribuido_a}`
+            );
+            chamado.nome_usuarioAtribuido =
+              responseUsuario.data.nomeUser.nome_usuario;
+          }
+          return chamado;
+        });
+
+        // Aguarda todas as requisições terminarem
+        const chamadosComUsuarios = await Promise.all(promessas);
+
+        // Atualiza o estado com os chamados e os nomes dos usuários atribuídos
+        setChamados(chamadosComUsuarios);
+        setFilteredChamados(chamadosComUsuarios); // Inicializa com todos os chamados
+        atualizarContadores(chamadosComUsuarios);
+      } catch (error) {
+        console.error("Erro ao buscar tickets ou usuários:", error);
+      }
+    };
+
+    // Chama a função imediatamente
+    fetchChamados();
+
+    // Define um intervalo para chamar a função a cada 30 segundos
+    const interval = setInterval(fetchChamados, 30000);
+
+    // Limpa o intervalo quando o componente for desmontado
+    return () => clearInterval(interval);
+  }, []);
+
+  //Ajustar isso, para poder ficar negrito ou algo assim quando tiver novas mensagens
+  const getRespostas = async () => {
     try {
-      const response = await api.get("/tickets/");
-      const chamados = response.data;
+      const response = await api.get("resposta/getNaoLidas");
+      const respostas = response.data;
 
-      // Cria um array de promessas para buscar os usuários atribuídos
-      const promessas = chamados.map(async (chamado) => {
-        if (chamado.atribuido_a) {
-          const responseUsuario = await api.get(`/usuarios/${chamado.atribuido_a}`);
-          chamado.nome_usuarioAtribuido = responseUsuario.data.nomeUser.nome_usuario;
+      // Criar um mapa de tickets com respostas não lidas
+      const naoLidasMap = respostas.reduce((acc, resposta) => {
+        if (!acc[resposta.id_ticket]) {
+          acc[resposta.id_ticket] = [];
         }
-        return chamado;
-      });
+        acc[resposta.id_ticket].push(resposta.id_resposta);
+        return acc;
+      }, {});
 
-      // Aguarda todas as requisições terminarem
-      const chamadosComUsuarios = await Promise.all(promessas);
-
-      // Atualiza o estado com os chamados e os nomes dos usuários atribuídos
-      setChamados(chamadosComUsuarios);
-      setFilteredChamados(chamadosComUsuarios); // Inicializa com todos os chamados
-      atualizarContadores(chamadosComUsuarios);
+      setMensagensNaoLidas(naoLidasMap);
     } catch (error) {
-      console.error("Erro ao buscar tickets ou usuários:", error);
+      console.error("Erro ao buscar respostas não lidas:", error);
     }
   };
-
-  // Chama a função imediatamente
-  fetchChamados();
-
-  // Define um intervalo para chamar a função a cada 30 segundos
-  const interval = setInterval(fetchChamados, 30000);
-
-  // Limpa o intervalo quando o componente for desmontado
-  return () => clearInterval(interval);
-}, []);
-
 
   useEffect(() => {
     if (usuario && chamados.length > 0) {
       atualizarContadores(chamados);
+      getRespostas();
     }
   }, [usuario, chamados]);
 
@@ -130,7 +157,7 @@ useEffect(() => {
         (chamado) => chamado.status === filtro.status
       );
     }
-    
+
     setFilteredChamados(filtrados);
   };
 
@@ -139,12 +166,29 @@ useEffect(() => {
     aplicarFiltros();
   }, [busca, filtro, chamados]);
 
-  const handleChamadoClick = (chamado) => {
+  const handleChamadoClick = async (chamado) => {
+    if (mensagensNaoLidas[chamado.id_ticket]) {
+      try {
+        await api.put("resposta/updateResposta", {
+          ids: mensagensNaoLidas[chamado.id_ticket], // Enviando os IDs das respostas não lidas
+        });
+
+        // Atualiza o estado para remover os tickets lidos
+        setMensagensNaoLidas((prev) => {
+          const updated = { ...prev };
+          delete updated[chamado.id_ticket];
+          return updated;
+        });
+      } catch (error) {
+        console.error("Erro ao marcar respostas como lidas:", error);
+      }
+    }
+
     navigate(`/t/${chamado.id_ticket}`);
   };
 
   //buscar no do usuário atribuido ao ticket
-/*
+  /*
   useEffect(() => {
     const fetchUserAtribuido = async () => {
       try {
@@ -255,6 +299,11 @@ useEffect(() => {
                     <tr
                       key={chamado.id_ticket}
                       onClick={() => handleChamadoClick(chamado)}
+                      className={
+                        mensagensNaoLidas[chamado.id_ticket]
+                          ? styles.chamadoNaoLido
+                          : ""
+                      }
                     >
                       <td>{chamado.codigo_ticket}</td>
                       <td>
