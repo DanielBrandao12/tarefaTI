@@ -38,7 +38,6 @@ function Category() {
 
   //Alterar o modal para o popup!!
   return (
-    
     <PaginaPadrao>
       {/* Modal de mensagem */}
       {showModal && (
@@ -46,7 +45,6 @@ function Category() {
           <p>{modalMessage}</p>
         </div>
       )}
-
 
       <FormPadrao
         titleForm={titleForm}

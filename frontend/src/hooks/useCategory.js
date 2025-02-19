@@ -61,7 +61,7 @@ const useCategory = () => {
 
     try {
       // Envia a requisição para criar uma nova categoria
-      const response = await api.post("/categoria/createCategory", {
+       await api.post("/categoria/createCategory", {
         nomeCategoria,
         statusCategoria,
       });
@@ -128,6 +128,7 @@ const useCategory = () => {
     setShowEdit(!showEdit); // Alterna a exibição do formulário de edição
     setIsEditIconDisabled(!isEditIconDisabled); // Desabilita o ícone de edição
     setTitleForm("Editar Categoria"); // Altera o título do formulário para "Editar"
+    setError("")
   };
 
   // Função para cancelar o modo de edição
@@ -137,6 +138,7 @@ const useCategory = () => {
     setTitleForm("Adicionar Categoria"); // Altera o título do formulário para "Adicionar"
     setNomeCategoria(""); // Limpa o campo de nome da categoria
     setStatusCategoria(""); // Limpa o campo de status da categoria
+    setError("")
   };
 
   /*

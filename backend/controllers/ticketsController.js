@@ -94,7 +94,39 @@ const createTickets = async (req, res) => {
             from: 'servicedesk2@fatecbpaulista.edu.br',
             to: ticketCriado.email,
             subject: `Chamado Criado - ${ticketCriado.codigo_ticket}`,
-            text: `Agradecemos por entrar em contato! Seu chamado foi registrado com sucesso e recebeu o código: ${ticketCriado.codigo_ticket}. Para acompanhar o andamento ou enviar novas informações, basta responder a este e-mail. Estamos à disposição para ajudar!`
+            html: `
+                <div style="font-family: Verdana, sans-serif; font-size: 18px; text-align: center; padding: 20px;">
+                    <div style="max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ccc; border-radius: 10px; 
+                                box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1); background-color: #f9f9f9;">
+                        <p style="font-weight: bold; font-size: 22px;">Agradecemos por entrar em contato!</p>
+                        
+                        <p style="font-size: 20px;">Seu chamado foi registrado com sucesso e recebeu o código:</p>
+                        <p style="font-size: 24px; font-weight: bold; background-color: #007bff; color: white; padding: 10px; 
+                                  display: inline-block; border-radius: 5px;">
+                            ${ticketCriado.codigo_ticket}
+                        </p>
+        
+                        <p style="font-size: 18px; text-align: left; margin-top: 20px;">
+                            Para acompanhar o andamento ou enviar novas informações, basta responder a este e-mail.
+                        </p>
+        
+                        <p style="font-size: 18px; text-align: left;">Estamos à disposição para ajudar!</p>
+        
+                        <p style="font-size: 18px; text-align: left;"><strong>Equipe T.I Fatec Bragança Paulista</strong></p>
+        
+                        <hr style="margin: 20px 0; border: none; border-top: 1px solid #ccc;">
+        
+                        <img src="cid:logo" alt="Fatec Bragança Paulista" style="max-width: 100%; height: auto; border-radius: 5px;">
+                    </div>
+                </div>
+            `,
+            attachments: [
+                {
+                    filename: 'logo.png', // Nome do arquivo
+                    path: '../backend/public/images/logo.png', // Caminho local do arquivo
+                    cid: 'logo' // Identificador usado no `src="cid:logo"`
+                }
+            ]
         })
 
         return res.status(201).json({

@@ -1,45 +1,37 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./style.module.css";
 import stylesGlobal from "../../styles/styleGlobal.module.css";
 import PaginaPadrao from "../../components/paginaPadrao";
 import Card from "../../components/card";
 import api from "../../services/api";
-import Cookies from "js-cookie";
-import { jwtDecode } from "jwt-decode";
+
+import useUser from "../../hooks/useUser";
 
 function Chamados() {
   const navigate = useNavigate();
+
+  const {idUser} = useUser()
+
+  
+ 
   const [contadorTodos, setContadorTodos] = useState(0);
   const [contadorAtMim, setContadorAtMim] = useState(0);
   const [contadorAtAOutros, setContadorAtAOutros] = useState(0);
   const [contadorNaoAt, setContadorNaoAt] = useState(0);
   const [chamados, setChamados] = useState([]);
   const [filteredChamados, setFilteredChamados] = useState([]);
-  const [usuario, setUsuario] = useState({});
   const [busca, setBusca] = useState("");
-  const hasFetched = useRef(false);
+ 
   const [mensagensNaoLidas, setMensagensNaoLidas] = useState({});
-  const [ticketsComMensagensNaoLidas, setTicketsComMensagensNaoLidas] =
-    useState([]);
+
   const [filtro, setFiltro] = useState({
     prioridade: "",
     status: "",
   });
 
-  // Decodificar o token e carregar dados do usuário
-  useEffect(() => {
-    const token = Cookies.get("token");
-    if (token) {
-      try {
-        const decoded = jwtDecode(token);
-        setUsuario(decoded);
-        console.log("Usuário decodificado:", decoded);
-      } catch (error) {
-        console.error("Erro ao decodificar o token:", error);
-      }
-    }
-  }, []);
+  
+
 
   // Buscar chamados do backend e atualizar contadores
   useEffect(() => {
@@ -104,24 +96,24 @@ function Chamados() {
   };
 
   useEffect(() => {
-    if (usuario && chamados.length > 0) {
+    if (idUser && chamados.length > 0) {
       atualizarContadores(chamados);
       getRespostas();
     }
-  }, [usuario, chamados]);
+  }, [idUser, chamados]);
 
   const atualizarContadores = (dados) => {
     setContadorTodos(dados.length);
 
     setContadorAtMim(
-      dados.filter((chamado) => parseInt(chamado.atribuido_a) === usuario.id)
+      dados.filter((chamado) => parseInt(chamado.atribuido_a) === idUser.id)
         .length
     );
     setContadorAtAOutros(
       dados.filter(
         (chamado) =>
           parseInt(chamado.atribuido_a) &&
-          parseInt(chamado.atribuido_a) !== usuario.id
+          parseInt(chamado.atribuido_a) !== idUser.id
       ).length
     );
     setContadorNaoAt(dados.filter((chamado) => !chamado.atribuido_a).length);
@@ -198,7 +190,7 @@ function Chamados() {
         // Cria um array de promessas para buscar os usuários simultaneamente
         const promessas = chamadosAtualizados.map(async (chamado) => {
           if (chamado.atribuido_a) {
-            const response = await api.get(`/usuarios/${chamado.atribuido_a}`);
+            const response = await api.get(`/idUsers/${chamado.atribuido_a}`);
             console.log(response)
             chamado.nome_usuarioAtribuido = response.data.nomeUser.nome_usuario;
           }
@@ -246,7 +238,7 @@ function Chamados() {
                 onClick={() =>
                   setFilteredChamados(
                     chamados.filter(
-                      (chamado) => parseInt(chamado.atribuido_a) === usuario.id
+                      (chamado) => parseInt(chamado.atribuido_a) === idUser.id
                     )
                   )
                 }
@@ -260,7 +252,7 @@ function Chamados() {
                     chamados.filter(
                       (chamado) =>
                         parseInt(chamado.atribuido_a) &&
-                        parseInt(chamado.atribuido_a) !== usuario.id
+                        parseInt(chamado.atribuido_a) !== idUser.id
                     )
                   )
                 }
