@@ -49,7 +49,6 @@ const checkEmails = async () => {
 
         for (const message of messages) {
             try {
-                // Obtém o corpo do e-mail
                 const all = message.parts.find(part => part.which === '');
                 if (!all) {
                     console.error('Não foi possível encontrar o corpo do e-mail.');
@@ -57,39 +56,28 @@ const checkEmails = async () => {
                 }
 
                 const parsed = await simpleParser(all.body);
-                
-                // Captura o e-mail do remetente de forma mais robusta
-                const regexEmail = /[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/;
-                const remetente = parsed.from?.value?.[0]?.address || 
-                                  parsed.from?.text?.match(regexEmail)?.[0] || 
-                                  'Desconhecido';
-                
-                console.log(`Remetente detectado: ${remetente}`);
-                console.log('Dados completos do remetente:', parsed.from);
+                console.log(`Processando e-mail de: ${parsed.from?.text || 'Desconhecido'}`);
 
                 // Processa anexos
                 const anexos = parsed.attachments.map(att => ({
                     nome: att.filename,
                     tipo: att.contentType,
                     tamanho: att.size,
-                    arquivo: att.content
+                    arquivo: att.content // Não converta para base64 aqui
                 }));
 
-                // Monta o objeto do chamado
                 const chamado = {
-                    remetente,
+                    remetente: parsed.from?.text || parsed.from || 'Desconhecido',
                     assunto: parsed.subject || 'Sem assunto',
                     mensagem: parsed.html || 'Sem mensagem',
                     anexos: anexos || null
                 };
 
-                // Verifica se há um código de ticket no assunto
                 const codigoTicket = extrairCodigoTicket(chamado.assunto);
 
                 if (codigoTicket) {
                     const ticketExistente = await getTicketPorCodigo(codigoTicket);
 
-                    // Se o ticket já existir, adiciona uma resposta e marca como lido
                     if (ticketExistente) {
                         console.log(`O ticket ${codigoTicket} já existe. Não será criado um novo chamado.`);
                         const mensagem = getDivFirst(chamado.mensagem);
@@ -99,7 +87,6 @@ const checkEmails = async () => {
                     }
                 }
 
-                // Se não há ticket existente, cria um novo chamado
                 const ticketCriado = await criarChamadoPorEmail(chamado);
                 console.log(`Chamado criado com sucesso para: ${chamado.remetente} (Ticket: ${ticketCriado.ticketCriado.codigo_ticket})`);
                 await enviarRespostaAutomatica(chamado.remetente, ticketCriado.ticketCriado.codigo_ticket);
