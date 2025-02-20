@@ -27,6 +27,24 @@ function Chamados() {
     status: "",
   });
 
+  const [status, setStatus] = useState([])
+  const getAllStatus = async () => {
+    try {
+      const response = await api.get("/status/");
+      setStatus(response.data.filter((item)=>{
+        return item.ativo
+      }));
+   
+    } catch (error) {
+      console.error("Erro ao buscar status:", error);
+  
+    }
+  };
+
+  useEffect(() => {
+    getAllStatus();
+  }, []);
+
   // Decodificar o token e carregar dados do usuário
   useEffect(() => {
     const token = Cookies.get("token");
@@ -360,9 +378,16 @@ function Chamados() {
                 <option value="Aguardando Classificação">
                   Aguardando classificação
                 </option>
-                <option value="Em atendimento">Em atendimento</option>
-                <option value="Suspenso">Suspenso</option>
-                <option value="Fechado">Fechado</option>
+                { status ? (
+                  status.map((item) => (
+                    <option
+                    key={item.id_status}
+                    value={item.nome}
+                    >
+                      {item.nome}
+                    </option>
+                  ))): (<option>Sem status</option>)
+                }
               </select>
               <span
                 className={styles.spanLink}
