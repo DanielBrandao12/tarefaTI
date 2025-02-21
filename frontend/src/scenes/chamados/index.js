@@ -375,9 +375,6 @@ function Chamados() {
                 }
               >
                 <option value="">Escolha o status</option>
-                <option value="Aguardando Classificação">
-                  Aguardando classificação
-                </option>
                 { status ? (
                   status.map((item) => (
                     <option
