@@ -7,13 +7,14 @@ import Card from "../../components/card";
 import api from "../../services/api";
 
 import useUser from "../../hooks/useUser";
+import useStatus from "../../hooks/useStatus";
 
 function Chamados() {
   const navigate = useNavigate();
 
-  const {idUser} = useUser()
+  const {idUser} = useUser();
 
-  
+  const {status} = useStatus();
  
   const [contadorTodos, setContadorTodos] = useState(0);
   const [contadorAtMim, setContadorAtMim] = useState(0);
@@ -30,6 +31,15 @@ function Chamados() {
     status: "",
   });
 
+
+  const [statusAtivo, setStatusAtivo] = useState([]);
+
+  useEffect(()=>{
+    console.log(status)
+      setStatusAtivo(status.filter((item) => {
+        return item.ativo
+      }))
+  }, [status])
   
 
 
@@ -349,12 +359,16 @@ function Chamados() {
                 }
               >
                 <option value="">Escolha o status</option>
-                <option value="Aguardando Classificação">
-                  Aguardando classificação
-                </option>
-                <option value="Em atendimento">Em atendimento</option>
-                <option value="Suspenso">Suspenso</option>
-                <option value="Fechado">Fechado</option>
+                { statusAtivo ? (
+                  statusAtivo.map((item) => (
+                    <option
+                    key={item.id_status}
+                    value={item.nome}
+                    >
+                      {item.nome}
+                    </option>
+                  ))): (<option>Sem status</option>)
+                }
               </select>
               <span
                 className={styles.spanLink}

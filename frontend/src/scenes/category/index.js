@@ -12,6 +12,7 @@ import style from "./style.module.css";
 
 import useCategory from "../../hooks/useCategory";
 
+
 function Category() {
   const {
     categorys,
@@ -31,6 +32,8 @@ function Category() {
     toggleEdit,
     cancelEdit,
   } = useCategory();
+
+
 
   function formatarDataHora(dataISO) {
     return dayjs(dataISO).format("DD/MM/YYYY HH:mm");

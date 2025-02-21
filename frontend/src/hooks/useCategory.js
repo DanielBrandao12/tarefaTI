@@ -1,7 +1,12 @@
 import { useState, useEffect } from "react";
 import api from "../services/api";
 
+import useUser from "./useUser";
+
 const useCategory = () => {
+
+  const {idUser} = useUser();
+
   // Estado para armazenar os erros de validação dos campos
   const [error, setError] = useState({
     nome: false,
@@ -58,12 +63,14 @@ const useCategory = () => {
     });
 
     if (hasError) return; // Interrompe a execução se houver erros
-
+    const nomeUser = idUser.nome_usuario
     try {
       // Envia a requisição para criar uma nova categoria
        await api.post("/categoria/createCategory", {
         nomeCategoria,
         statusCategoria,
+        nomeUser
+      
       });
 
       // Exibe mensagem de sucesso no modal

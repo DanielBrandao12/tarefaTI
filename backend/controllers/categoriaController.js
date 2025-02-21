@@ -41,11 +41,11 @@ const createCategoria = async (req, res) => {
     try {
 
 
-        const { nomeCategoria, statusCategoria } = req.body
+        const { nomeCategoria, statusCategoria , nomeUser} = req.body
 
         const categoria = await Categorias.create({
             nome:nomeCategoria,
-            criado_por:'Daniel',
+            criado_por:nomeUser,
             status:statusCategoria,
             data_criacao: new Date()
         })
