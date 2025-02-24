@@ -16,6 +16,7 @@ const useCategory = () => {
   // Estado para armazenar as categorias
   const [categorys, setCategorys] = useState([]);
 
+  const [categoria, setCategoria] = useState([])
   // Controle de exibição do modal e mensagem do modal
   const [showModal, setShowModal] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
@@ -148,6 +149,21 @@ const useCategory = () => {
     setError("")
   };
 
+
+    // Busca a categoria do chamado
+   
+      const fetchCategoria = async (chamado) => {
+        try {
+          if (chamado.id_categoria) {
+            const response = await api.get(`/categoria/${chamado.id_categoria}`);
+            setCategoria(response.data.nome);
+          }
+        } catch (error) {
+          console.error("Erro ao buscar categoria:", error);
+        }
+      };
+      fetchCategoria();
+   
   /*
   // Função para excluir uma categoria
   const deleteCategory = async (id, status) => {
@@ -185,6 +201,7 @@ const useCategory = () => {
   // Retorna os estados e funções para uso no componente
   return {
     categorys,
+    categoria,
     showModal,
     modalMessage,
     nomeCategoria,
@@ -200,6 +217,7 @@ const useCategory = () => {
     createCategory,
     toggleEdit,
     cancelEdit,
+    fetchCategoria
   };
 };
 

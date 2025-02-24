@@ -8,33 +8,49 @@ import { faPenToSquare, faPrint } from "@fortawesome/free-solid-svg-icons";
 import PaginaPadrao from "../../components/paginaPadrao";
 import Card from "../../components/card";
 import Popup from "../../components/popup";
-import Cookies from "js-cookie";
+
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import ExpandirLista from "../../components/expandirLista";
 import api from "../../services/api";
 
+import useStatus from "../../hooks/useStatus";
+import useCategory from "../../hooks/useCategory";
+import useUser from "../../hooks/useUser";
+
 // Componente principal da página
 function Chamado() {
-//  const navigate = useNavigate(); // Navegação entre páginas
+
+  //  const navigate = useNavigate(); // Navegação entre páginas
   const { id_ticket } = useParams(); // Captura o parâmetro da URL
+
+  const {idUser, userList, getUserAll} = useUser();
+
+  const {
+    listStatusAtivo,
+    statusChamado,
+    fetchStatus
+  } = useStatus();
+
+  const {categoria,fetchCategoria} = useCategory();
+
+
 
   // Estados para armazenar dados e controlar o comportamento do componente
   const [chamado, setChamado] = useState({});
   // const [listaTarefaTicket, setListaTarefaTicket] = useState([]);
   const [status, setStatus] = useState("");
-  const [categoria, setCategoria] = useState("");
+ 
   const [respostas, setRespostas] = useState([]);
   const [historicoStatus, setHistoricoStatus] = useState([]);
   const [resposta, setResposta] = useState("");
-  const [usuario, setUsuario] = useState({});
+  
   const [message, setMessage] = useState("");
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const hasFetched = useRef(false);
   const [edit, setEdit] = useState(false);
-  const [listStatus, setListStatus] = useState([]);
   const [listCategorias, setListCategorias] = useState([]);
-  const [listUsers, setListUsers] = useState([]);
+ 
   const [statusNome, setStatusNome] = useState();
   const [categoriaNome, setCategoriaNome] = useState();
   const [usuarioAtribuido, setUsuarioAtribuido] = useState();
@@ -165,53 +181,28 @@ const downloadFile = async (id) => {
 };
 
 
+/* ------------- */
+  //Refatorado 24/02/2025
 
-  // Busca a lista de tarefas associadas ao chamado
-  /*
-
-  useEffect(() => {
-    const fetchChamadoListaTarefa = async () => {
-      try {
-        const response = await api.get(`/tickets/listaTarefa/${id_ticket}`);
-        setListaTarefaTicket(response.data);
-      } catch (error) {
-        console.error('Erro ao buscar lista de tarefas:', error);
-      }
-    };
-    fetchChamadoListaTarefa();
-  }, [id_ticket]);
-*/
   
-// Busca o status atual do chamado
+// Busca o status atual do chamado 
   useEffect(() => {
-    const fetchStatus = async () => {
-      try {
-        if (chamado.id_status) {
-          const response = await api.get(`/status/${chamado.id_status}`);
-          setStatus(response.data.nome);
-        }
-      } catch (error) {
-        console.error("Erro ao buscar status:", error);
-      }
-    };
-    fetchStatus();
+      fetchStatus(chamado)
   }, [chamado]);
 
-  // Busca a categoria do chamado
+
+  // Busca a categoria do chamado 
   useEffect(() => {
-    const fetchCategoria = async () => {
-      try {
-        if (chamado.id_categoria) {
-          const response = await api.get(`/categoria/${chamado.id_categoria}`);
-          setCategoria(response.data.nome);
-        }
-      } catch (error) {
-        console.error("Erro ao buscar categoria:", error);
-      }
-    };
-    fetchCategoria();
+    fetchCategoria(chamado);
   }, [chamado]);
 
+
+  // Buscar todos os usuários
+  useEffect(() => {
+    getUserAll()
+   }, []);
+
+/* ------------- */
   // Busca o histórico de status do chamado
   useEffect(() => {
     const fetchHistoricoStatus = async () => {
@@ -238,18 +229,7 @@ const downloadFile = async (id) => {
     fetchHistoricoStatus();
   }, [id_ticket, editOk]);
 
-  // Decodifica o token de autenticação e armazena os dados do usuário logado
-  useEffect(() => {
-    const token = Cookies.get("token");
-    if (token) {
-      try {
-        const decoded = JSON.parse(atob(token.split(".")[1])); // Decodifica o payload do JWT
-        setUsuario(decoded);
-      } catch (error) {
-        console.error("Erro ao decodificar o token:", error);
-      }
-    }
-  }, []);
+
 
   // Envia uma nova resposta para o chamado
   const sendResposta = async (codigoTicket, remetente) => {
@@ -258,11 +238,11 @@ const downloadFile = async (id) => {
         handleOpenPopup("A resposta não pode estar vazia.");
         return;
       }
-      console.log(usuario);
+
       const response = await api.post("/resposta/createResposta", {
         resposta,
         id_ticket,
-        id_usuario: usuario.id,
+        id_usuario: idUser.id,
         codigoTicket,
         remetente,
       });
@@ -408,39 +388,9 @@ const downloadFile = async (id) => {
     fetchCategorias();
   }, []);
 
-  // Buscar todos os status
-  useEffect(() => {
-    const fetchStatus = async () => {
-      try {
-        const response = await api.get("/status");
-        setListStatus(
-          response.data.filter((item) => {
-            return item.ativo;
-          })
-        );
-      } catch (error) {
-        console.error("Erro ao buscar Status:", error);
-      }
-    };
 
-    fetchStatus();
-  }, []);
 
-  // Buscar todos os usuários
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const response = await api.get("/usuarios/");
-        setListUsers(response.data);
-       
-      
-      } catch (error) {
-        console.error("Erro ao buscar usuários:", error);
-      }
-    };
 
-    fetchUsers();
-  }, []);
 
   //Habilitar para edição
   const handleEditChamado = () => {
@@ -464,7 +414,7 @@ const salvarEdicao = async () => {
       nivel_prioridade: nivelPrioridade || chamado.nivel_prioridade,
       id_status: statusNome || null,
       atribuido_a: usuarioAtribuido || chamado.atribuido_a,
-      id_usuario: usuario.id,
+      id_usuario: idUser.id,
     };
 
     // Enviar requisição de atualização
@@ -560,28 +510,7 @@ const salvarEdicao = async () => {
               </div>
             </div>
           </Card>
-          {/* Card de lista de tarefas 
-          <Card>
-            <div className={styles.containerListaTarefas}>
-              <h3 className={styles.titleLista}>Lista de Tarefas</h3>
-              <div className={styles.containerCheckboxes}>
-                {!listaTarefaTicket.length ? (
-                  <span>Não existe tarefas</span>
-                ) : (
-                  listaTarefaTicket.map((item) => (
-                    <label key={item.id_tarefa}>
-                      <input
-                        type="checkbox"
-                        className={styles.checkBox}
-                      />
-                      {item.assunto}
-                    </label>
-                  ))
-                )}
-              </div>
-            </div>
-          </Card>
-          */}
+         
           {/* Expandir lista de respostas */}
           <ExpandirLista title="Respostas do chamado">
   {!respostas.length ? (
@@ -686,20 +615,20 @@ const salvarEdicao = async () => {
             </div>
             <div className={styles.containerDivTwo}>
               <div>
-                <span>Código do Ticket:</span>
+                <span className={styles.titleSpanDetalhes}>Código do Ticket:</span>
                 <span className={styles.spanDetalhes}>
                   {chamado.codigo_ticket}
                 </span>
               </div>
               <div>
-                <span>Data e Hora Criação:</span>
+                <span className={styles.titleSpanDetalhes}>Data e Hora Criação:</span>
                 <span className={styles.spanDetalhes}>
                   {formatarData(chamado.data_criacao)}
                 </span>
               </div>
               {chamado.data_conclusao && (
                 <div>
-                  <span>Data e Hora Conclusão:</span>
+                  <span className={styles.titleSpanDetalhes}>Data e Hora Conclusão:</span>
                   <span className={styles.spanDetalhes}>
                     {formatarData(chamado.data_conclusao)}
                   </span>
@@ -708,21 +637,21 @@ const salvarEdicao = async () => {
               {!edit ? (
                 <div className={styles.containerDivTwo}>
                   <div>
-                    <span>Status:</span>
-                    <span className={styles.spanDetalhes}>{status}</span>
+                    <span className={styles.titleSpanDetalhes}>Status:</span>
+                    <span className={styles.spanDetalhes}>{statusChamado}</span>
                   </div>
                   <div>
-                    <span>Categoria:</span>
+                    <span className={styles.titleSpanDetalhes}>Categoria:</span>
                     <span className={styles.spanDetalhes}>{categoria}</span>
                   </div>
                   <div>
-                    <span>Prioridade:</span>
+                    <span className={styles.titleSpanDetalhes}>Prioridade:</span>
                     <span className={styles.spanDetalhes}>
                       {chamado.nivel_prioridade}
                     </span>
                   </div>
                   <div>
-                    <span>Técnico Responsável:</span>
+                    <span className={styles.titleSpanDetalhes}>Técnico Responsável:</span>
                     <span className={styles.spanDetalhes}>
                       {chamado.nome_usuarioAtribuido}
                     </span>
@@ -731,7 +660,7 @@ const salvarEdicao = async () => {
               ) : (
                 <div className={styles.containerDivTwo}>
                   <div>
-                    <span>Status:</span>
+                    <span className={styles.titleSpanDetalhes}>Status:</span>
                     <select
                       className={styles.selectDetalhes}
                       value={statusNome}
@@ -742,11 +671,11 @@ const salvarEdicao = async () => {
                       <option value={""} disabled>
                         Selecione um opção
                       </option>
-                      {listStatus.map((item) => (
+                      {listStatusAtivo.map((item) => (
                         <option
                           key={item.id_status}
                           value={item.id_status}
-                          style={item.nome === status ? { color: "green" } : {}}
+                          style={item.nome === statusChamado ? { color: "green" } : {}}
                         >
                           {item.nome}
                         </option>
@@ -754,7 +683,7 @@ const salvarEdicao = async () => {
                     </select>
                   </div>
                   <div>
-                    <span>Categoria:</span>
+                    <span className={styles.titleSpanDetalhes}>Categoria:</span>
                     <select
                       className={styles.selectDetalhes}
                       value={categoriaNome}
@@ -778,7 +707,7 @@ const salvarEdicao = async () => {
                     </select>
                   </div>
                   <div>
-                    <span>Prioridade:</span>
+                    <span className={styles.titleSpanDetalhes}>Prioridade:</span>
                     <select className={styles.selectDetalhes} defaultValue="" 
                       onChange={(e) => setNivelPrioridade(e.target.value)}
                     >
@@ -804,7 +733,7 @@ const salvarEdicao = async () => {
                     </select>
                   </div>
                   <div>
-                    <span>Técnico Responsável:</span>
+                    <span className={styles.titleSpanDetalhes}>Técnico Responsável:</span>
                     <select
                       className={styles.selectDetalhes}
                       value={usuarioAtribuido}
@@ -814,7 +743,7 @@ const salvarEdicao = async () => {
                       <option value={""} disabled>
                         Selecione um opção
                       </option>
-                      {listUsers.map((item) => (
+                      {userList.map((item) => (
                         <option
                           key={item.id_usuario}
                           value={item.id_usuario}
@@ -860,13 +789,13 @@ const salvarEdicao = async () => {
                 style={{ marginBottom: "10px" }}
               >
                 <div>
-                  <span>Data:</span>
+                  <span className={styles.titleSpanDetalhes}>Data:</span>
                   <span className={styles.spanDetalhes}>
                     {formatarData(item.data_hora)}
                   </span>
                 </div>
                 <div>
-                  <span>Status:</span>
+                  <span className={styles.titleSpanDetalhes}>Status:</span>
                   <span className={styles.spanDetalhes}>
                     {item.status?.nome || "Status não encontrado"}
                   </span>

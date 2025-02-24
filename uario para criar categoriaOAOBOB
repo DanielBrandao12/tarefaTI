@@ -1,0 +1,77 @@
+[33mccb159a[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mversao2.1[m[33m, [m[1;31morigin/versao2.1[m[33m)[m Atualização pegar nome de usuario para criar categoria
+[33ma0e0d38[m refatoração tela status
+[33mb9e48b7[m atualzação de mensagens não lidas
+[33mff76b1f[m logica para respostas
+[33me87f7ae[m refatoração tela categorias
+[33m33d7822[m refatoração categorys
+[33m3853352[m refatoração do header
+[33m3916e66[m tela inicial
+[33m11a11af[m atualização chamados
+[33mbbd4b99[m atualização de anexos
+[33m47383a3[m alterando para fazer download de anexo
+[33mdcfdfac[m versão 2.1
+[33ma390a4a[m[33m ([m[1;32mversao2.0[m[33m)[m Editar status
+[33m0943227[m email test
+[33mf3fee0d[m email test
+[33mb51c25f[m versão 2.0
+[33m1cd4c2b[m versão 2.0
+[33m00889fc[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m Merge pull request #1 from DanielBrandao12/servicedesk2.0
+[33m61f9746[m Editar status
+[33m18de1ff[m Funções de salvar, editar e lsitar usuários
+[33mc23ff03[m criar usuário
+[33mbed647a[m criar usuário
+[33m8523b58[m modal cadastrado de usuário
+[33m861b346[m ajsutes na tela de chamado
+[33m25ce101[m campo data criação add na view_tickets
+[33m9ab957b[m ajustes na parte de tratar os email de respostas
+[33ma2a3024[m Atualização do front status
+[33m5cf1dab[m tela status frontend
+[33m14cc83a[m tela status
+[33m56ec187[m ajustes na tela de chamado
+[33me275c36[m ajustes na tela de chamado
+[33m11c29ae[m ajustes no logout
+[33mc8e8c13[m envio de respostas
+[33m7e4b424[m mudanças no menu
+[33m7081591[m resolvido problema de atribuição
+[33m7dc8717[m verificar abertura de chamado por email
+[33m8776f1e[m implementação do email
+[33m4b0be03[m atualização update ticket
+[33m0825f3b[m atualização update ticket
+[33m0046fb9[m função em loop
+[33mcc921c5[m funções front criação ticket
+[33m6dc7dd7[m alteração atribuido_a
+[33m338b9eb[m alteração atribuido_a
+[33m9870c7f[m organizando tela de chamado
+[33m584099f[m tela chamado envio respsta
+[33m15bbfd0[m carregar respostas na tela de chamado
+[33m1fc03f3[m tela chamados
+[33mfc5255e[m categoria
+[33ma6c7e2e[m backend e front category
+[33m3345e2e[m criação de controllers
+[33m2b9fa76[m testes backend inventario
+[33mfde3a92[m atualização inventario
+[33m9f64da1[m lendo arquivo, consulta no banco
+[33m724e668[m models inventario
+[33ma52712e[m new controllers
+[33m3cd8043[m listatarefa controller
+[33m68ae48f[m backend createTickets
+[33m99718e9[m new models and updates to controllers
+[33m8826cb8[m ajuste da pagina newtickets
+[33md237b7d[m atualização tela chamados
+[33m1ba2c4f[m tela de chamado
+[33m4533ed1[m atualização tela de chamado
+[33m85e5d7c[m tela de chamado
+[33m2bbbc9f[m tela chamados
+[33ma7d5674[m form chamado, inicio tela chamados
+[33m7677e22[m form chamado
+[33mebbfb38[m Componentes novos
+[33mce94846[m commit inicial nova versão
+[33m171fb80[m[33m ([m[1;31morigin/projetoInicial[m[33m, [m[1;32mmain[m[33m)[m atualização teste
+[33m503bdb5[m atualziação de cores
+[33m5329946[m atualização
+[33m86c4e41[m ajustes finais primeira versão
+[33mb8f341d[m ajustes login
+[33m35f0e2f[m autenticação login e logout
+[33m9f146a4[m backend e frontend login
+[33m65787f1[m criação de componentes
+[33mcd35edf[m projeto tarefa

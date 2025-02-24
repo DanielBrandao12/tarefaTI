@@ -111,7 +111,7 @@
 .titleLista {
     font-size: 25px;
     padding: 5px;
-
+    color: #b20000;
 }
 
 .addContainer{
@@ -235,6 +235,10 @@
     padding: 5px;
     width: 100%;
 
+}
+
+.titleSpanDetalhes{
+    color: #b20000;
 }
 
 .selectDetalhes {

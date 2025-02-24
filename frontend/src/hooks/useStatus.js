@@ -11,16 +11,21 @@ const useStatus = () => {
   const [showEdit, setShowEdit] = useState(false);
   const [isEditIconDisabled, setIsEditIconDisabled] = useState(false);
   const [status, setStatus] = useState([]);
+  const [statusChamado, setStatusChamado] = useState()
   const [idStatus, setIdStatus] = useState();
   const [statusNome, setStatusNome] = useState("");
   const [situacaoStatus, setSituacaoStatus] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
+  const [listStatusAtivo, setListStatusAtivo] = useState([])
 
   const getAllStatus = async () => {
     try {
       const response = await api.get("/status/");
       setStatus(response.data);
+      setListStatusAtivo(response.data.filter((item)=>{
+            return item.ativo
+      })) 
       setError(false);
     } catch (error) {
       console.error("Erro ao buscar status:", error);
@@ -105,6 +110,20 @@ const useStatus = () => {
     }
   };
 
+  
+    const fetchStatus = async (chamado) => {
+      try {
+        if (chamado.id_status) {
+          const response = await api.get(`/status/${chamado.id_status}`);
+          setStatusChamado(response.data.nome);
+        }
+      } catch (error) {
+        console.error("Erro ao buscar status:", error);
+      }
+    };
+   
+  
+
   return {
     error,
     titleForm,
@@ -116,6 +135,8 @@ const useStatus = () => {
     showModal,
     showEdit,
     modalMessage,
+    statusChamado,
+    listStatusAtivo,
     setStatusNome,
     setError,
     setSituacaoStatus,
@@ -123,6 +144,7 @@ const useStatus = () => {
     toggleEdit,
     editStatus,
     cancelEdit,
+    fetchStatus
   };
 };
 
