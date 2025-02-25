@@ -16,7 +16,11 @@ const useCategory = () => {
   // Estado para armazenar as categorias
   const [categorys, setCategorys] = useState([]);
 
-  const [categoria, setCategoria] = useState([])
+  const [categoria, setCategoria] = useState([]);
+
+  //Estado para armazenar categorias ativadas
+  const [listCategorias, setListCategorias] = useState([])
+
   // Controle de exibição do modal e mensagem do modal
   const [showModal, setShowModal] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
@@ -42,6 +46,9 @@ const useCategory = () => {
     try {
       const response = await api.get("/categoria/"); // Chama o endpoint para buscar categorias
       setCategorys(response.data); // Armazena os dados na variável de estado
+      setListCategorias(
+        response.data.filter((item) => item.status !== "Desativado")
+      );
       setError(false); // Reseta o erro caso a requisição tenha sucesso
     } catch (error) {
       console.error("Erro ao buscar categorias:", error);
@@ -156,47 +163,16 @@ const useCategory = () => {
         try {
           if (chamado.id_categoria) {
             const response = await api.get(`/categoria/${chamado.id_categoria}`);
+          
             setCategoria(response.data.nome);
           }
         } catch (error) {
           console.error("Erro ao buscar categoria:", error);
         }
       };
-      fetchCategoria();
    
-  /*
-  // Função para excluir uma categoria
-  const deleteCategory = async (id, status) => {
-    try {
-      console.log(id, status);
-
-      // Envia os parâmetros como query string
-      const response = await api.delete(`/categoria/deleteCategory`, {
-        params: { id, status },
-      });
-
-      // Verifica se a categoria está ativa
-      if (status === "Ativo") {
-        setModalMessage("Categoria em uso, desative para excluir a categoria");
-        setShowModal(true);
-        setTimeout(() => setShowModal(false), 1000);
-      } else {
-        // Mensagem de sucesso no modal
-        setModalMessage("Categoria excluída com sucesso!");
-        setShowModal(true);
-        setTimeout(() => setShowModal(false), 3000);
-
-        setNomeCategoria("");
-        setStatusCategoria("");
-
-        // Atualiza a lista de categorias
-        await getAllCategory();
-      }
-    } catch (error) {
-      console.error("Erro ao excluir categoria", error);
-    }
-  };
-*/
+   
+  
 
   // Retorna os estados e funções para uso no componente
   return {
@@ -210,6 +186,7 @@ const useCategory = () => {
     showEdit,
     isEditIconDisabled,
     error,
+    listCategorias,
     setError,
     setNomeCategoria,
     setStatusCategoria,
@@ -217,7 +194,8 @@ const useCategory = () => {
     createCategory,
     toggleEdit,
     cancelEdit,
-    fetchCategoria
+    fetchCategoria,
+    getAllCategorys
   };
 };
 

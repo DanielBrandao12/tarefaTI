@@ -17,192 +17,98 @@ import api from "../../services/api";
 import useStatus from "../../hooks/useStatus";
 import useCategory from "../../hooks/useCategory";
 import useUser from "../../hooks/useUser";
-
+import useAnexo from "../../hooks/useAnexo";
+import useTickets from "../../hooks/useTickets";
 // Componente principal da página
 function Chamado() {
-
   //  const navigate = useNavigate(); // Navegação entre páginas
   const { id_ticket } = useParams(); // Captura o parâmetro da URL
 
-  const {idUser, userList, getUserAll} = useUser();
+  const { idUser, userList, getUserAll } = useUser();
+
+  const { listStatusAtivo, statusChamado, fetchStatus } = useStatus();
+
+  const { anexos, fetchAnexos, downloadFile } = useAnexo();
+
+  const { categoria, listCategorias, fetchCategoria, getAllCategorys } = useCategory();
 
   const {
-    listStatusAtivo,
-    statusChamado,
-    fetchStatus
-  } = useStatus();
+    chamado,
+    respostas,
+    edit,
+    statusNome,
+    categoriaNome,
+    usuarioAtribuido,
+    isPopupOpen,
+    message,
+    setIsPopupOpen,
+    setEdit,
+    setStatusNome,
+    setCategoriaNome,
+    setNivelPrioridade,
+    setUsuarioAtribuido,
+    setRespostas,
+    handleOpenPopup,
+    fetchChamado,
+    fetchUserAtribuido,
+    salvarEdicao
+  } = useTickets();
 
-  const {categoria,fetchCategoria} = useCategory();
-
-
-
-  // Estados para armazenar dados e controlar o comportamento do componente
-  const [chamado, setChamado] = useState({});
-  // const [listaTarefaTicket, setListaTarefaTicket] = useState([]);
-  const [status, setStatus] = useState("");
- 
-  const [respostas, setRespostas] = useState([]);
   const [historicoStatus, setHistoricoStatus] = useState([]);
   const [resposta, setResposta] = useState("");
-  
-  const [message, setMessage] = useState("");
-  const [isPopupOpen, setIsPopupOpen] = useState(false);
+
   const hasFetched = useRef(false);
-  const [edit, setEdit] = useState(false);
-  const [listCategorias, setListCategorias] = useState([]);
- 
-  const [statusNome, setStatusNome] = useState();
-  const [categoriaNome, setCategoriaNome] = useState();
-  const [usuarioAtribuido, setUsuarioAtribuido] = useState();
-  const [nivelPrioridade, setNivelPrioridade] = useState()
-  const [editOk, setEditOk] = useState(false)
-  const [userAtt, setUserAtt] = useState()
-  const [anexos, setAnexos] = useState([])
-  const [anexosRespostas, setAnexosRespostas]= useState([])
-  // Funções para controlar o Popup
-  const handleOpenPopup = (mensagem) => {
-    setMessage(mensagem);
-    setIsPopupOpen(true);
-  };
+
   const handleClosePopup = () => setIsPopupOpen(false);
+
+
+  /* ------------- */
+  //Refatorado 02/2025
 
   // Busca os detalhes do chamado pelo ID
   useEffect(() => {
-    const fetchChamado = async () => {
-      try {
-        const response = await api.get(`/tickets/${id_ticket}`);
-        
-        setChamado(response.data.ticket);
-      
-        if (response.data.respostas.length > 0) {
-          const respostasComAnexos = await Promise.all(
-            response.data.respostas.map(async (resposta) => {
-              try {
-                // Busca os anexos para cada resposta
-                const anexoR = await api.get(`/anexo/${resposta.id_resposta}`);
-                return { ...resposta, anexos: anexoR.data.length > 0 ? anexoR.data : [] };
-              } catch (error) {
-                console.error(`Erro ao buscar anexos para a resposta ${resposta.id_resposta}:`, error);
-                return { ...resposta, anexos: [] }; // Garante que a resposta será mostrada sem anexos
-              }
-            })
-          );
-          
-          setRespostas(respostasComAnexos);
-        } else {
-          setRespostas([]); // Garante que o estado não fique indefinido
-        }
-      } catch (error) {
-        console.error("Erro ao buscar tickets:", error);
-      }
-    };
-    fetchChamado();
-  }, [id_ticket, resposta, editOk]);
-  
+    fetchChamado(id_ticket);
+  }, [id_ticket, resposta]);
 
-
-
-
-//
-useEffect(() => {
-  const fetchAnexos = async () => {
-    try {
-      const response = await api.get(`/anexo/${id_ticket}`);
-      console.log(response);
-      // Atualiza o estado com os dados dos anexos
-      setAnexos(response.data); // Ajuste conforme a resposta esperada
-    } catch (error) {
-      console.error("Erro ao buscar anexos:", error);
-    }
-  };
-
-  fetchAnexos();
-}, [id_ticket]); // A dependência de id_ticket garante que a função seja chamada quando id_ticket mudar
-
-const downloadFile = async (id) => {
-  try {
-    // Faz a requisição para pegar o arquivo com responseType 'blob'
-    const response = await api.get(`/anexo/getAnexo/${id}`, { responseType: 'blob' });
-
-    // Obtém o Content-Type do cabeçalho
-    const contentType = response.headers['content-type'] || 'application/octet-stream';
-
-    // Define um nome de arquivo padrão
-    let fileName = `arquivo`;
-
-    // Tenta obter o nome do arquivo do cabeçalho Content-Disposition
-    const contentDisposition = response.headers['content-disposition'];
-    if (contentDisposition) {
-      const fileNameMatch = contentDisposition.match(/filename="?([^"]+)"?/);
-      if (fileNameMatch && fileNameMatch[1]) {
-        fileName = fileNameMatch[1];
-      }
-    } else {
-      // Se não houver Content-Disposition, tenta definir a extensão pelo Content-Type
-      const mimeTypes = {
-        'application/pdf': 'pdf',
-        'image/png': 'png',
-        'image/jpeg': 'jpg',
-        'image/jpg': 'jpg',
-        'application/zip': 'zip',
-        'application/msword': 'doc',
-        'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'docx',
-        'application/vnd.ms-excel': 'xls',
-        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': 'xlsx',
-      };
-
-      if (mimeTypes[contentType]) {
-        fileName += `.${mimeTypes[contentType]}`;
-      }
-    }
-
-    // Cria um Blob a partir dos dados binários
-    const fileBlob = new Blob([response.data], { type: contentType });
-
-    // Cria uma URL para o arquivo
-    const fileUrl = window.URL.createObjectURL(fileBlob);
-
-    // Cria um elemento de link para o download
-    const link = document.createElement('a');
-    link.href = fileUrl;
-    link.setAttribute('download', fileName);
-
-    // Simula um clique para iniciar o download
-    document.body.appendChild(link);
-    link.click();
-
-    // Remove o link após o download
-    document.body.removeChild(link);
-    window.URL.revokeObjectURL(fileUrl); // Libera a URL do objeto para evitar vazamento de memória
-
-  } catch (error) {
-    console.error('Erro ao baixar o anexo', error);
-  }
-};
-
-
-/* ------------- */
-  //Refatorado 24/02/2025
-
-  
-// Busca o status atual do chamado 
+  //busca anexos
   useEffect(() => {
-      fetchStatus(chamado)
+    fetchAnexos(id_ticket);
+  }, [id_ticket]); // A dependência de id_ticket garante que a função seja chamada quando id_ticket mudar
+
+  // Busca o status atual do chamado
+  useEffect(() => {
+    fetchStatus(chamado);
   }, [chamado]);
 
-
-  // Busca a categoria do chamado 
+  // Busca a categoria do chamado
   useEffect(() => {
     fetchCategoria(chamado);
   }, [chamado]);
 
+  useEffect(() => {
+    getAllCategorys(); // Chama a função ao montar o componente
+  }, []);
 
   // Buscar todos os usuários
   useEffect(() => {
-    getUserAll()
-   }, []);
+    getUserAll();
+  }, []);
 
-/* ------------- */
+  //Atribui o nome do user ao chamado
+  useEffect(() => {
+    // Verifica se o chamado foi carregado antes de buscar o usuário
+    if (chamado.id_ticket && !hasFetched.current) {
+      fetchUserAtribuido(chamado);
+      // Marca como verdadeiro para impedir novas requisições
+      hasFetched.current = true;
+    }
+  }, [chamado]); // Esse useEffect será executado sempre que 'chamado' for alterado
+
+  /* ------------- */
+
+
+
+  
   // Busca o histórico de status do chamado
   useEffect(() => {
     const fetchHistoricoStatus = async () => {
@@ -227,9 +133,7 @@ const downloadFile = async (id) => {
       }
     };
     fetchHistoricoStatus();
-  }, [id_ticket, editOk]);
-
-
+  }, [id_ticket]);
 
   // Envia uma nova resposta para o chamado
   const sendResposta = async (codigoTicket, remetente) => {
@@ -261,6 +165,7 @@ const downloadFile = async (id) => {
       handleOpenPopup("Erro ao enviar a resposta. Tente novamente.");
     }
   };
+
 
   // Função para imprimir os detalhes do chamado
   const handlePrint = () => {
@@ -297,7 +202,7 @@ const downloadFile = async (id) => {
                 )}</p>`
               : ""
           }
-          <p><span>Status:</span> ${status}</p>
+          <p><span>Status:</span> ${statusChamado}</p>
           <p><span>Categoria:</span> ${categoria}</p>
           <p><span>Prioridade:</span> ${chamado.nivel_prioridade}</p>
           <p><span>Atribuído a:</span> ${chamado.nome_usuarioAtribuido}</p>
@@ -332,7 +237,6 @@ const downloadFile = async (id) => {
     printWindow.print();
   };
 
-
   // Formata a data em um formato legível
   const formatarData = (data) => {
     const date = new Date(data);
@@ -344,124 +248,14 @@ const downloadFile = async (id) => {
     return `${dia}/${mes}/${ano}, ${horas}:${minutos}`;
   };
 
-
-
-  //Atribui o nome do user ao chamado
-  useEffect(() => {
-    const fetchUserAtribuido = async () => {
-      try {
-        // Verifica se o chamado tem um 'id_usuario' atribuído
-        if (chamado.atribuido_a) {
-          const response = await api.get(`/usuarios/${chamado.atribuido_a}`);
-          setChamado((prevChamado) => ({
-            ...prevChamado,
-            nome_usuarioAtribuido: response.data.nomeUser.nome_usuario,
-          }));
-          setUserAtt(response.data.nomeUser)
-        }
-      } catch (error) {
-        console.error("Erro ao buscar usuário:", error);
-      }
-    };
-
-    // Verifica se o chamado foi carregado antes de buscar o usuário
-    if (chamado.id_ticket && !hasFetched.current) {
-      fetchUserAtribuido();
-      // Marca como verdadeiro para impedir novas requisições
-      hasFetched.current = true;
-    }
-  }, [ chamado]); // Esse useEffect será executado sempre que 'chamado' for alterado
-
-  // Buscar todas as categorias
-  useEffect(() => {
-    const fetchCategorias = async () => {
-      try {
-        const response = await api.get("/categoria");
-        setListCategorias(
-          response.data.filter((item) => item.status !== "Desativado")
-        );
-      } catch (error) {
-        console.error("Erro ao buscar categorias:", error);
-      }
-    };
-
-    fetchCategorias();
-  }, []);
-
-
-
-
-
   //Habilitar para edição
   const handleEditChamado = () => {
     //navigate(`/editarChamado/${chamado.id_ticket}`);
     setEdit(!edit);
   };
 
-//Salvar edição
 
-const salvarEdicao = async () => {
-  try {
-    if (!id_ticket) {
-      handleOpenPopup("ID do ticket não fornecido.");
-      return;
-    }
 
-    // Criar um objeto com os dados atualizados
-    const dadosAtualizados = {
-      id_ticket,
-      id_categoria: categoriaNome || chamado.id_categoria,
-      nivel_prioridade: nivelPrioridade || chamado.nivel_prioridade,
-      id_status: statusNome || null,
-      atribuido_a: usuarioAtribuido || chamado.atribuido_a,
-      id_usuario: idUser.id,
-    };
-
-    // Enviar requisição de atualização
-    const response = await api.put(`/tickets/updateTicket`, dadosAtualizados);
-
-    if (response.status === 200) {
-      handleOpenPopup("Ticket alterado com sucesso!");
-
-      // Atualizar estado do chamado com os novos valores
-      setChamado((prevChamado) => ({
-        ...prevChamado,
-        id_categoria: dadosAtualizados.id_categoria,
-        nivel_prioridade: dadosAtualizados.nivel_prioridade,
-        id_status: dadosAtualizados.id_status,
-        atribuido_a: dadosAtualizados.atribuido_a,
-      }));
-
-      // Se um técnico foi atribuído, buscar o nome atualizado
-      if (dadosAtualizados.atribuido_a) {
-        try {
-          const userResponse = await api.get(`/usuarios/${dadosAtualizados.atribuido_a}`);
-          console.log(userResponse)
-          setChamado((prevChamado) => ({
-            ...prevChamado,
-            nome_usuarioAtribuido: userResponse.data.nomeUser.nome_usuario
-          }));
-        } catch (error) {
-          console.error("Erro ao buscar usuário atribuído:", error);
-        }
-      }
-
-      // Resetar estados da edição
-      setEdit(false);
-      setNivelPrioridade("");
-      setCategoriaNome("");
-      setStatusNome("");
-      setUsuarioAtribuido("");
-    } else {
-      handleOpenPopup(`Falha ao atualizar o ticket. Código: ${response.status}`);
-    }
-  } catch (error) {
-    console.error("Erro ao atualizar o ticket:", error);
-    handleOpenPopup("Ocorreu um erro ao salvar as alterações. Tente novamente.");
-  }
-};
-
-  
   return (
     <PaginaPadrao>
       {/* Layout principal */}
@@ -491,76 +285,76 @@ const salvarEdicao = async () => {
                   />
                 </p>
                 <div className={styles.anexosContainer}>
-      <h3>Anexos:</h3>
-      {anexos && anexos.length > 0 ? (
-        <ul>
-          {anexos.map((anexo) => (
-            <li key={anexo.id}>
-              <span>{anexo.nome}</span>
-              <button onClick={() => downloadFile(anexo.id)}>
-                Baixar
-              </button>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p>Nenhum anexo encontrado.</p>
-      )}
-    </div>
+                  <h3>Anexos:</h3>
+                  {anexos && anexos.length > 0 ? (
+                    <ul>
+                      {anexos.map((anexo) => (
+                        <li key={anexo.id}>
+                          <span>{anexo.nome}</span>
+                          <button onClick={() => downloadFile(anexo.id)}>
+                            Baixar
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p>Nenhum anexo encontrado.</p>
+                  )}
+                </div>
               </div>
             </div>
           </Card>
-         
+
           {/* Expandir lista de respostas */}
           <ExpandirLista title="Respostas do chamado">
-  {!respostas.length ? (
-    <span>Não existem respostas</span>
-  ) : (
-    respostas
-      .sort((a, b) => new Date(b.data_hora) - new Date(a.data_hora)) // Ordena por data mais recente
-      .map((item) => (
-        <Card key={item.id_resposta}>
-          <div className={styles.responsesCard}>
-            <div className={styles.responsesCardDivFirst}>
-              <div>
-                <p>
-                  Enviado por{" "}
-                  <span>
-                    {item.nome_usuario || item.nome_requisitante} -{" "}
-                  </span>
-                </p>
-              </div>
-              <div>
-                <span>{formatarData(item.data_hora)}</span>
-              </div>
-            </div>
+            {!respostas.length ? (
+              <span>Não existem respostas</span>
+            ) : (
+              respostas
+                .sort((a, b) => new Date(b.data_hora) - new Date(a.data_hora)) // Ordena por data mais recente
+                .map((item) => (
+                  <Card key={item.id_resposta}>
+                    <div className={styles.responsesCard}>
+                      <div className={styles.responsesCardDivFirst}>
+                        <div>
+                          <p>
+                            Enviado por{" "}
+                            <span>
+                              {item.nome_usuario || item.nome_requisitante} -{" "}
+                            </span>
+                          </p>
+                        </div>
+                        <div>
+                          <span>{formatarData(item.data_hora)}</span>
+                        </div>
+                      </div>
 
-            <div
-              className={styles.responsesCardDivTwo}
-              dangerouslySetInnerHTML={{ __html: item.conteudo }}
-            />
+                      <div
+                        className={styles.responsesCardDivTwo}
+                        dangerouslySetInnerHTML={{ __html: item.conteudo }}
+                      />
 
-            {/* Se houver anexos, exibe a lista de anexos */}
-            {item.anexos && item.anexos.length > 0 && (
-              <div className={styles.anexosContainer}>
-                <h4>Anexos:</h4>
-                <ul>
-                  {item.anexos.map((anexo) => (
-                    <li key={anexo.id}>
-                      <span>{anexo.nome}</span>
-                      <button onClick={() => downloadFile(anexo.id)}>
-                        Baixar
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+                      {/* Se houver anexos, exibe a lista de anexos */}
+                      {item.anexos && item.anexos.length > 0 && (
+                        <div className={styles.anexosContainer}>
+                          <h4>Anexos:</h4>
+                          <ul>
+                            {item.anexos.map((anexo) => (
+                              <li key={anexo.id}>
+                                <span>{anexo.nome}</span>
+                                <button onClick={() => downloadFile(anexo.id)}>
+                                  Baixar
+                                </button>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
+                  </Card>
+                ))
             )}
-          </div>
-        </Card>
-      ))
-  )}
-</ExpandirLista>
+          </ExpandirLista>
 
           {/* Card para envio de respostas */}
           <Card>
@@ -615,20 +409,26 @@ const salvarEdicao = async () => {
             </div>
             <div className={styles.containerDivTwo}>
               <div>
-                <span className={styles.titleSpanDetalhes}>Código do Ticket:</span>
+                <span className={styles.titleSpanDetalhes}>
+                  Código do Ticket:
+                </span>
                 <span className={styles.spanDetalhes}>
                   {chamado.codigo_ticket}
                 </span>
               </div>
               <div>
-                <span className={styles.titleSpanDetalhes}>Data e Hora Criação:</span>
+                <span className={styles.titleSpanDetalhes}>
+                  Data e Hora Criação:
+                </span>
                 <span className={styles.spanDetalhes}>
                   {formatarData(chamado.data_criacao)}
                 </span>
               </div>
               {chamado.data_conclusao && (
                 <div>
-                  <span className={styles.titleSpanDetalhes}>Data e Hora Conclusão:</span>
+                  <span className={styles.titleSpanDetalhes}>
+                    Data e Hora Conclusão:
+                  </span>
                   <span className={styles.spanDetalhes}>
                     {formatarData(chamado.data_conclusao)}
                   </span>
@@ -645,13 +445,17 @@ const salvarEdicao = async () => {
                     <span className={styles.spanDetalhes}>{categoria}</span>
                   </div>
                   <div>
-                    <span className={styles.titleSpanDetalhes}>Prioridade:</span>
+                    <span className={styles.titleSpanDetalhes}>
+                      Prioridade:
+                    </span>
                     <span className={styles.spanDetalhes}>
                       {chamado.nivel_prioridade}
                     </span>
                   </div>
                   <div>
-                    <span className={styles.titleSpanDetalhes}>Técnico Responsável:</span>
+                    <span className={styles.titleSpanDetalhes}>
+                      Técnico Responsável:
+                    </span>
                     <span className={styles.spanDetalhes}>
                       {chamado.nome_usuarioAtribuido}
                     </span>
@@ -664,7 +468,6 @@ const salvarEdicao = async () => {
                     <select
                       className={styles.selectDetalhes}
                       value={statusNome}
-                     
                       onChange={(e) => setStatusNome(e.target.value)}
                       defaultValue=""
                     >
@@ -675,7 +478,11 @@ const salvarEdicao = async () => {
                         <option
                           key={item.id_status}
                           value={item.id_status}
-                          style={item.nome === statusChamado ? { color: "green" } : {}}
+                          style={
+                            item.nome === statusChamado
+                              ? { color: "green" }
+                              : {}
+                          }
                         >
                           {item.nome}
                         </option>
@@ -693,22 +500,27 @@ const salvarEdicao = async () => {
                       <option value={""} disabled>
                         Selecione um opção
                       </option>
-                      {listCategorias.map((item) => (
-                        <option
-                          key={item.id_categoria}
-                          value={item.id_categoria}
-                          style={
-                            item.nome === categoria ? { color: "green" } : {}
-                          }
-                        >
-                          {item.nome}
-                        </option>
-                      ))}
+                      {listCategorias &&
+                        listCategorias.map((item) => (
+                          <option
+                            key={item.id_categoria}
+                            value={item.id_categoria}
+                            style={
+                              item.nome === categoria ? { color: "green" } : {}
+                            }
+                          >
+                            {item.nome}
+                          </option>
+                        ))}
                     </select>
                   </div>
                   <div>
-                    <span className={styles.titleSpanDetalhes}>Prioridade:</span>
-                    <select className={styles.selectDetalhes} defaultValue="" 
+                    <span className={styles.titleSpanDetalhes}>
+                      Prioridade:
+                    </span>
+                    <select
+                      className={styles.selectDetalhes}
+                      defaultValue=""
                       onChange={(e) => setNivelPrioridade(e.target.value)}
                     >
                       <option value={""} disabled>
@@ -733,7 +545,9 @@ const salvarEdicao = async () => {
                     </select>
                   </div>
                   <div>
-                    <span className={styles.titleSpanDetalhes}>Técnico Responsável:</span>
+                    <span className={styles.titleSpanDetalhes}>
+                      Técnico Responsável:
+                    </span>
                     <select
                       className={styles.selectDetalhes}
                       value={usuarioAtribuido}
@@ -752,7 +566,6 @@ const salvarEdicao = async () => {
                               ? { color: "green" }
                               : {}
                           }
-                          
                         >
                           {item.nome_usuario}
                         </option>
@@ -764,7 +577,7 @@ const salvarEdicao = async () => {
                       type="button"
                       className={styles.buttonPadrao}
                       value={"Salvar"}
-                      onClick={salvarEdicao}
+                      onClick={()=>salvarEdicao(id_ticket)}
                     />
                     <input
                       type="button"
