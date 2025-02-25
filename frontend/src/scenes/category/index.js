@@ -78,7 +78,7 @@ function Category() {
               </thead>
               <tbody className={stylesGlobal.tbody}>
                 {categorys.map((category) => (
-                  <tr key={category.id} style={{ cursor: "auto" }}>
+                  <tr key={category.id_categoria} style={{ cursor: "auto" }}>
                     <td>{category.id_categoria}</td>
                     <td>{category.nome}</td>
                     <td>{category.criado_por}</td>

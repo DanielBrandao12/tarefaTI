@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import api from "../services/api";
 
 import useUser from "./useUser";
@@ -42,7 +42,7 @@ const useCategory = () => {
   const [isEditIconDisabled, setIsEditIconDisabled] = useState(false);
 
   // Função para buscar todas as categorias da API
-  const getAllCategorys = async () => {
+  const getAllCategorys = useCallback( async () => {
     try {
       const response = await api.get("/categoria/"); // Chama o endpoint para buscar categorias
       setCategorys(response.data); // Armazena os dados na variável de estado
@@ -54,12 +54,12 @@ const useCategory = () => {
       console.error("Erro ao buscar categorias:", error);
       setError(true); // Sinaliza que houve um erro
     }
-  };
+  },[setCategorys, setListCategorias]);
 
   // useEffect para chamar a função getAllCategorys ao montar o componente
   useEffect(() => {
     getAllCategorys(); // Chama a função ao montar o componente
-  }, []); // O array vazio garante que a função será chamada apenas uma vez
+  }, [getAllCategorys]); // O array vazio garante que a função será chamada apenas uma vez
 
   // Função para criar uma nova categoria
   const createCategory = async () => {
@@ -159,7 +159,7 @@ const useCategory = () => {
 
     // Busca a categoria do chamado
    
-      const fetchCategoria = async (chamado) => {
+      const fetchCategoria =useCallback( async (chamado) => {
         try {
           if (chamado.id_categoria) {
             const response = await api.get(`/categoria/${chamado.id_categoria}`);
@@ -169,7 +169,7 @@ const useCategory = () => {
         } catch (error) {
           console.error("Erro ao buscar categoria:", error);
         }
-      };
+      },[setCategoria]);
    
    
   

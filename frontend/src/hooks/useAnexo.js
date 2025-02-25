@@ -1,20 +1,20 @@
-import {useState} from "react";
+import {useCallback, useState} from "react";
 
 import api from "../services/api";
 
 const useAnexo = () =>{
     const [anexos, setAnexos] = useState([])
 
-    const fetchAnexos = async (id_ticket) => {
+    const fetchAnexos = useCallback( async (id_ticket) => {
         try {
           const response = await api.get(`/anexo/${id_ticket}`);
-          console.log(response);
+        
           // Atualiza o estado com os dados dos anexos
           setAnexos(response.data); // Ajuste conforme a resposta esperada
         } catch (error) {
           console.error("Erro ao buscar anexos:", error);
         }
-      };
+      },[setAnexos]);
 
 
       const downloadFile = async (id) => {

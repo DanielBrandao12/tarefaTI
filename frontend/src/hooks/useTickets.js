@@ -1,27 +1,24 @@
-import  { useState, useEffect } from "react";
-
+import { useCallback, useState } from "react";
 
 import api from "../services/api";
-
 
 import useUser from "./useUser";
 
 const useTickets = () => {
+  const { idUser } = useUser();
 
-
- const { idUser } = useUser();
   // Estados para armazenar dados e controlar o comportamento do componente
   const [chamado, setChamado] = useState({});
 
   const [respostas, setRespostas] = useState([]);
-    const [message, setMessage] = useState("");
-    const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [message, setMessage] = useState("");
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
 
   const [statusNome, setStatusNome] = useState();
   const [categoriaNome, setCategoriaNome] = useState();
   const [usuarioAtribuido, setUsuarioAtribuido] = useState();
   const [nivelPrioridade, setNivelPrioridade] = useState();
-
+  const [resposta, setResposta] = useState("");
   const [edit, setEdit] = useState(false);
 
   // Funções para controlar o Popup
@@ -29,61 +26,58 @@ const useTickets = () => {
     setMessage(mensagem);
     setIsPopupOpen(true);
   };
-  
 
   // Busca os detalhes do chamado pelo ID
-    const fetchChamado = async (id_ticket) => {
-      try {
-        const response = await api.get(`/tickets/${id_ticket}`);
+  const fetchChamado = useCallback( async (id_ticket) => {
+    try {
+      const response = await api.get(`/tickets/${id_ticket}`);
 
-        setChamado(response.data.ticket);
+      setChamado(response.data.ticket);
 
-        if (response.data.respostas.length > 0) {
-          const respostasComAnexos = await Promise.all(
-            response.data.respostas.map(async (resposta) => {
-              try {
-                // Busca os anexos para cada resposta
-                const anexoR = await api.get(`/anexo/${resposta.id_resposta}`);
-                return {
-                  ...resposta,
-                  anexos: anexoR.data.length > 0 ? anexoR.data : [],
-                };
-              } catch (error) {
-                console.error(
-                  `Erro ao buscar anexos para a resposta ${resposta.id_resposta}:`,
-                  error
-                );
-                return { ...resposta, anexos: [] }; // Garante que a resposta será mostrada sem anexos
-              }
-            })
-          );
+      if (response.data.respostas.length > 0) {
+        const respostasComAnexos = await Promise.all(
+          response.data.respostas.map(async (resposta) => {
+            try {
+              // Busca os anexos para cada resposta
+              const anexoR = await api.get(`/anexo/${resposta.id_resposta}`);
+              return {
+                ...resposta,
+                anexos: anexoR.data.length > 0 ? anexoR.data : [],
+              };
+            } catch (error) {
+              console.error(
+                `Erro ao buscar anexos para a resposta ${resposta.id_resposta}:`,
+                error
+              );
+              return { ...resposta, anexos: [] }; // Garante que a resposta será mostrada sem anexos
+            }
+          })
+        );
 
-          setRespostas(respostasComAnexos);
-        } else {
-          setRespostas([]); // Garante que o estado não fique indefinido
-        }
-      } catch (error) {
-        console.error("Erro ao buscar tickets:", error);
+        setRespostas(respostasComAnexos);
+      } else {
+        setRespostas([]); // Garante que o estado não fique indefinido
       }
-    };
-   
+    } catch (error) {
+      console.error("Erro ao buscar tickets:", error);
+    }
+  }, [setChamado, setRespostas]);
 
-     //Atribui o nome do user ao chamado
-    const fetchUserAtribuido = async (chamado) => {
-      try {
-        // Verifica se o chamado tem um 'id_usuario' atribuído
-        if (chamado.atribuido_a) {
-          const response = await api.get(`/usuarios/${chamado.atribuido_a}`);
-          setChamado((prevChamado) => ({
-            ...prevChamado,
-            nome_usuarioAtribuido: response.data.nomeUser.nome_usuario,
-          }));
-         
-        }
-      } catch (error) {
-        console.error("Erro ao buscar usuário:", error);
+  //Atribui o nome do user ao chamado
+  const fetchUserAtribuido = useCallback( async (chamado) => {
+    try {
+      // Verifica se o chamado tem um 'id_usuario' atribuído
+      if (chamado.atribuido_a) {
+        const response = await api.get(`/usuarios/${chamado.atribuido_a}`);
+        setChamado((prevChamado) => ({
+          ...prevChamado,
+          nome_usuarioAtribuido: response.data.nomeUser.nome_usuario,
+        }));
       }
-    };
+    } catch (error) {
+      console.error("Erro ao buscar usuário:", error);
+    }
+  },[]);
 
   //Salvar edição
 
@@ -125,7 +119,7 @@ const useTickets = () => {
             const userResponse = await api.get(
               `/usuarios/${dadosAtualizados.atribuido_a}`
             );
-            console.log(userResponse);
+
             setChamado((prevChamado) => ({
               ...prevChamado,
               nome_usuarioAtribuido: userResponse.data.nomeUser.nome_usuario,
@@ -154,9 +148,38 @@ const useTickets = () => {
     }
   };
 
+  // Envia uma nova resposta para o chamado
+  const sendResposta = async (codigoTicket, remetente, id_ticket, idUser) => {
+    try {
+      if (!resposta || !resposta.trim()) {
+        handleOpenPopup("A resposta não pode estar vazia.");
+        return;
+      }
+
+      const response = await api.post("/resposta/createResposta", {
+        resposta,
+        id_ticket,
+        id_usuario: idUser.id,
+        codigoTicket,
+        remetente,
+      });
+      //aqui vai ter uma função para enviar para o email do requisitante.
+
+      // Atualiza a lista de respostas e limpa o campo
+      handleOpenPopup("Mensagem Enviada com sucesso!");
+      setRespostas((prevRespostas) => [
+        ...prevRespostas,
+        response.data.respostaCriada,
+      ]);
+      console.log(response.data);
+      setResposta("");
+    } catch (error) {
+      console.error("Erro ao enviar a resposta:", error);
+      handleOpenPopup("Erro ao enviar a resposta. Tente novamente.");
+    }
+  };
 
   return {
-
     chamado,
     respostas,
     edit,
@@ -165,6 +188,9 @@ const useTickets = () => {
     usuarioAtribuido,
     isPopupOpen,
     message,
+    resposta,
+    setResposta,
+    sendResposta,
     setIsPopupOpen,
     setEdit,
     setStatusNome,
@@ -175,8 +201,7 @@ const useTickets = () => {
     handleOpenPopup,
     fetchChamado,
     fetchUserAtribuido,
-    salvarEdicao
-  
+    salvarEdicao,
   };
 };
 

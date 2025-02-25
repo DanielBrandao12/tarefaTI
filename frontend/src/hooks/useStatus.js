@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import api from "../services/api";
 
 const useStatus = () => {
@@ -111,7 +111,7 @@ const useStatus = () => {
   };
 
   
-    const fetchStatus = async (chamado) => {
+    const fetchStatus = useCallback( async (chamado) => {
       try {
         if (chamado.id_status) {
           const response = await api.get(`/status/${chamado.id_status}`);
@@ -120,7 +120,7 @@ const useStatus = () => {
       } catch (error) {
         console.error("Erro ao buscar status:", error);
       }
-    };
+    },[setStatusChamado]);
    
   
 

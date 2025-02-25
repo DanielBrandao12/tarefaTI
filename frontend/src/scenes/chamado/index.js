@@ -1,5 +1,5 @@
 // Importação das dependências necessárias
-import React, { useState, useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import styles from "./style.module.css";
 import stylesGlobal from "../../styles/styleGlobal.module.css";
@@ -12,13 +12,15 @@ import Popup from "../../components/popup";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import ExpandirLista from "../../components/expandirLista";
-import api from "../../services/api";
+
 
 import useStatus from "../../hooks/useStatus";
 import useCategory from "../../hooks/useCategory";
 import useUser from "../../hooks/useUser";
 import useAnexo from "../../hooks/useAnexo";
 import useTickets from "../../hooks/useTickets";
+import useHistoricos from "../../hooks/useHistoricos";
+import BodyTicket from "../../components/bodyTicket";
 // Componente principal da página
 function Chamado() {
   //  const navigate = useNavigate(); // Navegação entre páginas
@@ -30,7 +32,10 @@ function Chamado() {
 
   const { anexos, fetchAnexos, downloadFile } = useAnexo();
 
-  const { categoria, listCategorias, fetchCategoria, getAllCategorys } = useCategory();
+  const { categoria, listCategorias, fetchCategoria, getAllCategorys } =
+    useCategory();
+
+  const { historicoStatus, fetchHistoricoStatus } = useHistoricos();
 
   const {
     chamado,
@@ -41,26 +46,23 @@ function Chamado() {
     usuarioAtribuido,
     isPopupOpen,
     message,
+    resposta,
+    setResposta,
+    sendResposta,
     setIsPopupOpen,
     setEdit,
     setStatusNome,
     setCategoriaNome,
     setNivelPrioridade,
     setUsuarioAtribuido,
-    setRespostas,
-    handleOpenPopup,
     fetchChamado,
     fetchUserAtribuido,
     salvarEdicao
   } = useTickets();
 
-  const [historicoStatus, setHistoricoStatus] = useState([]);
-  const [resposta, setResposta] = useState("");
-
   const hasFetched = useRef(false);
 
   const handleClosePopup = () => setIsPopupOpen(false);
-
 
   /* ------------- */
   //Refatorado 02/2025
@@ -68,31 +70,31 @@ function Chamado() {
   // Busca os detalhes do chamado pelo ID
   useEffect(() => {
     fetchChamado(id_ticket);
-  }, [id_ticket, resposta]);
+  }, [id_ticket, resposta, fetchChamado]);
 
   //busca anexos
   useEffect(() => {
     fetchAnexos(id_ticket);
-  }, [id_ticket]); // A dependência de id_ticket garante que a função seja chamada quando id_ticket mudar
+  }, [id_ticket, fetchAnexos]); // A dependência de id_ticket garante que a função seja chamada quando id_ticket mudar
 
   // Busca o status atual do chamado
   useEffect(() => {
     fetchStatus(chamado);
-  }, [chamado]);
+  }, [chamado, fetchStatus]);
 
   // Busca a categoria do chamado
   useEffect(() => {
     fetchCategoria(chamado);
-  }, [chamado]);
+  }, [chamado, fetchCategoria]);
 
   useEffect(() => {
     getAllCategorys(); // Chama a função ao montar o componente
-  }, []);
+  }, [getAllCategorys]);
 
   // Buscar todos os usuários
   useEffect(() => {
     getUserAll();
-  }, []);
+  }, [getUserAll]);
 
   //Atribui o nome do user ao chamado
   useEffect(() => {
@@ -102,69 +104,13 @@ function Chamado() {
       // Marca como verdadeiro para impedir novas requisições
       hasFetched.current = true;
     }
-  }, [chamado]); // Esse useEffect será executado sempre que 'chamado' for alterado
+  }, [chamado, fetchUserAtribuido]); // Esse useEffect será executado sempre que 'chamado' for alterado
 
-  /* ------------- */
-
-
-
-  
   // Busca o histórico de status do chamado
   useEffect(() => {
-    const fetchHistoricoStatus = async () => {
-      try {
-        const response = await api.get(`/historicoStatus/${id_ticket}`);
-        const historico = response.data;
-
-        const statusPromises = historico.map((item) =>
-          api.get(`/status/${item.id_status}`)
-        );
-        const statusResponses = await Promise.all(statusPromises);
-        const statusData = statusResponses.map((res) => res.data);
-
-        const historicoComStatus = historico.map((item, index) => ({
-          ...item,
-          status: statusData[index],
-        }));
-
-        setHistoricoStatus(historicoComStatus);
-      } catch (error) {
-        console.error("Erro ao buscar histórico:", error);
-      }
-    };
-    fetchHistoricoStatus();
-  }, [id_ticket]);
-
-  // Envia uma nova resposta para o chamado
-  const sendResposta = async (codigoTicket, remetente) => {
-    try {
-      if (!resposta || !resposta.trim()) {
-        handleOpenPopup("A resposta não pode estar vazia.");
-        return;
-      }
-
-      const response = await api.post("/resposta/createResposta", {
-        resposta,
-        id_ticket,
-        id_usuario: idUser.id,
-        codigoTicket,
-        remetente,
-      });
-      //aqui vai ter uma função para enviar para o email do requisitante.
-
-      // Atualiza a lista de respostas e limpa o campo
-      handleOpenPopup("Mensagem Enviada com sucesso!");
-      setRespostas((prevRespostas) => [
-        ...prevRespostas,
-        response.data.respostaCriada,
-      ]);
-      console.log(response.data);
-      setResposta("");
-    } catch (error) {
-      console.error("Erro ao enviar a resposta:", error);
-      handleOpenPopup("Erro ao enviar a resposta. Tente novamente.");
-    }
-  };
+    fetchHistoricoStatus(id_ticket);
+  }, [id_ticket, statusChamado, fetchHistoricoStatus]);
+  /* ------------- */
 
 
   // Função para imprimir os detalhes do chamado
@@ -254,8 +200,6 @@ function Chamado() {
     setEdit(!edit);
   };
 
-
-
   return (
     <PaginaPadrao>
       {/* Layout principal */}
@@ -263,46 +207,11 @@ function Chamado() {
         <div className={styles.containerFirstCard}>
           {/* Card de informações do chamado */}
           <Card>
-            <div className={styles.containerChamadoView}>
-              <h3 className={styles.titleAssunto}>{chamado.assunto}</h3>
-              <div className={styles.autor}>
-                <span className={styles.span}>Enviado por:</span>
-                <p className={stylesGlobal.paragrafoGlobal}>
-                  {chamado.nome_requisitante}
-                </p>
-              </div>
-              <div className={styles.autor}>
-                <span className={styles.span}>Email:</span>
-                <p className={stylesGlobal.paragrafoGlobal}>{chamado.email}</p>
-              </div>
-
-              <span className={styles.span}>Descrição:</span>
-              <div className={styles.descri}>
-                <p className={stylesGlobal.paragrafoGlobal}>
-                  <p
-                    style={{ marginLeft: "15px" }}
-                    dangerouslySetInnerHTML={{ __html: chamado.descricao }}
-                  />
-                </p>
-                <div className={styles.anexosContainer}>
-                  <h3>Anexos:</h3>
-                  {anexos && anexos.length > 0 ? (
-                    <ul>
-                      {anexos.map((anexo) => (
-                        <li key={anexo.id}>
-                          <span>{anexo.nome}</span>
-                          <button onClick={() => downloadFile(anexo.id)}>
-                            Baixar
-                          </button>
-                        </li>
-                      ))}
-                    </ul>
-                  ) : (
-                    <p>Nenhum anexo encontrado.</p>
-                  )}
-                </div>
-              </div>
-            </div>
+            <BodyTicket
+              chamado={chamado}
+              anexos={anexos}
+              downloadFile={downloadFile}
+            />
           </Card>
 
           {/* Expandir lista de respostas */}
@@ -336,7 +245,7 @@ function Chamado() {
 
                       {/* Se houver anexos, exibe a lista de anexos */}
                       {item.anexos && item.anexos.length > 0 && (
-                        <div className={styles.anexosContainer}>
+                        <div className={stylesGlobal.anexosContainer}>
                           <h4>Anexos:</h4>
                           <ul>
                             {item.anexos.map((anexo) => (
@@ -371,7 +280,7 @@ function Chamado() {
                   className="button-padrao"
                   value="Enviar"
                   onClick={() =>
-                    sendResposta(chamado.codigo_ticket, chamado.email)
+                    sendResposta(chamado.codigo_ticket, chamado.email, id_ticket, idUser)
                   }
                 />
               </div>
@@ -577,7 +486,7 @@ function Chamado() {
                       type="button"
                       className={styles.buttonPadrao}
                       value={"Salvar"}
-                      onClick={()=>salvarEdicao(id_ticket)}
+                      onClick={() => salvarEdicao(id_ticket)}
                     />
                     <input
                       type="button"

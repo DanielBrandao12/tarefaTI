@@ -1,0 +1,31 @@
+.containerChamadoView {
+    display: flex;
+    flex-direction: column;
+   
+    gap: 12px;
+}
+
+.titleAssunto {
+    font-size: 22px;
+    color: #b20000;
+    font-weight: bold;
+    padding: 10px;
+}
+
+.autor {
+    display: flex;
+    align-items: center;
+}
+
+.descri{
+    
+    border: 1px solid #b2000025;
+    border-radius: 2px;
+}
+.span {
+    font-size: 15px;
+    color: #b20000;
+    font-weight: bold;
+    padding: 10px;
+}
+

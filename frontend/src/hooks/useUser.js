@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import api from "../services/api"; // Verifique o caminho do seu arquivo 'api.js'
 import { jwtDecode } from "jwt-decode";
 import Cookies from "js-cookie";
@@ -78,14 +78,14 @@ const useUser = () => {
   };
 
   // Função para obter todos os usuários
-  const getUserAll = async () => {
+  const getUserAll = useCallback( async () => {
     try {
       const response = await api.get("/usuarios/");
       setUserList(response.data);
     } catch (error) {
       console.error("Erro ao buscar todos os usuários:", error);
     }
-  };
+  }, [setUserList]);
 
   // Validação do formulário
   const validateForm = () => {
