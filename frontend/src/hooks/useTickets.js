@@ -9,17 +9,21 @@ const useTickets = () => {
 
   // Estados para armazenar dados e controlar o comportamento do componente
   const [chamado, setChamado] = useState({});
-
+  const [chamados, setChamados] = useState([]);
   const [respostas, setRespostas] = useState([]);
   const [message, setMessage] = useState("");
   const [isPopupOpen, setIsPopupOpen] = useState(false);
-
+  const [filteredChamados, setFilteredChamados] = useState([]);
   const [statusNome, setStatusNome] = useState();
   const [categoriaNome, setCategoriaNome] = useState();
   const [usuarioAtribuido, setUsuarioAtribuido] = useState();
   const [nivelPrioridade, setNivelPrioridade] = useState();
   const [resposta, setResposta] = useState("");
   const [edit, setEdit] = useState(false);
+  const [contadorTodos, setContadorTodos] = useState(0);
+  const [contadorAtMim, setContadorAtMim] = useState(0);
+  const [contadorAtAOutros, setContadorAtAOutros] = useState(0);
+  const [contadorNaoAt, setContadorNaoAt] = useState(0);
 
   // Funções para controlar o Popup
   const handleOpenPopup = (mensagem) => {
@@ -27,44 +31,95 @@ const useTickets = () => {
     setIsPopupOpen(true);
   };
 
-  // Busca os detalhes do chamado pelo ID
-  const fetchChamado = useCallback( async (id_ticket) => {
+  // Buscar chamados do backend e atualizar contadores
+  const fetchChamados = async () => {
     try {
-      const response = await api.get(`/tickets/${id_ticket}`);
+      const response = await api.get("/tickets/");
+      const chamados = response.data;
 
-      setChamado(response.data.ticket);
+      // Cria um array de promessas para buscar os usuários atribuídos
+      const promessas = chamados.map(async (chamado) => {
+        if (chamado.atribuido_a) {
+          const responseUsuario = await api.get(
+            `/usuarios/${chamado.atribuido_a}`
+          );
+          chamado.nome_usuarioAtribuido =
+            responseUsuario.data.nomeUser.nome_usuario;
+        }
+        return chamado;
+      });
 
-      if (response.data.respostas.length > 0) {
-        const respostasComAnexos = await Promise.all(
-          response.data.respostas.map(async (resposta) => {
-            try {
-              // Busca os anexos para cada resposta
-              const anexoR = await api.get(`/anexo/${resposta.id_resposta}`);
-              return {
-                ...resposta,
-                anexos: anexoR.data.length > 0 ? anexoR.data : [],
-              };
-            } catch (error) {
-              console.error(
-                `Erro ao buscar anexos para a resposta ${resposta.id_resposta}:`,
-                error
-              );
-              return { ...resposta, anexos: [] }; // Garante que a resposta será mostrada sem anexos
-            }
-          })
-        );
+      // Aguarda todas as requisições terminarem
+      const chamadosComUsuarios = await Promise.all(promessas);
 
-        setRespostas(respostasComAnexos);
-      } else {
-        setRespostas([]); // Garante que o estado não fique indefinido
-      }
+      // Atualiza o estado com os chamados e os nomes dos usuários atribuídos
+      setChamados(chamadosComUsuarios);
+      setFilteredChamados(chamadosComUsuarios); // Inicializa com todos os chamados
+      atualizarContadores(chamadosComUsuarios);
     } catch (error) {
-      console.error("Erro ao buscar tickets:", error);
+      console.error("Erro ao buscar tickets ou usuários:", error);
     }
-  }, [setChamado, setRespostas]);
+  };
+
+  //Atualizar contadores
+  const atualizarContadores =(dados) => {
+    setContadorTodos(dados.length);
+
+    setContadorAtMim(
+      dados.filter((chamado) => parseInt(chamado.atribuido_a) === idUser.id)
+        .length
+    );
+    setContadorAtAOutros(
+      dados.filter(
+        (chamado) =>
+          parseInt(chamado.atribuido_a) &&
+          parseInt(chamado.atribuido_a) !== idUser.id
+      ).length
+    );
+    setContadorNaoAt(dados.filter((chamado) => !chamado.atribuido_a).length);
+  };
+
+  // Busca os detalhes do chamado pelo ID
+  const fetchChamado = useCallback(
+    async (id_ticket) => {
+      try {
+        const response = await api.get(`/tickets/${id_ticket}`);
+
+        setChamado(response.data.ticket);
+
+        if (response.data.respostas.length > 0) {
+          const respostasComAnexos = await Promise.all(
+            response.data.respostas.map(async (resposta) => {
+              try {
+                // Busca os anexos para cada resposta
+                const anexoR = await api.get(`/anexo/${resposta.id_resposta}`);
+                return {
+                  ...resposta,
+                  anexos: anexoR.data.length > 0 ? anexoR.data : [],
+                };
+              } catch (error) {
+                console.error(
+                  `Erro ao buscar anexos para a resposta ${resposta.id_resposta}:`,
+                  error
+                );
+                return { ...resposta, anexos: [] }; // Garante que a resposta será mostrada sem anexos
+              }
+            })
+          );
+
+          setRespostas(respostasComAnexos);
+        } else {
+          setRespostas([]); // Garante que o estado não fique indefinido
+        }
+      } catch (error) {
+        console.error("Erro ao buscar tickets:", error);
+      }
+    },
+    [setChamado, setRespostas]
+  );
 
   //Atribui o nome do user ao chamado
-  const fetchUserAtribuido = useCallback( async (chamado) => {
+  const fetchUserAtribuido = useCallback(async (chamado) => {
     try {
       // Verifica se o chamado tem um 'id_usuario' atribuído
       if (chamado.atribuido_a) {
@@ -77,7 +132,7 @@ const useTickets = () => {
     } catch (error) {
       console.error("Erro ao buscar usuário:", error);
     }
-  },[]);
+  }, []);
 
   //Salvar edição
 
@@ -189,6 +244,13 @@ const useTickets = () => {
     isPopupOpen,
     message,
     resposta,
+    chamados,
+    contadorTodos,
+    contadorAtMim,
+    contadorAtAOutros,
+    contadorNaoAt,
+    filteredChamados,
+    setFilteredChamados,
     setResposta,
     sendResposta,
     setIsPopupOpen,
@@ -202,6 +264,8 @@ const useTickets = () => {
     fetchChamado,
     fetchUserAtribuido,
     salvarEdicao,
+    atualizarContadores,
+    fetchChamados,
   };
 };
 

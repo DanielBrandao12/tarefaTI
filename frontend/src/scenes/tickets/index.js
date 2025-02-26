@@ -9,8 +9,9 @@ import api from "../../services/api";
 import useUser from "../../hooks/useUser";
 import useStatus from "../../hooks/useStatus";
 import useTickets from "../../hooks/useTickets";
+import Table from "../../components/table";
 
-function Chamados() {
+function Tickets() {
   const navigate = useNavigate();
 
   const { idUser } = useUser();
@@ -40,6 +41,18 @@ function Chamados() {
 
   const [statusAtivo, setStatusAtivo] = useState([]);
 
+  const columns = [
+    { key: "codigo_ticket", label: "Código do Ticket" },
+    { key: "nome_usuarioAtribuido", label: "Técnico" },
+    { key: "nome_requisitante", label: "Solicitante" },
+    { key: "data_criacao", label: "Data Criação" },
+    { key: "assunto", label: "Assunto" },
+    { key: "status", label: "Status" },
+    { key: "nivel_prioridade", label: "Prioridade" }
+  ];
+
+
+
   useEffect(() => {
     setStatusAtivo(
       status.filter((item) => {
@@ -59,6 +72,9 @@ function Chamados() {
     // Limpa o intervalo quando o componente for desmontado
     return () => clearInterval(interval);
   }, []);
+
+
+
 
   //Ajustar isso, para poder ficar negrito ou algo assim quando tiver novas mensagens
   const getRespostas = async () => {
@@ -199,45 +215,7 @@ function Chamados() {
             </div>
           </Card>
           <Card>
-            <table className={stylesGlobal.table}>
-              <thead>
-                <tr>
-                  <th>Código do Ticket</th>
-                  <th>Técnico</th>
-                  <th>Solicitante</th>
-                  <th>Assunto</th>
-                  <th>Status</th>
-                  <th>Prioridade</th>
-                </tr>
-              </thead>
-              <tbody className={stylesGlobal.tbody}>
-                {filteredChamados
-                  .sort(
-                    (a, b) =>
-                      new Date(b.data_criacao) - new Date(a.data_criacao)
-                  ) // Ordena do mais recente para o mais antigo
-                  .map((chamado) => (
-                    <tr
-                      key={chamado.id_ticket}
-                      onClick={() => handleChamadoClick(chamado)}
-                      className={
-                        mensagensNaoLidas[chamado.id_ticket]
-                          ? styles.chamadoNaoLido
-                          : ""
-                      }
-                    >
-                      <td>{chamado.codigo_ticket}</td>
-                      <td>
-                        {chamado.nome_usuarioAtribuido || "Não atribuído"}
-                      </td>
-                      <td>{chamado.nome_requisitante || "N/A"}</td>
-                      <td>{chamado.assunto}</td>
-                      <td>{chamado.status}</td>
-                      <td>{chamado.nivel_prioridade}</td>
-                    </tr>
-                  ))}
-              </tbody>
-            </table>
+            <Table data={chamados} columns={columns} fetchData={fetchChamados}/>
           </Card>
         </div>
         <div className={styles.containerCardsLinha}>
@@ -304,4 +282,4 @@ function Chamados() {
   );
 }
 
-export default Chamados;
+export default Tickets;

@@ -12,6 +12,7 @@ import Relatorio from './scenes/relatorio';
 import CriarChamadoUser from './scenes/newticket';
 import Status from './scenes/status';
 import Home from './scenes/home'
+import Tickets from './scenes/tickets';
 
 function App() {
   return (
@@ -26,6 +27,8 @@ function App() {
         <Route path="/category" element={<PrivateRoute element={<Category />} />} />
         <Route path="/relatorio" element={<PrivateRoute element={<Relatorio />} />} />
         <Route path="/newticket" element={<PrivateRoute element={<CriarChamadoUser />} />} />
+       
+        <Route path="/tickets" element={<PrivateRoute element={<Tickets />} />} />
        
         <Route path="/status" element={<PrivateRoute element={<Status />} />} />
 
