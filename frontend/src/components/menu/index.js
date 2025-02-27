@@ -17,8 +17,8 @@ function Menu() {
             <div className='container-nav-options'>
                 <div>
                     <Link className='link' to={'/'}>Início</Link>
-                    <Link className='link' to={'/chamados'}>Chamados</Link>
-                    <Link className='link' to={'/tickets'}>Chamados</Link>
+                    <Link className='link' to={'/tickets'}>Chamados Abertos</Link>
+                    <Link className='link' to={'/'}>Chamados Fechados</Link>
                     <Link className='link' to={'/relatorio'}>Relátorios</Link>
                     <Link className='link' to={'/category'}>Categorias</Link>
                     <Link className='link' to={'/status'}>Status</Link>

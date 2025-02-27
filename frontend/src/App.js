@@ -4,7 +4,6 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 
 import Login from './scenes/login';
 import Chamado from './scenes/chamado'
-import Chamados from './scenes/chamados';
 import CriarChamado from './scenes/criarChamado';
 import PrivateRoute from './components/privateRoute'; // Importe o componente PrivateRoute
 import Category from './scenes/category';
@@ -21,7 +20,6 @@ function App() {
       <Route path="/login" element={<Login />} />
         <Route path="/" element={<PrivateRoute element={<Home />} />} />
         <Route path="/t/:id_ticket" element={<PrivateRoute element={<Chamado />} />} />
-        <Route path="/chamados" element={<PrivateRoute element={<Chamados />} />} />
         <Route path="/editarChamado/:id" element={<PrivateRoute element={<CriarChamado />} />} />
         <Route path="/criarChamado" element={<PrivateRoute element={<CriarChamado />} />} />
         <Route path="/category" element={<PrivateRoute element={<Category />} />} />

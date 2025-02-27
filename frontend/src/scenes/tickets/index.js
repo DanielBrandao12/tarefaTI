@@ -25,12 +25,14 @@ function Tickets() {
     contadorAtAOutros,
     contadorNaoAt,
     filteredChamados,
+    setChamados,
     setFilteredChamados,
     fetchChamados,
     atualizarContadores,
   } = useTickets();
 
   const [busca, setBusca] = useState("");
+  const [filtroAtribuido, setFiltroAtribuido] = useState(""); // Estado para armazenar o tipo de atribuição
 
   const [mensagensNaoLidas, setMensagensNaoLidas] = useState({});
 
@@ -48,33 +50,16 @@ function Tickets() {
     { key: "data_criacao", label: "Data Criação" },
     { key: "assunto", label: "Assunto" },
     { key: "status", label: "Status" },
-    { key: "nivel_prioridade", label: "Prioridade" }
+    { key: "nivel_prioridade", label: "Prioridade" },
   ];
-
-
 
   useEffect(() => {
     setStatusAtivo(
       status.filter((item) => {
-        return item.ativo;
+        return item.ativo && item.nome !== 'Fechado';
       })
     );
   }, [status]);
-
-  // Buscar chamados do backend e atualizar contadores
-  useEffect(() => {
-    // Chama a função imediatamente
-    fetchChamados();
-
-    // Define um intervalo para chamar a função a cada 30 segundos
-    const interval = setInterval(fetchChamados, 30000);
-
-    // Limpa o intervalo quando o componente for desmontado
-    return () => clearInterval(interval);
-  }, []);
-
-
-
 
   //Ajustar isso, para poder ficar negrito ou algo assim quando tiver novas mensagens
   const getRespostas = async () => {
@@ -117,7 +102,9 @@ function Tickets() {
             ?.toLowerCase()
             .includes(busca.toLowerCase()) ||
           chamado.assunto?.toLowerCase().includes(busca.toLowerCase()) ||
-          chamado.atribuido_a?.toLowerCase().includes(busca.toLowerCase())
+          chamado.nome_usuarioAtribuido
+            ?.toLowerCase()
+            .includes(busca.toLowerCase())
       );
     }
 
@@ -135,13 +122,27 @@ function Tickets() {
       );
     }
 
+    // Filtro por atribuição
+    if (filtroAtribuido === "meus") {
+      filtrados = filtrados.filter(
+        (chamado) => parseInt(chamado.atribuido_a) === idUser.id
+      );
+    } else if (filtroAtribuido === "outros") {
+      filtrados = filtrados.filter(
+        (chamado) =>
+          parseInt(chamado.atribuido_a) &&
+          parseInt(chamado.atribuido_a) !== idUser.id
+      );
+    } else if (filtroAtribuido === "nao_atribuido") {
+      filtrados = filtrados.filter((chamado) => !chamado.atribuido_a);
+    }
+
     setFilteredChamados(filtrados);
   };
-
   // Atualiza os filtros toda vez que há mudanças nos valores
   useEffect(() => {
     aplicarFiltros();
-  }, [busca, filtro, chamados]);
+  }, [busca, filtro, filtroAtribuido, chamados]);
 
   const handleChamadoClick = async (chamado) => {
     if (mensagensNaoLidas[chamado.id_ticket]) {
@@ -174,53 +175,44 @@ function Tickets() {
                 type="button"
                 value={`Todos (${contadorTodos})`}
                 className={styles.buttonChamados}
-                onClick={() => setFilteredChamados(chamados)}
+                onClick={() => setFiltroAtribuido("")}
               />
               <input
                 type="button"
                 value={`Atribuído a mim (${contadorAtMim})`}
                 className={styles.buttonChamados}
-                onClick={() =>
-                  setFilteredChamados(
-                    chamados.filter(
-                      (chamado) => parseInt(chamado.atribuido_a) === idUser.id
-                    )
-                  )
-                }
+                onClick={() => setFiltroAtribuido("meus")}
               />
               <input
                 type="button"
                 value={`Atribuído a outros (${contadorAtAOutros})`}
                 className={styles.buttonChamados}
-                onClick={() =>
-                  setFilteredChamados(
-                    chamados.filter(
-                      (chamado) =>
-                        parseInt(chamado.atribuido_a) &&
-                        parseInt(chamado.atribuido_a) !== idUser.id
-                    )
-                  )
-                }
+                onClick={() => setFiltroAtribuido("outros")}
               />
               <input
                 type="button"
                 value={`Não atribuído (${contadorNaoAt})`}
                 className={styles.buttonChamados}
-                onClick={() =>
-                  setFilteredChamados(
-                    chamados.filter((chamado) => !chamado.atribuido_a)
-                  )
-                }
+                onClick={() => setFiltroAtribuido("nao_atribuido")}
               />
             </div>
           </Card>
           <Card>
-            <Table data={chamados} columns={columns} fetchData={fetchChamados}/>
+            <Table
+              data={filteredChamados}
+              columns={columns}
+              mensagensNaoLidas={mensagensNaoLidas}
+              fetchData={fetchChamados}
+              click={handleChamadoClick}
+            />
           </Card>
         </div>
         <div className={styles.containerCardsLinha}>
           <Card>
-            <div className={styles.containerFilter}>
+            <div
+              className={styles.containerFilter}
+              title="Busque por código do ticket, solicitante, assunto ou técnico"
+            >
               <label className={styles.labelFilter}>Pesquisar por:</label>
               <input
                 type="text"

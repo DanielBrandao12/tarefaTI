@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import PaginaPadrao from "../../components/paginaPadrao";
 import Card from "../../components/card";
 
@@ -32,6 +32,7 @@ function Status() {
     cancelEdit,
   } = useStatus();
 
+
   return (
     <PaginaPadrao>
       {showModal && (
@@ -54,8 +55,21 @@ function Status() {
       />
 
       <Card>
+        <div >
+
+   <div className={stylesGlobal.controls}>
+        <label>Exibir</label>
+        <select
+        
+        >
+          <option value={5}>5</option>
+          <option value={10}>10</option>
+          <option value={20}>20</option>
+        </select>
+        <label>itens por página</label>
+      </div>
         <table className={stylesGlobal.table}>
-          <thead>
+          <thead className={stylesGlobal.thead}>
             <tr>
               <th>ID</th>
               <th>Status</th>
@@ -87,6 +101,24 @@ function Status() {
             ))}
           </tbody>
         </table>
+<div className={stylesGlobal.pagination}>
+
+        <button
+         
+        >
+          Anterior
+        </button>
+        <span>
+          Página {1} de {2}
+        </span>
+        <button
+      
+        >
+          Próxima
+        </button>
+      </div>
+
+        </div>
       </Card>
     </PaginaPadrao>
   );

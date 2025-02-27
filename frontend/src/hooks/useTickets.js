@@ -3,9 +3,11 @@ import { useCallback, useState } from "react";
 import api from "../services/api";
 
 import useUser from "./useUser";
+import formatarData from "./formatDate";
 
 const useTickets = () => {
   const { idUser } = useUser();
+  
 
   // Estados para armazenar dados e controlar o comportamento do componente
   const [chamado, setChamado] = useState({});
@@ -35,7 +37,9 @@ const useTickets = () => {
   const fetchChamados = async () => {
     try {
       const response = await api.get("/tickets/");
-      const chamados = response.data;
+      const chamados = response.data.filter((item) => {
+        return item.status !== 'Fechado'
+      });
 
       // Cria um array de promessas para buscar os usuários atribuídos
       const promessas = chamados.map(async (chamado) => {
@@ -45,10 +49,12 @@ const useTickets = () => {
           );
           chamado.nome_usuarioAtribuido =
             responseUsuario.data.nomeUser.nome_usuario;
+        
         }
+        chamado.data_criacao = formatarData(chamado.data_criacao)
         return chamado;
       });
-
+      
       // Aguarda todas as requisições terminarem
       const chamadosComUsuarios = await Promise.all(promessas);
 
@@ -259,6 +265,7 @@ const useTickets = () => {
     setCategoriaNome,
     setNivelPrioridade,
     setUsuarioAtribuido,
+    setChamados,
     setRespostas,
     handleOpenPopup,
     fetchChamado,

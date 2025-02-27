@@ -144,7 +144,8 @@ const useStatus = () => {
     toggleEdit,
     editStatus,
     cancelEdit,
-    fetchStatus
+    fetchStatus,
+    getAllStatus
   };
 };
 

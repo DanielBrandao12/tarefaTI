@@ -42,42 +42,99 @@
     padding: 5px;
   }
 
+
   .table{
     width: 100%;
+    border-collapse: collapse;
+    font-family: Arial, sans-serif;
+    background-color: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
     font-size: 13px;
-    font-weight: 400;
-    text-align: center;
-    padding: 10px;
+}
+
+.controls{
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  margin-bottom: 1rem;
+  gap: 5px;
+}
+
+.controls select {
+  padding: 6px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+
+.thead {
+  background-color: #b20000;
+  color: white;
+  font-weight: bold;
   
 }
-.table thead {
-    height: 30px;
-    background-color: #b20000;
-    font-weight: 700;
-    line-height: normal;
-    letter-spacing: .1px;
-    color: #fff;
-   
+
+.thead th {
+  padding: 10px;
+  text-align: center;
+  border-bottom: 2px solid #7E0000;
+
 }
-.tbody {
-   
-    background-color: #b65151;
-    color: #fff;
+  /* Corpo da tabela */
+  .tbody tr {
+    
     text-align: center;
-    overflow-y: scroll;
-}
+    transition: background-color 0.3s;
+   
+  }
 
-.tbody tr{
-    height: 30px;
+  .tbody tr:nth-child(even) {
+    background-color: #f8f8f8;
+  }
+  
+  .tbody tr:hover {
+    background-color: #f0dddd;
     cursor: pointer;
-    
-}
+  }
+  
+  .tbody td {
+    padding:12px 5px;
+    border-bottom: 1px solid #ddd;
+  }
 
-.tbody tr:hover{
-    background-color: #7E0000;
+    /* Controles de paginação */
+    .pagination {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+      background-color: #fff;
+      border-top: 1px solid #7E0000;
+    }
     
-}
-
+    .pagination button {
+      background-color: #b20000;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      margin: 5px;
+      cursor: pointer;
+      border-radius: 5px;
+      transition: background-color 0.3s;
+    }
+    
+    .pagination button:hover {
+      background-color: #7E0000;
+    }
+    
+    .pagination select {
+      padding: 5px;
+      border-radius: 5px;
+      border: 1px solid #ddd;
+    }
+  
 .buttonPadrao {
   margin-left: 35px;
   background-color: #B20000;
