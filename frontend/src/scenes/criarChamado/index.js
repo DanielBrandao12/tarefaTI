@@ -7,9 +7,6 @@ import stylesGlobal from '../../styles/styleGlobal.module.css';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus, faTimes } from '@fortawesome/free-solid-svg-icons';
-
 import Card from '../../components/card';
 import PaginaPadrao from '../../components/paginaPadrao';
 import Popup from '../../components/popup';

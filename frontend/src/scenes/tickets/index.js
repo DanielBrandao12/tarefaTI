@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./style.module.css";
-import stylesGlobal from "../../styles/styleGlobal.module.css";
+
 import PaginaPadrao from "../../components/paginaPadrao";
 import Card from "../../components/card";
 import api from "../../services/api";
