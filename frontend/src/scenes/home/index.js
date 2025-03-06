@@ -1,36 +1,34 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import PaginaPadrao from "../../components/paginaPadrao";
 import styles from "./style.module.css";
-import {HelpCircle, Wrench , Briefcase, Clock, CheckCircle, AlertTriangle } from "lucide-react";
+import { HelpCircle, Wrench, Clock, CheckCircle } from "lucide-react";
+
+import useTickets from "../../hooks/useTickets";
+import formatarData from "../../hooks/formatDate";
 
 const Home = () => {
-  // Dados fictícios dos chamados
-  const chamados = [
-    {
-      id: 1,
-      titulo: "Erro no login",
-      status: "Aguardando",
-      data: "07/02/2025",
-    },
-    {
-      id: 2,
-      titulo: "Sistema fora do ar",
-      status: "Em andamento",
-      data: "07/02/2025",
-    },
-    {
-      id: 3,
-      titulo: "Solicitação de acesso",
-      status: "Novo",
-      data: "07/02/2025",
-    },
-    {
-      id: 4,
-      titulo: "Erro na impressão",
-      status: "Concluído",
-      data: "06/02/2025",
-    },
-  ];
+  const { allTickets, fetchChamados } = useTickets(); // Assume-se que isso retorna a lista de tickets.
+  
+  const [agClassifique, setAgClassifique] = useState(0);
+  const [emAtendimento, setEmAtendimento] = useState(0);
+  const [novosTickets, setNovosTickets] = useState(0);
+  const [fechados, setFechados] = useState(0);
+
+  useEffect(()=> {
+    fetchChamados()
+    const interval = setInterval(allTickets, 30000);
+    return () => clearInterval(interval);
+  }, [])
+
+  useEffect(() => {
+    console.log( allTickets.map(ticket =>  formatarData(ticket.data_criacao )=== '06/03/2025'))
+    if (allTickets) {
+      setAgClassifique(allTickets.filter(ticket => ticket.status === "Aguardando Classificação").length);
+      setNovosTickets(allTickets.filter(ticket =>  formatarData(ticket.data_criacao )=== formatarData(Date.now())).length);
+      setEmAtendimento(allTickets.filter(ticket => ticket.status === "Em atendimento").length);
+      setFechados(allTickets.filter(ticket => ticket.status === "Fechado").length);
+    }
+  }, [allTickets]);
 
   return (
     <PaginaPadrao>
@@ -41,7 +39,7 @@ const Home = () => {
         <div className={styles.resumo}>
           <div className={styles.card}>
             <div>
-              <h2>8</h2>
+              <h2>{agClassifique}</h2>
             </div>
             <div>
               <HelpCircle size={32} className={styles.icone} />
@@ -51,7 +49,7 @@ const Home = () => {
 
           <div className={styles.card}>
             <div>
-              <h2>5</h2>
+              <h2>{novosTickets}</h2>
             </div>
             <div>
               <Clock size={32} className={styles.icone} />
@@ -61,17 +59,17 @@ const Home = () => {
 
           <div className={styles.card}>
             <div>
-              <h2>12</h2>
+              <h2>{emAtendimento}</h2>
             </div>
             <div>
-              <Wrench  size={32} className={styles.icone} />
+              <Wrench size={32} className={styles.icone} />
               <p>Em Atendimento</p>
             </div>
           </div>
 
           <div className={styles.card}>
             <div>
-              <h2>20</h2>
+              <h2>{fechados}</h2>
             </div>
             <div>
               <CheckCircle size={32} className={styles.icone} />

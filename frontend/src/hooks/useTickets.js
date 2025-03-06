@@ -26,7 +26,7 @@ const useTickets = () => {
   const [contadorAtMim, setContadorAtMim] = useState(0);
   const [contadorAtAOutros, setContadorAtAOutros] = useState(0);
   const [contadorNaoAt, setContadorNaoAt] = useState(0);
-
+  const [allTickets, setAllTickets] = useState([])
   // Funções para controlar o Popup
   const handleOpenPopup = (mensagem) => {
     setMessage(mensagem);
@@ -37,6 +37,7 @@ const useTickets = () => {
   const fetchChamados = async () => {
     try {
       const response = await api.get("/tickets/");
+      setAllTickets(response.data)
       const chamados = response.data.filter((item) => {
         return item.status !== 'Fechado'
       });
@@ -67,6 +68,8 @@ const useTickets = () => {
     }
   };
 
+
+  
   //Atualizar contadores
   const atualizarContadores =(dados) => {
     setContadorTodos(dados.length);
@@ -256,6 +259,7 @@ const useTickets = () => {
     contadorAtAOutros,
     contadorNaoAt,
     filteredChamados,
+    allTickets,
     setFilteredChamados,
     setResposta,
     sendResposta,

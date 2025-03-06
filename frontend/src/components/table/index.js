@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { FaSort, FaSortUp, FaSortDown } from "react-icons/fa";
 import styles from "./style.module.css";
-import styleGlobal from "../../styles/styleGlobal.module.css"
+import styleGlobal from "../../styles/styleGlobal.module.css";
+
 const Table = ({ data, columns, mensagensNaoLidas, fetchData, click }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
-  const [sortedData, setSortedData] = useState([...data]);
-  const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
+  const [sortedData, setSortedData] = useState([]);
+  const [sortConfig, setSortConfig] = useState({ key: "codigo_ticket", direction: "desc" }); // Ordem decrescente por padrão
 
   useEffect(() => {
     if (fetchData) {
@@ -17,20 +18,35 @@ const Table = ({ data, columns, mensagensNaoLidas, fetchData, click }) => {
   }, []);
 
   useEffect(() => {
-    setSortedData([...data]); // Atualiza os dados ordenados quando `data` muda
-  }, [data]);
+    // Se os dados forem passados e não estiverem vazios, realizamos a ordenação
+    if (data && data.length > 0) {
+      const sorted = [...data].sort((a, b) => {
+        const valueA = a.codigo_ticket ?? 0;
+        const valueB = b.codigo_ticket ?? 0;
+        return valueB - valueA;
+      });
+      setSortedData(sorted); // Atualiza os dados ordenados
+    }
+  }, [data]); // Só executa quando `data` mudar
 
   const handleSort = (key) => {
-    let direction = "asc";
-    if (sortConfig.key === key && sortConfig.direction === "asc") {
-      direction = "desc";
+    let direction = "desc"; // Ordenação decrescente por padrão
+
+    if (sortConfig.key === key && sortConfig.direction === "desc") {
+      direction = "asc"; // Se já estiver decrescente, inverte para crescente
     }
+
     setSortConfig({ key, direction });
-  
+
     const sorted = [...sortedData].sort((a, b) => {
-      const valueA = a[key] ?? ""; // Se for undefined, atribui uma string vazia
-      const valueB = b[key] ?? ""; // Se for undefined, atribui uma string vazia
-  
+      const valueA = a[key] ?? "";
+      const valueB = b[key] ?? "";
+
+      if (key === "codigo_ticket") {
+        return direction === "desc" ? valueB - valueA : valueA - valueB;
+      }
+
+      // Para outros campos, realiza a ordenação alfabética
       if (typeof valueA === "string" && typeof valueB === "string") {
         return direction === "asc"
           ? valueA.localeCompare(valueB)
@@ -39,7 +55,7 @@ const Table = ({ data, columns, mensagensNaoLidas, fetchData, click }) => {
         return direction === "asc" ? (valueA || 0) - (valueB || 0) : (valueB || 0) - (valueA || 0);
       }
     });
-  
+
     setSortedData(sorted);
   };
 
@@ -55,7 +71,7 @@ const Table = ({ data, columns, mensagensNaoLidas, fetchData, click }) => {
   };
 
   return (
-    <div >
+    <div>
       <div className={styleGlobal.controls}>
         <label>Exibir</label>
         <select

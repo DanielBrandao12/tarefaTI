@@ -64,6 +64,7 @@ function Header() {
   // Alterna o estado do formulário de criação de usuário
   const toggleCreateUser = () => {
     if (!isOpen) {
+     
       setIsOpen(true);
       toggleEditUser(); // Abre o formulário de criação ao mesmo tempo
     } else {
