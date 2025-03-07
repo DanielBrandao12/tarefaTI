@@ -15,6 +15,7 @@ import styleGlobal from "../../styles/styleGlobal.module.css";
 import useUser from "../../hooks/useUser";
 import Cookies from "js-cookie";
 import { confirmAlert } from "react-confirm-alert";
+import 'react-confirm-alert/src/react-confirm-alert.css'; // Import css
 import Popup from "../popup";
 import api from "../../services/api";
 
@@ -99,6 +100,7 @@ function Header() {
       title: "Confirmação",
       message: "Deseja fazer logout?",
       buttons: [{ label: "Sim", onClick: handleRemoveToken }, { label: "Não" }],
+      overlayClassName:".react-confirm-alert-body"
     });
   };
 
@@ -183,7 +185,7 @@ function Header() {
         <div
           className={styles.titleOptionLogout}
           onClick={(e) => {
-            e.preventDefault();
+            e.preventDefault()
             confirmaCloncuir();
           }}
         >

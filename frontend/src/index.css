@@ -30,11 +30,8 @@ code {
   display: flex;
   flex-direction: row;
 
-  
-  
-
-  
 }
+
 
 
 .button-padrao {
@@ -56,4 +53,15 @@ code {
 
 .button-padrao:hover{
   background-color: #7E0000;
+}
+
+
+.react-confirm-alert-body{
+  color: #B20000 !important;
+}
+.react-confirm-alert-body button{
+  background-color: #B20000 !important;
+}
+.react-confirm-alert-body button:hover{
+  background-color: #7E0000 !important;
 }

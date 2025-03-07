@@ -14,21 +14,34 @@ const Home = () => {
   const [novosTickets, setNovosTickets] = useState(0);
   const [fechados, setFechados] = useState(0);
 
-  useEffect(()=> {
-    fetchChamados()
-    const interval = setInterval(allTickets, 30000);
-    return () => clearInterval(interval);
-  }, [])
-
-  useEffect(() => {
-    console.log( allTickets.map(ticket =>  formatarData(ticket.data_criacao )=== '06/03/2025'))
+  // Função para atualizar os valores dos tickets
+  const atualizarTickets = () => {
     if (allTickets) {
       setAgClassifique(allTickets.filter(ticket => ticket.status === "Aguardando Classificação").length);
-      setNovosTickets(allTickets.filter(ticket =>  formatarData(ticket.data_criacao )=== formatarData(Date.now())).length);
+      setNovosTickets(allTickets.filter(ticket =>ticket.data_criacao === formatarData(Date.now())).length);
       setEmAtendimento(allTickets.filter(ticket => ticket.status === "Em atendimento").length);
       setFechados(allTickets.filter(ticket => ticket.status === "Fechado").length);
     }
-  }, [allTickets]);
+  };
+
+  useEffect(() => {
+    fetchChamados();
+  }, []); // Apenas faz a primeira chamada para pegar os tickets
+
+  useEffect(() => {
+    // Atualiza os dados assim que a lista de tickets é carregada
+    atualizarTickets();
+
+    // Configura o intervalo de atualização a cada 30 segundos
+    const interval = setInterval(() => {
+      console.log(allTickets)
+     // fetchChamados();
+      atualizarTickets();
+    }, 30000);
+
+    // Limpa o intervalo quando o componente for desmontado
+    return () => clearInterval(interval);
+  }, [allTickets]); // Esse effect é chamado sempre que a lista de tickets mudar
 
   return (
     <PaginaPadrao>

@@ -37,7 +37,9 @@ const useTickets = () => {
   const fetchChamados = async () => {
     try {
       const response = await api.get("/tickets/");
+
       setAllTickets(response.data)
+
       const chamados = response.data.filter((item) => {
         return item.status !== 'Fechado'
       });

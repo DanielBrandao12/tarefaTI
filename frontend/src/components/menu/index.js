@@ -1,11 +1,9 @@
 import './style.css';
-import { Link, useNavigate } from 'react-router-dom';
-import Cookies from 'js-cookie';
-import { confirmAlert } from 'react-confirm-alert'; // Importa a função confirmAlert
-import api from '../../services/api';
+import { Link } from 'react-router-dom';
+
 
 function Menu() {
-    const navigate = useNavigate(); // Hook para navegação programática
+  
 
 
     return (
