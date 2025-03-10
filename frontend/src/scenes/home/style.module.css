@@ -4,11 +4,12 @@
 }
 
 .titulo {
-  font-size: 28px;
+  font-size: 2.5rem; /* Aumento do tamanho da fonte */
   font-weight: bold;
   color: #7E0000;
   margin-bottom: 20px;
   text-align: center;
+  text-transform: uppercase; /* Deixa o título mais impactante */
 }
 
 /* Estilo dos cards */
@@ -16,45 +17,49 @@
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 20px;
+  justify-items: center; /* Alinha os itens horizontalmente no centro */
+  align-items: center; /* Alinha os itens verticalmente no centro */
 }
 
 .card {
   display: flex;
   flex-direction: row;
-  justify-content: space-around;
+  justify-content: space-around; /* Garante mais espaço entre os elementos */
   align-items: center;
   background: #ffffff;
+  width: 80%;
+  height: 280px;
   padding: 20px;
   gap: 20px;
-  border-radius: 12px;
-  box-shadow: 2px 2px 8px 0px rgba(126, 0, 0, 0.5);
+  border-radius: 12px; /* Mantém as bordas arredondadas */
+  box-shadow: 2px 2px 8px 0px rgba(126, 0, 0, 0.5); /* Mantém o box-shadow original */
   transition: transform 0.2s;
   cursor: pointer;
-
 }
 
-.card div{
+.card div {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
+
 .card:hover {
-  transform: scale(1.05);
+  transform: scale(1.05); /* Efeito de aumento no hover */
 }
 
 .card .icone {
   color: #b20000;
- 
+  font-size: 42px; /* Aumento do tamanho do ícone para dar mais destaque */
 }
 
 .card h2 {
-  font-size: 36px;
+  font-size: 40px; /* Aumento do tamanho da fonte */
   color: #b20000;
   margin: 0;
 }
 
 .card p {
   margin: 0;
-  font-size: 16px;
+  font-size: 18px; /* Aumento do tamanho da fonte para maior legibilidade */
   color: #666;
 }

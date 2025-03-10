@@ -99,7 +99,7 @@ const useTickets = () => {
         const response = await api.get(`/tickets/${id_ticket}`);
 
         setChamado(response.data.ticket);
-
+        console.log(response.data.ticket)
         if (response.data.respostas.length > 0) {
           const respostasComAnexos = await Promise.all(
             response.data.respostas.map(async (resposta) => {
