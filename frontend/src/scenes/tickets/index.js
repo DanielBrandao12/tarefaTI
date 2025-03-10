@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+
 import styles from "./style.module.css";
 
 import PaginaPadrao from "../../components/paginaPadrao";
@@ -9,10 +10,12 @@ import api from "../../services/api";
 import useUser from "../../hooks/useUser";
 import useStatus from "../../hooks/useStatus";
 import useTickets from "../../hooks/useTickets";
+import formatarData from "../../hooks/formatDate";
 import Table from "../../components/table";
 
 function Tickets() {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const { idUser } = useUser();
 
@@ -25,7 +28,7 @@ function Tickets() {
     contadorAtAOutros,
     contadorNaoAt,
     filteredChamados,
-    setChamados,
+    newTicket,
     setFilteredChamados,
     fetchChamados,
     atualizarContadores,
@@ -35,7 +38,7 @@ function Tickets() {
   const [filtroAtribuido, setFiltroAtribuido] = useState(""); // Estado para armazenar o tipo de atribuição
 
   const [mensagensNaoLidas, setMensagensNaoLidas] = useState({});
-
+  
   const [filtro, setFiltro] = useState({
     prioridade: "",
     status: "",
@@ -52,7 +55,21 @@ function Tickets() {
     { key: "status", label: "Status" },
     { key: "nivel_prioridade", label: "Prioridade" },
   ];
+  const filtroInicial = location.state?.filtroStatus || "";
 
+  useEffect(() => {
+    if (filtroInicial) {
+      if (filtroInicial === "hoje") {
+        setFiltroAtribuido("novo"); // Define para o filtro de hoje
+      } else {
+        setFiltro((prevFiltro) => ({
+          ...prevFiltro,
+          status: filtroInicial,
+        }));
+      }
+    }
+  }, [filtroInicial]);
+  
   useEffect(() => {
     setStatusAtivo(
       status.filter((item) => {
@@ -135,6 +152,8 @@ function Tickets() {
       );
     } else if (filtroAtribuido === "nao_atribuido") {
       filtrados = filtrados.filter((chamado) => !chamado.atribuido_a);
+    } else if (filtroAtribuido === "novo") {
+      filtrados = filtrados.filter((chamado) => chamado.data_criacao === formatarData(Date.now()));
     }
 
     setFilteredChamados(filtrados);
@@ -176,6 +195,12 @@ function Tickets() {
                 value={`Todos (${contadorTodos})`}
                 className={styles.buttonChamados}
                 onClick={() => setFiltroAtribuido("")}
+              />
+              <input
+                type="button"
+                value={`Hoje (${newTicket})`}
+                className={styles.buttonChamados}
+                onClick={() => setFiltroAtribuido("novo")}
               />
               <input
                 type="button"

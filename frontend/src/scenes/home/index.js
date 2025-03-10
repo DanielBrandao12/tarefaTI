@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import PaginaPadrao from "../../components/paginaPadrao";
 import styles from "./style.module.css";
 import { HelpCircle, Wrench, Clock, CheckCircle } from "lucide-react";
@@ -7,8 +8,10 @@ import useTickets from "../../hooks/useTickets";
 import formatarData from "../../hooks/formatDate";
 
 const Home = () => {
-  const { allTickets, fetchChamados } = useTickets(); // Assume-se que isso retorna a lista de tickets.
-  
+  const navigate = useNavigate();
+
+  const { allTickets, fetchChamados } = useTickets(); //retorna a lista de tickets.
+
   const [agClassifique, setAgClassifique] = useState(0);
   const [emAtendimento, setEmAtendimento] = useState(0);
   const [novosTickets, setNovosTickets] = useState(0);
@@ -17,15 +20,28 @@ const Home = () => {
   // Função para atualizar os valores dos tickets
   const atualizarTickets = () => {
     if (allTickets) {
-      setAgClassifique(allTickets.filter(ticket => ticket.status === "Aguardando Classificação").length);
-      setNovosTickets(allTickets.filter(ticket =>ticket.data_criacao === formatarData(Date.now())).length);
-      setEmAtendimento(allTickets.filter(ticket => ticket.status === "Em atendimento").length);
-      setFechados(allTickets.filter(ticket => ticket.status === "Fechado").length);
+      setAgClassifique(
+        allTickets.filter(
+          (ticket) => ticket.status === "Aguardando Classificação"
+        ).length
+      );
+      setNovosTickets(
+        allTickets.filter(
+          (ticket) => ticket.data_criacao === formatarData(Date.now())
+        ).length
+      );
+      setEmAtendimento(
+        allTickets.filter((ticket) => ticket.status === "Em atendimento").length
+      );
+      setFechados(
+        allTickets.filter((ticket) => ticket.status === "Fechado").length
+      );
     }
   };
 
   useEffect(() => {
     fetchChamados();
+
   }, []); // Apenas faz a primeira chamada para pegar os tickets
 
   useEffect(() => {
@@ -34,14 +50,18 @@ const Home = () => {
 
     // Configura o intervalo de atualização a cada 30 segundos
     const interval = setInterval(() => {
-      console.log(allTickets)
-     // fetchChamados();
+      //console.log(allTickets);
+      // fetchChamados();
       atualizarTickets();
-    }, 30000);
+    }, 1000);
 
     // Limpa o intervalo quando o componente for desmontado
     return () => clearInterval(interval);
   }, [allTickets]); // Esse effect é chamado sempre que a lista de tickets mudar
+
+  const handleTickets = (statusFiltro) => {
+    navigate("/tickets", { state: { filtroStatus: statusFiltro } });
+  };
 
   return (
     <PaginaPadrao>
@@ -50,7 +70,10 @@ const Home = () => {
 
         {/* Cards de Resumo */}
         <div className={styles.resumo}>
-          <div className={styles.card}>
+          <div
+            className={styles.card}
+            onClick={() => handleTickets("Aguardando Classificação")}
+          >
             <div>
               <h2>{agClassifique}</h2>
             </div>
@@ -60,7 +83,7 @@ const Home = () => {
             </div>
           </div>
 
-          <div className={styles.card}>
+          <div className={styles.card} onClick={() => handleTickets("hoje")}>
             <div>
               <h2>{novosTickets}</h2>
             </div>
@@ -70,7 +93,10 @@ const Home = () => {
             </div>
           </div>
 
-          <div className={styles.card}>
+          <div
+            className={styles.card}
+            onClick={() => handleTickets("Em atendimento")}
+          >
             <div>
               <h2>{emAtendimento}</h2>
             </div>
@@ -80,7 +106,7 @@ const Home = () => {
             </div>
           </div>
 
-          <div className={styles.card}>
+          <div className={styles.card} onClick={() => console.log("fechados")}>
             <div>
               <h2>{fechados}</h2>
             </div>

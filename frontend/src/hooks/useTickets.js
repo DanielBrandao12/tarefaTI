@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback,useEffect, useState } from "react";
 
 import api from "../services/api";
 
@@ -26,7 +26,8 @@ const useTickets = () => {
   const [contadorAtMim, setContadorAtMim] = useState(0);
   const [contadorAtAOutros, setContadorAtAOutros] = useState(0);
   const [contadorNaoAt, setContadorNaoAt] = useState(0);
-  const [allTickets, setAllTickets] = useState([])
+  const [allTickets, setAllTickets] = useState([]);
+  const [newTicket, setNewTicket] = useState([]);
   // Funções para controlar o Popup
   const handleOpenPopup = (mensagem) => {
     setMessage(mensagem);
@@ -39,7 +40,7 @@ const useTickets = () => {
       const response = await api.get("/tickets/");
 
       setAllTickets(response.data)
-
+      console.log(response.data)
       const chamados = response.data.filter((item) => {
         return item.status !== 'Fechado'
       });
@@ -88,6 +89,7 @@ const useTickets = () => {
       ).length
     );
     setContadorNaoAt(dados.filter((chamado) => !chamado.atribuido_a).length);
+    setNewTicket(chamados.filter(ticket =>ticket.data_criacao === formatarData(Date.now())).length);
   };
 
   // Busca os detalhes do chamado pelo ID
@@ -262,6 +264,7 @@ const useTickets = () => {
     contadorNaoAt,
     filteredChamados,
     allTickets,
+    newTicket,
     setFilteredChamados,
     setResposta,
     sendResposta,
