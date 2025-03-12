@@ -91,7 +91,7 @@ const createTickets = async (req, res) => {
         createHistorico( ticketCriado.id_ticket, idStatus, id_usuario)
 
         await transporter.sendMail({
-            from: 'servicedesk2@fatecbpaulista.edu.br',
+            from: 'servicedesk@fatecbpaulista.edu.br',
             to: ticketCriado.email,
             subject: `Chamado Criado - ${ticketCriado.codigo_ticket}`,
             html: `

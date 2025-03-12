@@ -282,7 +282,7 @@ const verificarCodigoUnico = async (codigo) => {
 const enviarRespostaAutomatica = async (remetente, codigoTicket) => {
     try {
         await transporter.sendMail({
-            from: 'servicedesk2@fatecbpaulista.edu.br',
+            from: 'servicedesk@fatecbpaulista.edu.br',
             to: remetente,
             subject: `Chamado Criado - ${codigoTicket}`,
             html: `
