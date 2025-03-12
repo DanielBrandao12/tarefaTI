@@ -18,8 +18,6 @@ const Home = () => {
   const [novosTickets, setNovosTickets] = useState(0);
   const [fechados, setFechados] = useState(0);
 
-  
-
   useEffect(() => {
     fetchChamados();
     const interval = setInterval(() => {
@@ -54,81 +52,72 @@ const Home = () => {
       }
     };
 
-    // Configura o intervalo de atualização a cada 30 segundos
-    const interval = setInterval(() => {
-      //console.log(allTickets);
-      // fetchChamados();
+
 
       atualizarTickets();
-    }, 500);
 
-    // Limpa o intervalo quando o componente for desmontado
-    return () => clearInterval(interval);
   }, [allTickets]); // Esse effect é chamado sempre que a lista de tickets mudar
 
   const handleTickets = (statusFiltro) => {
     navigate("/tickets", { state: { filtroStatus: statusFiltro } });
   };
-
+  const handleTicketsClose = () => {
+    navigate("/ticketsClose")
+  }
   return (
     <PaginaPadrao>
-    
-        <div className={styles.dashboard}>
-          <h1 className={styles.titulo}>Painel de Chamados</h1>
+      <div className={styles.dashboard}>
+        <h1 className={styles.titulo}>Painel de Chamados</h1>
 
-          {/* Cards de Resumo */}
-          <div className={styles.resumo}>
-            <div
-              className={styles.card}
-              onClick={() => handleTickets("Aguardando Classificação")}
-            >
-              <div>
-                <h2>{agClassifique}</h2>
-              </div>
-              <div>
-                <HelpCircle size={36} className={styles.icone} />
-                <p>Aguardando Classificação</p>
-              </div>
+        {/* Cards de Resumo */}
+        <div className={styles.resumo}>
+          <div
+            className={styles.card}
+            onClick={() => handleTickets("Em atendimento")}
+          >
+            <div>
+              <h2>{emAtendimento}</h2>
             </div>
-
-            <div className={styles.card} onClick={() => handleTickets("hoje")}>
-              <div>
-                <h2>{novosTickets}</h2>
-              </div>
-              <div>
-                <Clock size={36} className={styles.icone} />
-                <p>Novos Hoje</p>
-              </div>
+            <div>
+              <Wrench size={36} className={styles.icone} />
+              <p>Em Atendimento</p>
             </div>
+          </div>
 
-            <div
-              className={styles.card}
-              onClick={() => handleTickets("Em atendimento")}
-            >
-              <div>
-                <h2>{emAtendimento}</h2>
-              </div>
-              <div>
-                <Wrench size={36} className={styles.icone} />
-                <p>Em Atendimento</p>
-              </div>
+          <div className={styles.card} onClick={() => handleTickets("hoje")}>
+            <div>
+              <h2>{novosTickets}</h2>
             </div>
+            <div>
+              <Clock size={36} className={styles.icone} />
+              <p>Novos Hoje</p>
+            </div>
+          </div>
 
-            <div
-              className={styles.card}
-              onClick={() => console.log("fechados")}
-            >
-              <div>
-                <h2>{fechados}</h2>
-              </div>
-              <div>
-                <CheckCircle size={36} className={styles.icone} />
-                <p>Fechados</p>
-              </div>
+          <div
+            className={styles.card}
+            onClick={() => handleTickets("Aguardando Classificação")}
+          >
+            <div>
+              <h2>{agClassifique}</h2>
+            </div>
+            <div>
+              <HelpCircle size={36} className={styles.icone} />
+              <p>Aguardando Classificação</p>
+            </div>
+          </div>
+
+          <div className={styles.card} onClick={handleTicketsClose}>
+            <div>
+              <h2>{fechados}</h2>
+            </div>
+            <div>
+              <CheckCircle size={36} className={styles.icone} />
+              <p>Fechados</p>
             </div>
           </div>
         </div>
-
+      </div>
     </PaginaPadrao>
   );
 };

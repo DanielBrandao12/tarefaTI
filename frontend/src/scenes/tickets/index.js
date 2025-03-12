@@ -38,7 +38,7 @@ function Tickets() {
   const [filtroAtribuido, setFiltroAtribuido] = useState(""); // Estado para armazenar o tipo de atribuição
 
   const [mensagensNaoLidas, setMensagensNaoLidas] = useState({});
-  
+
   const [filtro, setFiltro] = useState({
     prioridade: "",
     status: "",
@@ -69,11 +69,11 @@ function Tickets() {
       }
     }
   }, [filtroInicial]);
-  
+
   useEffect(() => {
     setStatusAtivo(
       status.filter((item) => {
-        return item.ativo && item.nome !== 'Fechado';
+        return item.ativo && item.nome !== "Fechado";
       })
     );
   }, [status]);
@@ -153,7 +153,9 @@ function Tickets() {
     } else if (filtroAtribuido === "nao_atribuido") {
       filtrados = filtrados.filter((chamado) => !chamado.atribuido_a);
     } else if (filtroAtribuido === "novo") {
-      filtrados = filtrados.filter((chamado) => chamado.data_criacao === formatarData(Date.now()));
+      filtrados = filtrados.filter(
+        (chamado) => chamado.data_criacao === formatarData(Date.now())
+      );
     }
 
     setFilteredChamados(filtrados);
@@ -186,6 +188,9 @@ function Tickets() {
 
   return (
     <PaginaPadrao>
+      <div className={styles.title}>
+        <h1>Chamados Abertos</h1>
+      </div>
       <div className={styles.containerCards}>
         <div className={styles.containerCardsColuna}>
           <Card>

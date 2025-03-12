@@ -12,6 +12,7 @@ import CriarChamadoUser from './scenes/newticket';
 import Status from './scenes/status';
 import Home from './scenes/home'
 import Tickets from './scenes/tickets';
+import TicketsClose from './scenes/ticketsClose';
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
         <Route path="/newticket" element={<PrivateRoute element={<CriarChamadoUser />} />} />
        
         <Route path="/tickets" element={<PrivateRoute element={<Tickets />} />} />
+        <Route path="/ticketsClose" element={<PrivateRoute element={<TicketsClose />} />} />
        
         <Route path="/status" element={<PrivateRoute element={<Status />} />} />
 

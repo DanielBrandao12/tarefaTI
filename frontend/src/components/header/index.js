@@ -277,7 +277,7 @@ function Header() {
         {isUserListOpen && (
           <div>
             <table className={styleGlobal.table}>
-              <thead>
+              <thead className={styleGlobal.thead}>
                 <tr>
                   <th>Nome</th>
                   <th>Email</th>

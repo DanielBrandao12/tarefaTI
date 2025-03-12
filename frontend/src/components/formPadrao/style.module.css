@@ -11,7 +11,13 @@
 
 }
 .containerInputAdd h3 {
-    font-size: 23px;
+    font-size: 1.3rem;
+    /* Aumento do tamanho da fonte */
+    font-weight: bold;
+    color: #7E0000;
+    text-align: center;
+    text-transform: uppercase;
+    /* Deixa o título mais impactante */
 }
 
 .containerInputs {

@@ -84,7 +84,7 @@ function Category() {
         </div>
       )}
 
-      <Card>
+     
         <FormPadrao
           titleForm={titleForm}
           nome={nomeCategoria}
@@ -97,7 +97,7 @@ function Category() {
           onCancel={cancelEdit}
           showEdit={showEdit}
         />
-      </Card>
+      
 
       <div className={style.containerSepara}>
         <Card>

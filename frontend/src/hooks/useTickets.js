@@ -35,42 +35,43 @@ const useTickets = () => {
   };
 
   // Buscar chamados do backend e atualizar contadores
-  const fetchChamados = async () => {
-    try {
-      const response = await api.get("/tickets/");
+// Buscar chamados do backend e atualizar contadores
+const fetchChamados = async () => {
+  try {
+    const response = await api.get("/tickets/");
+    
+    // Formatar todas as datas no allTickets antes de setar no estado
+    const allTicketsFormatado = response.data.map((item) => ({
+      ...item,
+      data_criacao: formatarData(item.data_criacao)
+    }));
 
-      setAllTickets(response.data)
-      console.log(response.data)
-      const chamados = response.data.filter((item) => {
-        return item.status !== 'Fechado'
-      });
+    // Cria um array de promessas para buscar os usuários atribuídos para todos os chamados
+    const promessas = allTicketsFormatado.map(async (chamado) => {
+      if (chamado.atribuido_a) {
+        const responseUsuario = await api.get(`/usuarios/${chamado.atribuido_a}`);
+        chamado.nome_usuarioAtribuido = responseUsuario.data.nomeUser.nome_usuario;
+      }
+      return chamado;
+    });
 
-      // Cria um array de promessas para buscar os usuários atribuídos
-      const promessas = chamados.map(async (chamado) => {
-        if (chamado.atribuido_a) {
-          const responseUsuario = await api.get(
-            `/usuarios/${chamado.atribuido_a}`
-          );
-          chamado.nome_usuarioAtribuido =
-            responseUsuario.data.nomeUser.nome_usuario;
-        
-        }
-        chamado.data_criacao = formatarData(chamado.data_criacao)
-        return chamado;
-      });
-      
-      // Aguarda todas as requisições terminarem
-      const chamadosComUsuarios = await Promise.all(promessas);
+    // Aguarda todas as requisições terminarem
+    const allTicketsComUsuarios = await Promise.all(promessas);
 
-      // Atualiza o estado com os chamados e os nomes dos usuários atribuídos
-      setChamados(chamadosComUsuarios);
-      setFilteredChamados(chamadosComUsuarios); // Inicializa com todos os chamados
-      atualizarContadores(chamadosComUsuarios);
-    } catch (error) {
-      console.error("Erro ao buscar tickets ou usuários:", error);
-    }
-  };
+    // Atualiza o estado de allTickets com os usuários atribuídos
+    setAllTickets(allTicketsComUsuarios);
 
+    // Filtra apenas os chamados que não estão fechados
+    const chamadosAbertos = allTicketsComUsuarios.filter((item) => item.status !== "Fechado");
+
+    // Atualiza os estados
+    setChamados(chamadosAbertos);
+    setFilteredChamados(chamadosAbertos);
+    atualizarContadores(chamadosAbertos);
+  } catch (error) {
+    console.error("Erro ao buscar tickets ou usuários:", error);
+  }
+};
 
   
   //Atualizar contadores

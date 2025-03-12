@@ -16,7 +16,7 @@ function Menu() {
                 <div>
                     <Link className='link' to={'/'}>Início</Link>
                     <Link className='link' to={'/tickets'}>Chamados Abertos</Link>
-                    <Link className='link' to={'/'}>Chamados Fechados</Link>
+                    <Link className='link' to={'/ticketsClose'}>Chamados Fechados</Link>
                     <Link className='link' to={'/relatorio'}>Relátorios</Link>
                     <Link className='link' to={'/category'}>Categorias</Link>
                     <Link className='link' to={'/status'}>Status</Link>

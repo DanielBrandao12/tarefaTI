@@ -80,7 +80,7 @@ function Status() {
         </div>
       )}
 
-      <Card>
+   
         <FormPadrao
           titleForm={titleForm}
           nome={statusNome}
@@ -93,7 +93,7 @@ function Status() {
           onCancel={cancelEdit}
           showEdit={showEdit}
         />
-      </Card>
+    
 
       <Card>
         <div>
