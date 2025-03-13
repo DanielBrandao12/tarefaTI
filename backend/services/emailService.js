@@ -69,7 +69,7 @@ const checkEmails = async () => {
                 const chamado = {
                     remetente: parsed.from?.text || parsed.from || 'Desconhecido',
                     assunto: parsed.subject || 'Sem assunto',
-                    mensagem: parsed.html || 'Sem mensagem',
+                    mensagem: parsed.html || parsed.text || 'Sem mensagem',
                     anexos: anexos || null
                 };
                 console.log(parsed.from)
@@ -77,8 +77,7 @@ const checkEmails = async () => {
 
                 if (codigoTicket) {
                     const ticketExistente = await getTicketPorCodigo(codigoTicket);
-
-                    if (ticketExistente) {
+                    if (ticketExistente && ticketExistente.id_status !== 4) {
                         console.log(`O ticket ${codigoTicket} já existe. Não será criado um novo chamado.`);
                         const mensagem = getDivFirst(chamado.mensagem);
                         await createResposta(ticketExistente.dataValues.id_ticket, mensagem, chamado.anexos);
