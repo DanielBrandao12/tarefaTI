@@ -6,7 +6,7 @@ const cors = require('cors')
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
-
+require('dotenv').config();
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 
@@ -41,8 +41,8 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 // Configuração do CORS
 const corsOptions = {
- //origin: 'http://servicedesk:3000', // Substitua pelo domínio do seu frontend
-  origin: 'http://localhost:3000', // Substitua pelo domínio do seu frontend
+ 
+  origin: process.env.DOMINIO_HOST, // Substitua pelo domínio do seu frontend
 
   credentials: true, // Permite que cookies e outras credenciais sejam enviadas
 };

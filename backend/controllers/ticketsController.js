@@ -1,7 +1,7 @@
 
 const { Tickets, ListaTarefa, Historico_status, View_Ticket, View_Respostas } = require('../database/models');
 const transporter = require('../config/nodemailerConfig');
-
+require('dotenv').config();
 // Função que gera um código de ticket com a data e um número aleatório
 const gerarCodigoTicket = () => {
     const dataAtual = new Date();
@@ -91,7 +91,7 @@ const createTickets = async (req, res) => {
         createHistorico( ticketCriado.id_ticket, idStatus, id_usuario)
 
         await transporter.sendMail({
-            from: 'servicedesk2@fatecbpaulista.edu.br',
+            from: process.env.EMAIL_USER,
             to: ticketCriado.email,
             subject: `Chamado Criado - ${ticketCriado.codigo_ticket}`,
             html: `

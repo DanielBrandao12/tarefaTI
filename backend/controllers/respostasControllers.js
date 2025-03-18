@@ -1,6 +1,7 @@
 const {Respostas} = require('../database/models')
 const transporter = require('../config/nodemailerConfig');
 
+require('dotenv').config();
 
 const getRespostasNaoLidas = async (req, res) => {
     try {
@@ -112,7 +113,7 @@ const enviarRespostaAutomatica = async (remetente, codigoTicket, mensagem) => {
     try {
         console.log(mensagem)
         await transporter.sendMail({
-            from: 'servicedesk2@fatecbpaulista.edu.br',
+            from: process.env.EMAIL_USER,
             to: remetente,
             subject: `Atualização do chamado - ${codigoTicket}`,
             html: mensagem
