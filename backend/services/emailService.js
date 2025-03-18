@@ -59,12 +59,12 @@ const checkEmails = async () => {
                 console.log(`Processando e-mail de: ${parsed.from?.text || 'Desconhecido'}`);
 
                 // Processa anexos
-                const anexos = parsed.attachments.map(att => ({
+                const anexos = parsed.attachments ? parsed.attachments.map(att => ({
                     nome: att.filename,
                     tipo: att.contentType,
                     tamanho: att.size,
-                    arquivo: att.content // Não converta para base64 aqui
-                }));
+                    arquivo: att.content
+                })) : [];
 
                 const chamado = {
                     remetente: parsed.from?.text || parsed.from || 'Desconhecido',
@@ -72,11 +72,16 @@ const checkEmails = async () => {
                     mensagem: parsed.html || parsed.text || 'Sem mensagem',
                     anexos: anexos || null
                 };
-                console.log(parsed.from)
+
+                // Garante que chamado.anexos seja sempre um array
+                chamado.anexos = chamado.anexos || [];
+
+                console.log(parsed.from);
                 const codigoTicket = extrairCodigoTicket(chamado.assunto);
 
                 if (codigoTicket) {
                     const ticketExistente = await getTicketPorCodigo(codigoTicket);
+                    console.log(ticketExistente);
                     if (ticketExistente && ticketExistente.id_status !== 4) {
                         console.log(`O ticket ${codigoTicket} já existe. Não será criado um novo chamado.`);
                         const mensagem = getDivFirst(chamado.mensagem);
@@ -209,9 +214,8 @@ const criarChamadoPorEmail = async (emailData) => {
         });
         
         createHistorico(ticketCriado.id_ticket, ticketData.idStatus, ticketData.id_usuario);
-        if(anexos.length >0) {
-            createAnexo(ticketCriado.id_ticket, null , anexos)
-           // console.log(anexos)
+        if (Array.isArray(anexos) && anexos.length > 0) {
+            await createAnexo(ticketCriado.id_ticket, null, anexos);
         }
         return {
             message: 'Chamado criado com sucesso!',
@@ -227,27 +231,35 @@ const criarChamadoPorEmail = async (emailData) => {
 
 const createAnexo = async (idTicket, idResposta, dadosAnexo) => {
     try {
-      // Mapeia os anexos e cria as promessas para inserção no banco
-      const anexosPromises = dadosAnexo.map((anexo) => {
-        return Anexo.create({
-          nome: anexo.nome,
-          tipo: anexo.tipo,
-          arquivo: anexo.arquivo,
-          ticket_id: idTicket || null,
-          resposta_id: idResposta || null
+        if (!idTicket && !idResposta) {
+            console.warn('Nenhum ID válido fornecido para anexar arquivos.');
+            return;
+        }
+
+        if (!Array.isArray(dadosAnexo) || dadosAnexo.length === 0) {
+            console.warn('Nenhum anexo válido para salvar.');
+            return;
+        }
+
+        const anexosPromises = dadosAnexo.map((anexo) => {
+            return Anexo.create({
+                nome: anexo.nome,
+                tipo: anexo.tipo,
+                arquivo: anexo.arquivo,
+                ticket_id: idTicket || null,
+                resposta_id: idResposta || null
+            });
         });
-      });
-  
-      // Aguarda todas as promessas de criação de anexo
-      const anexosCriados = await Promise.all(anexosPromises);
-  
-      console.log('Anexos criados com sucesso:', anexosCriados);
-      return anexosCriados;
+
+        const anexosCriados = await Promise.all(anexosPromises);
+        console.log('Anexos criados com sucesso:', anexosCriados);
+        return anexosCriados;
     } catch (error) {
-      console.error('Erro ao criar anexos:', error);
-      throw new Error('Erro ao criar anexos');
+        console.error('Erro ao criar anexos:', error);
+        throw new Error('Erro ao criar anexos');
     }
-  };
+};
+
   
 
 const getTicketPorCodigo = async (codigoTicket) => {
