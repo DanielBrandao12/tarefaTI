@@ -1,5 +1,5 @@
 .containerCard {
-    max-width: 1200px; /* ou apenas remova essa linha */
+    max-width: 1250px; /* ou apenas remova essa linha */
  
     padding: 16px; /* adicione um padding para espaçamento interno */
     box-shadow: 1px 1px 5px 0px rgba(178, 0, 0, 0.4);

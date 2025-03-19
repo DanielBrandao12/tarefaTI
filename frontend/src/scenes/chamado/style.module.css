@@ -19,36 +19,7 @@
     width: 30vw;
 }
 
-.containerChamadoView {
-    display: flex;
-    flex-direction: column;
-   
-    gap: 12px;
-}
 
-.titleAssunto {
-    font-size: 22px;
-    color: #b20000;
-    font-weight: bold;
-    padding: 10px;
-}
-
-.autor {
-    display: flex;
-    align-items: center;
-}
-
-.descri{
-    
-    border: 1px solid #b2000025;
-    border-radius: 2px;
-}
-.span {
-    font-size: 15px;
-    color: #b20000;
-    font-weight: bold;
-    padding: 10px;
-}
 .containerListaTarefas {
     display: flex;
     flex-direction: column;
@@ -111,7 +82,7 @@
 .titleLista {
     font-size: 25px;
     padding: 5px;
-
+    color: #b20000;
 }
 
 .addContainer{
@@ -237,6 +208,10 @@
 
 }
 
+.titleSpanDetalhes{
+    color: #b20000;
+}
+
 .selectDetalhes {
     border: none;
     outline: none;
@@ -285,3 +260,4 @@
   .buttonPadrao:hover {
     background-color: #7E0000;
   }
+

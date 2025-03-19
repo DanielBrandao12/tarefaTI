@@ -1,11 +1,9 @@
 import './style.css';
-import { Link, useNavigate } from 'react-router-dom';
-import Cookies from 'js-cookie';
-import { confirmAlert } from 'react-confirm-alert'; // Importa a função confirmAlert
-import api from '../../services/api';
+import { Link } from 'react-router-dom';
+
 
 function Menu() {
-    const navigate = useNavigate(); // Hook para navegação programática
+  
 
 
     return (
@@ -17,7 +15,8 @@ function Menu() {
             <div className='container-nav-options'>
                 <div>
                     <Link className='link' to={'/'}>Início</Link>
-                    <Link className='link' to={'/chamados'}>Chamados</Link>
+                    <Link className='link' to={'/tickets'}>Chamados Abertos</Link>
+                    <Link className='link' to={'/ticketsClose'}>Chamados Fechados</Link>
                     <Link className='link' to={'/relatorio'}>Relátorios</Link>
                     <Link className='link' to={'/category'}>Categorias</Link>
                     <Link className='link' to={'/status'}>Status</Link>

@@ -1,54 +1,65 @@
-
-
-
-
-.containerCards{
+.containerCards {
     display: flex;
-    justify-content: flex-start;
-   
-    max-width: 80vw;
+    justify-content: center;
+    max-width: 85vw;
 
 }
 
-.containerCardsColuna{
+.containerCardsColuna {
     display: flex;
     flex-direction: column;
-    
     width: 80%;
-    
-    
+
+
 }
-.containerCardsLinha{
+
+.containerCardsLinha {
     display: flex;
     flex-direction: column;
     width: 20%;
 }
 
-.containerFilter{
+.title {
+    font-size: 0.7rem;
+    /* Aumento do tamanho da fonte */
+    font-weight: bold;
+    color: #7E0000;
+    margin: 20px;
+
+    text-transform: uppercase;
+
+    /* Deixa o título mais impactante */
+}
+
+.containerFilter {
     display: flex;
     flex-direction: column;
-    
+
 
     gap: 10px;
-   
+
 }
-.titleFilter{
+
+.titleFilter {
     color: #b20000;
     font-size: 25px;
-    
+
     padding: 10px;
 }
-.selectFilter{
+
+.selectFilter {
     border: 1px solid #b20000;
     border-radius: 5px;
     padding: 10px;
     font-size: 15px;
     color: #b20000;
 }
-.selectFilter:focus{
+
+.selectFilter:focus {
     outline: none;
 }
-.labelFilter{
+
+.labelFilter {
     font-size: 15px;
     font-weight: bold;
     color: #b20000;
@@ -57,44 +68,47 @@
 
 
 
-.inputFilter{
+.inputFilter {
     border: 1px solid #b20000;
     border-radius: 5px;
     padding: 10px;
     font-size: 15px;
     color: #b20000;
-    
+
 }
-.inputFilter:focus{
+
+.inputFilter:focus {
     outline: none;
 }
-.containerButtonsChamados{
+
+.containerButtonsChamados {
     display: flex;
     justify-content: space-evenly;
     margin: 20px 0 20px 0;
-    
+
 }
 
 .buttonChamados {
-    
+
     background-color: #B20000;
     min-width: 180px;
     max-width: 300px;
     height: 35px;
-    font-size: 16px;
-    
+    font-size: 14px;
+    font-weight: bold;
     text-align: center;
     color: #ffff;
     border-style: none;
     border-radius: 5px;
-    padding: 0 5px 0 5px;
+    padding: 0 10px 0 10px;
     cursor: pointer;
-  }
-.buttonChamados:hover{
+}
+
+.buttonChamados:hover {
     background-color: #7E0000;
 }
 
-.spanLink{
+.spanLink {
     font-size: 14px;
     font-weight: bold;
     padding: 5px;
@@ -102,14 +116,27 @@
     color: #B65151;
 }
 
-.spanLink:hover{
+.spanLink:hover {
     text-decoration: underline;
 }
 
 
+.chamadoNaoLido {
+    font-weight: bold;
+    /* Deixa em negrito */
+    background-color: #000000;
+    /* Um tom leve de vermelho para destacar */
+}
+
+.chamadoNaoLido:hover {
+    background-color: #b20000 !important;
+}
+
+
+
 @media (max-width: 1600px) {
-    .buttonChamados{
-      min-width: 150px;
+    .buttonChamados {
+        min-width: 150px;
     }
-  
-  }
+
+}

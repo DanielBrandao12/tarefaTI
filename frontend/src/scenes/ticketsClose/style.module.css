@@ -1,0 +1,58 @@
+.containerCards {
+    display: flex;
+    justify-content: flex-start;
+    max-width: 85vw;
+
+}
+
+.containerCardsColuna {
+    display: flex;
+    flex-direction: column;
+    width: 80%;
+}
+
+.containerFilter {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    margin: 20px;
+    gap: 10px;
+
+}
+
+.title {
+    font-size: 0.7rem;
+    /* Aumento do tamanho da fonte */
+    font-weight: bold;
+    color: #7E0000;
+    margin-bottom: 20px;
+    text-align: center;
+    text-transform: uppercase;
+    /* Deixa o título mais impactante */
+}
+
+.search {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.labelFilter {
+    font-size: 15px;
+    font-weight: bold;
+    color: #b20000;
+
+}
+
+.inputFilter {
+    border: 1px solid #b20000;
+    border-radius: 5px;
+    padding: 10px;
+    font-size: 15px;
+    color: #b20000;
+
+}
+
+.inputFilter:focus {
+    outline: none;
+}

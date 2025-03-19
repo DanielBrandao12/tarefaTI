@@ -2,18 +2,41 @@ const Imap = require('imap-simple');
 const { simpleParser } = require('mailparser');
 const { imapConfig } = require('../config/imapConfig');
 const transporter = require('../config/nodemailerConfig');
-const { Tickets, Historico_status, Respostas } = require('../database/models');
+const { Tickets, Historico_status, Respostas, Anexo } = require('../database/models');
 const cheerio = require('cheerio');
 
+const conectarIMAP = async () => {
+    try {
+        console.log('Tentando conectar ao IMAP...');
+        const connection = await Imap.connect(imapConfig);
+        
+        // Tratamento de erros na conexão
+        connection.on('error', (err) => {
+            console.error('Erro na conexão IMAP:', err);
+        });
+
+        connection.on('close', (hadError) => {
+            console.error('A conexão foi fechada', hadError ? 'devido a um erro' : 'normalmente');
+        });
+
+        return connection;
+    } catch (error) {
+        console.error('Erro ao conectar ao IMAP:', error);
+        console.log('Tentando reconectar em 5 segundos...');
+        await new Promise(resolve => setTimeout(resolve, 5000));
+        return conectarIMAP();
+    }
+};
+
 const checkEmails = async () => {
-    let connection; // Inicializa a variável fora do try
+    let connection;
     try {
         console.log('Iniciando a conexão IMAP...');
-        connection = await Imap.connect(imapConfig);
+        connection = await conectarIMAP();
         console.log('Conexão estabelecida com sucesso!');
 
         await connection.openBox('INBOX');
-        const searchCriteria = ['UNSEEN']; // Buscar apenas e-mails não lidos
+        const searchCriteria = ['UNSEEN'];
         const fetchOptions = { bodies: [''], struct: true };
 
         const messages = await connection.search(searchCriteria, fetchOptions);
@@ -35,24 +58,34 @@ const checkEmails = async () => {
                 const parsed = await simpleParser(all.body);
                 console.log(`Processando e-mail de: ${parsed.from?.text || 'Desconhecido'}`);
 
+                // Processa anexos
+                const anexos = parsed.attachments ? parsed.attachments.map(att => ({
+                    nome: att.filename,
+                    tipo: att.contentType,
+                    tamanho: att.size,
+                    arquivo: att.content
+                })) : [];
+
                 const chamado = {
-                    remetente: parsed.from?.text || 'Desconhecido',
+                    remetente: parsed.from?.text || parsed.from || 'Desconhecido',
                     assunto: parsed.subject || 'Sem assunto',
-                    mensagem: parsed.html || 'Sem conteúdo no corpo do e-mail',
+                    mensagem: parsed.html || parsed.text || 'Sem mensagem',
+                    anexos: anexos || null
                 };
-            
+
+                // Garante que chamado.anexos seja sempre um array
+                chamado.anexos = chamado.anexos || [];
+
+                console.log(parsed.from);
                 const codigoTicket = extrairCodigoTicket(chamado.assunto);
 
                 if (codigoTicket) {
                     const ticketExistente = await getTicketPorCodigo(codigoTicket);
-
-                    if (ticketExistente) {
+                    console.log(ticketExistente);
+                    if (ticketExistente && ticketExistente.id_status !== 4) {
                         console.log(`O ticket ${codigoTicket} já existe. Não será criado um novo chamado.`);
-                        console.log(chamado.mensagem)
                         const mensagem = getDivFirst(chamado.mensagem);
-                        await createResposta(ticketExistente.dataValues.id_ticket, mensagem);
-                        //Quando vem com assinatura e caracteres eles traz os corpo de email todo
-                        //tratar para pegar apenas o texto da resposta
+                        await createResposta(ticketExistente.dataValues.id_ticket, mensagem, chamado.anexos);
                         await connection.addFlags(message.attributes.uid, ['\\Seen']);
                         continue;
                     }
@@ -70,11 +103,12 @@ const checkEmails = async () => {
         console.error('Erro ao verificar e-mails:', error);
     } finally {
         if (connection) {
-            await connection.end(); // Garante que a conexão será encerrada
+            await connection.end();
             console.log('Conexão IMAP encerrada com sucesso!');
         }
     }
 };
+
 
 
 const getDivFirst = (mensagem) =>{
@@ -94,7 +128,7 @@ const getDivFirst = (mensagem) =>{
     return resposta.trim();
 }
 
-const createResposta = async (id_ticket, descricao) => {
+const createResposta = async (id_ticket, descricao, anexo) => {
   try {
       
 
@@ -105,7 +139,7 @@ const createResposta = async (id_ticket, descricao) => {
           id_ticket
       })
 
-
+      createAnexo(null, respostaCriada.id_resposta, anexo)
    
 
   } catch (error) {
@@ -144,7 +178,7 @@ const parseRemetente = (remetente) => {
 
 const criarChamadoPorEmail = async (emailData) => {
     try {
-        const { remetente, assunto, mensagem } = emailData;
+        const { remetente, assunto, mensagem, anexos } = emailData;
         const { nome, email } = parseRemetente(remetente);
 
         let codigo_ticket;
@@ -178,9 +212,11 @@ const criarChamadoPorEmail = async (emailData) => {
             id_usuario: ticketData.id_usuario,
             id_status: ticketData.idStatus
         });
-
+        
         createHistorico(ticketCriado.id_ticket, ticketData.idStatus, ticketData.id_usuario);
-
+        if (Array.isArray(anexos) && anexos.length > 0) {
+            await createAnexo(ticketCriado.id_ticket, null, anexos);
+        }
         return {
             message: 'Chamado criado com sucesso!',
             ticketCriado
@@ -192,6 +228,39 @@ const criarChamadoPorEmail = async (emailData) => {
         };
     }
 };
+
+const createAnexo = async (idTicket, idResposta, dadosAnexo) => {
+    try {
+        if (!idTicket && !idResposta) {
+            console.warn('Nenhum ID válido fornecido para anexar arquivos.');
+            return;
+        }
+
+        if (!Array.isArray(dadosAnexo) || dadosAnexo.length === 0) {
+            console.warn('Nenhum anexo válido para salvar.');
+            return;
+        }
+
+        const anexosPromises = dadosAnexo.map((anexo) => {
+            return Anexo.create({
+                nome: anexo.nome,
+                tipo: anexo.tipo,
+                arquivo: anexo.arquivo,
+                ticket_id: idTicket || null,
+                resposta_id: idResposta || null
+            });
+        });
+
+        const anexosCriados = await Promise.all(anexosPromises);
+        console.log('Anexos criados com sucesso:', anexosCriados);
+        return anexosCriados;
+    } catch (error) {
+        console.error('Erro ao criar anexos:', error);
+        throw new Error('Erro ao criar anexos');
+    }
+};
+
+  
 
 const getTicketPorCodigo = async (codigoTicket) => {
     if (!codigoTicket) return null;
@@ -228,21 +297,38 @@ const enviarRespostaAutomatica = async (remetente, codigoTicket) => {
             to: remetente,
             subject: `Chamado Criado - ${codigoTicket}`,
             html: `
-                <div style="font-family: Verdana, sans-serif; font-size: 18px;">
-                    <p style=" text-align: center; font-weight: bold;">Agradecemos por entrar em contato!</p>
-                    
-                    <p style="font-size: 20px;  text-align: center;">Seu chamado foi registrado com sucesso e recebeu o código:
-                    <p style="font-size: 22px; font-weight: bold; text-align: center;">${codigoTicket}</p></p>
-                    
-                    
-                    
-                    <p style=" text-align: left;>Para acompanhar o andamento ou enviar novas informações, basta responder a este e-mail.</p>
-                    
-                    <p style=" text-align: left;>Estamos à disposição para ajudar!</p>
-                    
-                    <p style=" text-align: left; ">Equipe T.I Fatec Bragança Paulista.</p>
+                <div style="font-family: Verdana, sans-serif; font-size: 18px; text-align: center; padding: 20px;">
+                    <div style="max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ccc; border-radius: 10px; 
+                                box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1); background-color: #f9f9f9;">
+                        <p style="font-weight: bold; font-size: 22px;">Agradecemos por entrar em contato!</p>
+                        
+                        <p style="font-size: 20px;">Seu chamado foi registrado com sucesso e recebeu o código:</p>
+                        <p style="font-size: 24px; font-weight: bold; background-color: #007bff; color: white; padding: 10px; 
+                                  display: inline-block; border-radius: 5px;">
+                            ${codigoTicket}
+                        </p>
+        
+                        <p style="font-size: 18px; text-align: left; margin-top: 20px;">
+                            Para acompanhar o andamento ou enviar novas informações, basta responder a este e-mail.
+                        </p>
+        
+                        <p style="font-size: 18px; text-align: left;">Estamos à disposição para ajudar!</p>
+        
+                        <p style="font-size: 18px; text-align: left;"><strong>Equipe T.I Fatec Bragança Paulista</strong></p>
+        
+                        <hr style="margin: 20px 0; border: none; border-top: 1px solid #ccc;">
+        
+                        <img src="cid:logo" alt="Fatec Bragança Paulista" style="max-width: 100%; height: auto; border-radius: 5px;">
+                    </div>
                 </div>
-            `
+            `,
+            attachments: [
+                {
+                    filename: 'logo.png', // Nome do arquivo
+                    path: '../backend/public/images/logo.png', // Caminho local do arquivo
+                    cid: 'logo' // Identificador usado no `src="cid:logo"`
+                }
+            ]
         });
         
         //console.log(`Resposta automática enviada para: ${remetente}`);

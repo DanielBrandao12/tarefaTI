@@ -24,6 +24,7 @@ const historicoStatusRouter = require('./routes/historicoStatusRoute')
 const respostaRouter = require('./routes/respostaRoute')
 const statusRouter = require('./routes/statusRoute') 
 const emailService = require('./services/emailService')
+const anexoRouter = require('./routes/anexoRoute')
 
 const app = express();
 
@@ -40,8 +41,8 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 // Configuração do CORS
 const corsOptions = {
- // origin: 'http://servicedesk:3000', // Substitua pelo domínio do seu frontend
-  origin: 'http://localhost:3000', // Substitua pelo domínio do seu frontend
+ origin: 'http://servicedesk:3000', // Substitua pelo domínio do seu frontend
+  //origin: 'http://localhost:3000', // Substitua pelo domínio do seu frontend
 
   credentials: true, // Permite que cookies e outras credenciais sejam enviadas
 };
@@ -75,6 +76,7 @@ app.use('/maquinas', maquinaRouter)
 app.use('/historicoStatus', historicoStatusRouter)
 app.use('/resposta', respostaRouter)
 app.use('/status', statusRouter)
+app.use('/anexo', anexoRouter)
 
 
 // Verificar e-mails periodicamente (a cada 5 minutos)

@@ -4,10 +4,11 @@
   font-family: Verdana, Geneva, Tahoma, sans-serif;
 
   /*Bloqueia seleção de textos, provisorio aqui */  
-  user-select: none; /* Para navegadores modernos */
-  -webkit-user-select: none; /* Para Safari */
-  -moz-user-select: none; /* Para Firefox */
-  -ms-user-select: none; /* Para Internet Explorer */
+ /* user-select: none; /* Para navegadores modernos */
+ /* -webkit-user-select: none;  Para Safari */
+  /*  -moz-user-select: none;  Para Firefox */
+  /*  -ms-user-select: none;Para Internet Explorer */
+  
  
 }
 
@@ -29,11 +30,8 @@ code {
   display: flex;
   flex-direction: row;
 
-  
-  
-
-  
 }
+
 
 
 .button-padrao {
@@ -55,4 +53,15 @@ code {
 
 .button-padrao:hover{
   background-color: #7E0000;
+}
+
+
+.react-confirm-alert-body{
+  color: #B20000 !important;
+}
+.react-confirm-alert-body button{
+  background-color: #B20000 !important;
+}
+.react-confirm-alert-body button:hover{
+  background-color: #7E0000 !important;
 }

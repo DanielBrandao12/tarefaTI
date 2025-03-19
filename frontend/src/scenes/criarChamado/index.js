@@ -6,10 +6,8 @@ import stylesGlobal from '../../styles/styleGlobal.module.css';
 
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus, faTimes } from '@fortawesome/free-solid-svg-icons';
-
+import { confirmAlert } from 'react-confirm-alert';
+import 'react-confirm-alert/src/react-confirm-alert.css'
 import Card from '../../components/card';
 import PaginaPadrao from '../../components/paginaPadrao';
 import Popup from '../../components/popup';
@@ -130,46 +128,68 @@ function CriarChamado() {
       });
       return;
     }
-
-    setIsLoading(true); // Ativa o loading
-
-    try {
-      const token = Cookies.get('token');
-      const headers = token ? { Authorization: `Bearer ${token}` } : {};
-
-      const response = await api.post(
-        '/tickets/createTicket',
-        {
-          idCategoria,
-          nomeReq,
-          emailReq,
-          assunto,
-          descri,
-          prioridade,
-          idStatus,
-          atribuir,
-          id_usuario: idUser.id,
-        },
-        { headers }
-      );
-
-      if (response.status === 201) {
-        setMessage('Ticket criado com sucesso!');
-        setPopupVisible(true);
-        clearStates();
-      } else {
-        console.error('Erro ao criar o chamado:', response.data);
-        setMessage('Ocorreu um problema ao criar o chamado.');
-        setPopupVisible(true);
-      }
-    } catch (error) {
-      console.error('Erro ao enviar os dados:', error);
-      setMessage('Erro ao criar o chamado. Tente novamente mais tarde.');
-      setPopupVisible(true);
-    } finally {
-      setIsLoading(false); // Desativa o loading
-    }
+  
+    confirmAlert({
+      customUI: ({ onClose }) => (
+        <div className="react-confirm-alert-body">
+          <h2>Confirmação</h2>
+          <p>
+            O endereço de e-mail <strong>{emailReq}</strong> está correto?
+          </p>
+          <div className="react-confirm-alert-button-group">
+            <button
+              onClick={async () => {
+                onClose();
+                setIsLoading(true); // Ativa o loading
+    
+                try {
+                  const token = Cookies.get("token");
+                  const headers = token ? { Authorization: `Bearer ${token}` } : {};
+    
+                  const response = await api.post(
+                    "/tickets/createTicket",
+                    {
+                      idCategoria,
+                      nomeReq,
+                      emailReq,
+                      assunto,
+                      descri,
+                      prioridade,
+                      idStatus,
+                      atribuir,
+                      id_usuario: idUser.id,
+                    },
+                    { headers }
+                  );
+    
+                  if (response.status === 201) {
+                    setMessage("Ticket criado com sucesso!");
+                    setPopupVisible(true);
+                    clearStates();
+                  } else {
+                    console.error("Erro ao criar o chamado:", response.data);
+                    setMessage("Ocorreu um problema ao criar o chamado.");
+                    setPopupVisible(true);
+                  }
+                } catch (error) {
+                  console.error("Erro ao enviar os dados:", error);
+                  setMessage("Erro ao criar o chamado. Tente novamente mais tarde.");
+                  setPopupVisible(true);
+                } finally {
+                  setIsLoading(false); // Desativa o loading
+                }
+              }}
+            >
+              Sim
+            </button>
+            <button onClick={onClose}>Não</button>
+          </div>
+        </div>
+      ),
+    });
+    
   };
+  
 
   const updateTicket = async () => {
 
@@ -234,27 +254,7 @@ function CriarChamado() {
   };
 
 
-  //função para buscar lista de tarefas do ticket
-  //para usar caso for editar
-  /*
-  const fetchChamadoListaTarefa = async () => {
-    try {
-      const response = await api.get(`/tickets/listaTarefa/${id_ticket.id}`);
-
-      // Verifique se há dados antes de processá-los
-      if (response.data && Array.isArray(response.data)) {
-        const tarefas = response.data.map(item => item.assunto); // Extrai os "assunto"
-        setListaTarefa(tarefas); // Atualiza o estado com a lista completa de assuntos
-      } else {
-        console.warn('Nenhuma tarefa encontrada ou o formato dos dados é inválido.');
-      }
-
-      console.log(listaTarefa); // Certifique-se de que isso é necessário, pois pode exibir o estado antigo devido à natureza assíncrona do setState
-    } catch (error) {
-      console.error('Erro ao buscar lista de tarefas:', error);
-    }
-  };
-*/
+  
   //função para buscar ticket pelo id
   useEffect(() => {
     const getTicketId = async () => {
@@ -283,26 +283,7 @@ function CriarChamado() {
   }, [id_ticket.id]); // Executa o efeito apenas quando `id_ticket.id` muda.
 
 
-  //adicionar item na lista
-  /*
-  const addItemLista = () => {
-    if (!tarefa.trim()) {
-      setMessage('A tarefa não pode estar vazia!');
-      setPopupVisible(true);
-      return;
-    }
 
-    setListaTarefa((prevLista) => [...prevLista, tarefa]);
-    console.log(listaTarefa)
-    setTarefa(''); // Limpa o campo de entrada após adicionar a tarefa
-  };
-*/
-  //remove item da lista
-  /*
-  const removeItemLista = (indexToRemove) => {
-    setListaTarefa((prevLista) => prevLista.filter((_, index) => index !== indexToRemove));
-  };
-  */
 
 
   //fecha popup

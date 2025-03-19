@@ -1,0 +1,16 @@
+
+  
+.chamadoNaoLido {
+  font-weight: bold;  /* Deixa em negrito */
+  background-color: #000000 !important; /* Um tom leve de vermelho para destacar */
+  color: #fff;
+}
+
+.chamadoNaoLido:hover {
+  font-weight: bold;  /* Deixa em negrito */
+  background-color: #f0dddd !important; /* Um tom leve de vermelho para destacar */
+  color: #000000;
+}
+
+
+

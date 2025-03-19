@@ -1,11 +1,12 @@
 module.exports = {
     imapConfig: {
       imap: {
-        user: 'servicedesk@fatecbpaulista.edu.br', // E-mail do usuário
-        password: 'ks@4fn.FU-+HjgE', // Senha fornecida
+      //  user: '', // E-mail do usuário
+       // password: '', // Senha fornecida
         host: 'email-ssl.com.br', // Servidor de entrada
         port: 993, // Porta IMAP com SSL/TLS
         tls: true, // Habilita TLS
+        tlsOptions: { rejectUnauthorized: false },
         authTimeout: 60000, // Tempo limite para autenticação
       },
     },
