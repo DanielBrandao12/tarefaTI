@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import PaginaPadrao from "../../components/paginaPadrao";
 import Card from "../../components/card";
-
+import Cookies from "js-cookie";
+import { jwtDecode } from "jwt-decode";
 import api from "../../services/api";
 import dayjs from "dayjs";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -24,6 +25,21 @@ function Category() {
   const [showModal, setShowModal] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
   const [category, setCategory] = useState([]);
+  const [usuario, setUsuario] = useState([])
+
+    // Decodificar o token e carregar dados do usuário
+    useEffect(() => {
+      const token = Cookies.get("token");
+      if (token) {
+        try {
+          const decoded = jwtDecode(token);
+          setUsuario(decoded.nome_usuario);
+          console.log("Usuário decodificado:", decoded);
+        } catch (error) {
+          console.error("Erro ao decodificar o token:", error);
+        }
+      }
+    }, []);
 
   const handleStatusChange = (event) => {
     setStatusCategoria(event.target.value);
@@ -75,6 +91,7 @@ function Category() {
       const response = await api.post("/categoria/createCategory", {
         nomeCategoria,
         statusCategoria,
+        usuario
       });
       const categoriaCriada = response.data;
       
