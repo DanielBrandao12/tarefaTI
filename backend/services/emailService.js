@@ -66,7 +66,7 @@ const checkEmails = async () => {
                     tamanho: att.size,
                     arquivo: att.content
                 })) : [];
-
+           
                 const chamado = {
                     remetente: parsed.from?.text || parsed.from || 'Desconhecido',
                     assunto: parsed.subject || 'Sem assunto',
@@ -77,7 +77,6 @@ const checkEmails = async () => {
                 // Garante que chamado.anexos seja sempre um array
                 chamado.anexos = chamado.anexos || [];
 
-                console.log(parsed.from);
                 const codigoTicket = extrairCodigoTicket(chamado.assunto);
 
                 if (codigoTicket) {
@@ -86,6 +85,7 @@ const checkEmails = async () => {
                     if (ticketExistente && ticketExistente.id_status !== 4) {
                         console.log(`O ticket ${codigoTicket} já existe. Não será criado um novo chamado.`);
                         const mensagem = getDivFirst(chamado.mensagem);
+                        console.log(chamado.mensagem)
                         await createResposta(ticketExistente.dataValues.id_ticket, mensagem, chamado.anexos);
                         await connection.addFlags(message.attributes.uid, ['\\Seen']);
                         continue;
@@ -111,24 +111,27 @@ const checkEmails = async () => {
 };
 
 
+const getDivFirst = (mensagem) => {
+    // Captura qualquer texto antes da primeira tag HTML
+    const textoAntesHTML = mensagem.split(/<[^>]+>/)[0].trim();
 
-
-const getDivFirst = (mensagem) =>{
     const $ = cheerio.load(mensagem);
 
-    // Remove os elementos que correspondem à citação do e-mail anterior
-    $('blockquote, div.gmail_quote, .gmail_attr, #divRplyFwdMsg, .BodyFragment').remove();
+    // Remove assinaturas e citações comuns (incluindo Yahoo e Gmail)
+    $('blockquote, div.gmail_quote, .gmail_attr, #divRplyFwdMsg, .BodyFragment, div#ymail_android_signature, a#ymail_android_signature_link').remove();
 
-     // Seleciona o conteúdo dentro das divs que estão antes das citações
-     const resposta = $('body').children().filter(function() {
-        return $(this).text().trim().length > 0; // Filtra elementos com texto significativo
+    // Seleciona o conteúdo útil dentro das divs
+    const resposta = $('body').children().filter(function() {
+        const text = $(this).text().trim();
+        return text.length > 0 && !$(this).is('blockquote, div.ymail_signature');
     }).map(function() {
-        return $(this).html(); // Pega o HTML de cada um desses elementos
-    }).get().join(''); // Junta todos os conteúdos em uma string
+        return $(this).text().trim();
+    }).get().join('\n');
 
-    // Retorna o conteúdo limpo
-    return resposta.trim();
-}
+    // Retorna o texto antes do HTML + o conteúdo filtrado
+    return [textoAntesHTML, resposta].filter(Boolean).join('\n').trim();
+};
+
 
 const createResposta = async (id_ticket, descricao, anexo) => {
   try {
@@ -217,7 +220,7 @@ const criarChamadoPorEmail = async (emailData) => {
         
         createHistorico(ticketCriado.id_ticket, ticketData.idStatus, ticketData.id_usuario);
         if (Array.isArray(anexos) && anexos.length > 0) {
-            await createAnexo(ticketCriado.id_ticket, null, anexos);
+            await createAnexo(ticketCriado.codigoTicket, null, anexos);
         }
         return {
             message: 'Chamado criado com sucesso!',

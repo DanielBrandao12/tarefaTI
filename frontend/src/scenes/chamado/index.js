@@ -72,10 +72,10 @@ function Chamado() {
     fetchChamado(id_ticket);
   }, [id_ticket, resposta, fetchChamado]);
 
-  //busca anexos
-  useEffect(() => {
-    fetchAnexos(id_ticket);
-  }, [id_ticket, fetchAnexos]); // A dependência de id_ticket garante que a função seja chamada quando id_ticket mudar
+//busca anexos
+useEffect(() => {
+  fetchAnexos(chamado.codigo_ticket);
+}, [chamado.codigo_ticket, fetchAnexos]); // A dependência de id_ticket garante que a função seja chamada quando id_ticket mudar
 
   // Busca o status atual do chamado
   useEffect(() => {
