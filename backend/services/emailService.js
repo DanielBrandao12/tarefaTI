@@ -221,7 +221,7 @@ const criarChamadoPorEmail = async (emailData) => {
         
         createHistorico(ticketCriado.id_ticket, ticketData.idStatus, ticketData.id_usuario);
         if (Array.isArray(anexos) && anexos.length > 0) {
-            await createAnexo(ticketCriado.id_ticket, null, anexos);
+            await createAnexo(ticketCriado.codigoTicket, null, anexos);
         }
         return {
             message: 'Chamado criado com sucesso!',
