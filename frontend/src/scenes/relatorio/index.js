@@ -3,16 +3,28 @@ import PaginaPadrao from "../../components/paginaPadrao";
 import Card from "../../components/card";
 import stylesGlobal from "../../styles/styleGlobal.module.css";
 import style from "./style.module.css";
+import useRelatorio from "../../hooks/useRelatorio";
 
 function Relatorio() {
+  const {
+    filtro,
+    todayTickets,
+    weekTickets,
+    monthTickets,
+    yearTickets,
+    allTickets,
+    setFiltro,
+    filtrarPorPeriodo,
+  } = useRelatorio();
+
   const [modoSelecao, setModoSelecao] = useState("select");
   const [intervaloSelecionado, setIntervaloSelecionado] = useState("");
   const [dataInicio, setDataInicio] = useState("");
   const [dataFim, setDataFim] = useState("");
-
+  const [tickets, setTickets] = useState([])
   const handleModoSelecao = (modo) => {
     setModoSelecao(modo);
-    
+
     // Resetando valores ao alternar
     if (modo === "select") {
       setDataInicio("");
@@ -32,10 +44,14 @@ function Relatorio() {
       return;
     }
 
-    const dadosEnvio = modoSelecao === "select"
-      ? { intervalo: intervaloSelecionado }
-      : { dataInicio, dataFim };
-
+    const dadosEnvio =
+      modoSelecao === "select"
+        ? { intervalo: intervaloSelecionado }
+        : { dataInicio, dataFim };
+    if(intervaloSelecionado === 'hoje'){
+        setTickets(intervaloSelecionado)
+        console.log(todayTickets)
+    }
     console.log("Enviando dados:", dadosEnvio);
   };
 
@@ -120,26 +136,34 @@ function Relatorio() {
       </Card>
       <Card>
         <div>
-          <table className={stylesGlobal.table}>
-            <thead className={stylesGlobal.thead}>
-              <tr>
-                <th>Data</th>
-                <th>Novos Chamados</th>
-                <th>Aguardando Atendimento</th>
-                <th>Em atendimento</th>
-                <th>Fechado</th>
-              </tr>
-            </thead>
-            <tbody className={stylesGlobal.tbody}>
-              <tr style={{ cursor: "auto" }}>
-                <td>07-10-2024</td>
-                <td>5</td>
-                <td>1</td>
-                <td>0</td>
-                <td>10</td>
-              </tr>
-            </tbody>
-          </table>
+      { tickets ==='hoje'?
+      (
+      <table className={stylesGlobal.table}>
+      <thead className={stylesGlobal.thead}>
+        <tr>
+          <th>Data</th>
+          <th>Novos Chamados</th>
+          <th>Aguardando Atendimento</th>
+          <th>Em atendimento</th>
+          <th>Fechado</th>
+        </tr>
+      </thead>
+      <tbody className={stylesGlobal.tbody}>
+          {todayTickets.map((item)=>(
+        <tr style={{ cursor: "auto" }}>
+       
+
+             <td>{item.data_criacao}</td>
+             <td>{todayTickets.length}</td>
+       
+           
+        </tr>
+          ))}
+         
+      </tbody>
+    </table>
+    ):(<div></div>)}
+          
           <table className={stylesGlobal.table}>
             <thead className={stylesGlobal.thead}>
               <tr>
