@@ -6,32 +6,20 @@ import style from "./style.module.css";
 import useRelatorio from "../../hooks/useRelatorio";
 
 function Relatorio() {
-  const {
-    filtro,
-    todayTickets,
-    weekTickets,
-    monthTickets,
-    yearTickets,
-    allTickets,
-    setFiltro,
-    filtrarPorPeriodo,
-  } = useRelatorio();
+  const { todayTickets, weekTickets, monthTickets, yearTickets, allTickets } =
+    useRelatorio();
 
   const [modoSelecao, setModoSelecao] = useState("select");
   const [intervaloSelecionado, setIntervaloSelecionado] = useState("");
+  const [tipoRelatorio, setTipoRelatorio] = useState("");
   const [dataInicio, setDataInicio] = useState("");
   const [dataFim, setDataFim] = useState("");
-  const [tickets, setTickets] = useState([])
+  const [ticketsFiltrados, setTicketsFiltrados] = useState([]);
+  const [mostrarRelatorio, setMostrarRelatorio] = useState(false);
+
   const handleModoSelecao = (modo) => {
     setModoSelecao(modo);
-
-    // Resetando valores ao alternar
-    if (modo === "select") {
-      setDataInicio("");
-      setDataFim("");
-    } else {
-      setIntervaloSelecionado("");
-    }
+    setTicketsFiltrados([]);
   };
 
   const handleSubmit = () => {
@@ -43,17 +31,50 @@ function Relatorio() {
       alert("Escolha um intervalo de datas válido.");
       return;
     }
-
-    const dadosEnvio =
-      modoSelecao === "select"
-        ? { intervalo: intervaloSelecionado }
-        : { dataInicio, dataFim };
-    if(intervaloSelecionado === 'hoje'){
-        setTickets(intervaloSelecionado)
-        console.log(todayTickets)
+    if (!tipoRelatorio) {
+      alert("Escolha um tipo de relatório.");
+      return;
     }
-    console.log("Enviando dados:", dadosEnvio);
+
+    let tickets = [];
+    switch (intervaloSelecionado) {
+      case "hoje":
+        tickets = todayTickets;
+        break;
+      case "semana":
+        tickets = weekTickets;
+        break;
+      case "mes":
+        tickets = monthTickets;
+        break;
+      case "ano":
+        tickets = yearTickets;
+        break;
+      case "todos":
+        tickets = allTickets;
+        break;
+      default:
+        tickets = [];
+    }
+
+    setTicketsFiltrados(tickets);
+    setMostrarRelatorio(true);
   };
+
+  const meses = [
+    "Janeiro",
+    "Fevereiro",
+    "Março",
+    "Abril",
+    "Maio",
+    "Junho",
+    "Julho",
+    "Agosto",
+    "Setembro",
+    "Outubro",
+    "Novembro",
+    "Dezembro",
+  ];
 
   return (
     <PaginaPadrao>
@@ -70,7 +91,6 @@ function Relatorio() {
                   onChange={() => handleModoSelecao("select")}
                 />
                 <select
-                  name="intervalo"
                   className={stylesGlobal.selectChamado}
                   disabled={modoSelecao !== "select"}
                   value={intervaloSelecionado}
@@ -115,117 +135,178 @@ function Relatorio() {
           <div className={style.containerOptions}>
             <label>Tipo de Relatório</label>
             <div className={style.containerTipo}>
-              <select name="tipo" className={stylesGlobal.selectChamado}>
+              <select
+                className={stylesGlobal.selectChamado}
+                value={tipoRelatorio}
+                onChange={(e) => setTipoRelatorio(e.target.value)}
+              >
                 <option value="" disabled>
                   Escolha uma opção
-                </option>
-                <option>Por Dia</option>
-                <option>Por mês</option>
-                <option>Técnico</option>
-                <option>Categoria</option>
-              </select>
+                </option>{" "}
+                <option value="dia">Por Dia</option>{" "}
+                <option value="mes">Por Mês</option>{" "}
+                <option value="tecnico">Por Técnico</option>{" "}
+                <option value="categoria">Por Categoria</option>{" "}
+              </select>{" "}
               <input
                 type="button"
                 value="Exibir relatório"
                 className={stylesGlobal.buttonPadrao}
                 onClick={handleSubmit}
-              />
-            </div>
-          </div>
-        </div>
+              />{" "}
+            </div>{" "}
+          </div>{" "}
+        </div>{" "}
       </Card>
-      <Card>
-        <div>
-      { tickets ==='hoje'?
-      (
-      <table className={stylesGlobal.table}>
-      <thead className={stylesGlobal.thead}>
-        <tr>
-          <th>Data</th>
-          <th>Novos Chamados</th>
-          <th>Aguardando Atendimento</th>
-          <th>Em atendimento</th>
-          <th>Fechado</th>
-        </tr>
-      </thead>
-      <tbody className={stylesGlobal.tbody}>
-          {todayTickets.map((item)=>(
-        <tr style={{ cursor: "auto" }}>
-       
+      {mostrarRelatorio && (
+        <Card>
+          <div>
+            {ticketsFiltrados.length > 0 ? (
+              <table className={stylesGlobal.table}>
+                <thead className={stylesGlobal.thead}>
+                  <tr>
+                    {tipoRelatorio === "dia" && <th>Data</th>}
+                    {tipoRelatorio === "mes" && <th>Mês</th>}
+                    {tipoRelatorio === "tecnico" && <th>Técnico</th>}
+                    {tipoRelatorio === "categoria" && <th>Categoria</th>}
+                    <th>Total</th>
+                    <th>Aguardando Atendimento</th>
+                    <th>Em Atendimento</th>
+                    <th>Fechado</th>
+                  </tr>
+                </thead>
+                <tbody className={stylesGlobal.tbody}>
+                  {tipoRelatorio === "dia" &&
+                    ticketsFiltrados.map((ticket, index) => (
+                      <tr key={index}>
+                        <td>{ticket.data_criacao}</td>
+                        <td>{ticketsFiltrados.length}</td>
+                        <td>
+                          {
+                            ticketsFiltrados.filter(
+                              (t) => t.status === "Aguardando atendimento"
+                            ).length
+                          }
+                        </td>
+                        <td>
+                          {
+                            ticketsFiltrados.filter(
+                              (t) => t.status === "Em atendimento"
+                            ).length
+                          }
+                        </td>
+                        <td>
+                          {
+                            ticketsFiltrados.filter(
+                              (t) => t.status === "Fechado"
+                            ).length
+                          }
+                        </td>
+                      </tr>
+                    ))}
 
-             <td>{item.data_criacao}</td>
-             <td>{todayTickets.length}</td>
-       
-           
-        </tr>
-          ))}
-         
-      </tbody>
-    </table>
-    ):(<div></div>)}
-          
-          <table className={stylesGlobal.table}>
-            <thead className={stylesGlobal.thead}>
-              <tr>
-                <th>Técnico</th>
-                <th>Novos Chamados</th>
-                <th>Aguardando Atendimento</th>
-                <th>Em atendimento</th>
-                <th>Fechado</th>
-              </tr>
-            </thead>
-            <tbody className={stylesGlobal.tbody}>
-              <tr style={{ cursor: "auto" }}>
-                <td>Daniel</td>
-                <td>5</td>
-                <td>1</td>
-                <td>0</td>
-                <td>10</td>
-              </tr>
-            </tbody>
-          </table>
-          <table className={stylesGlobal.table}>
-            <thead className={stylesGlobal.thead}>
-              <tr>
-                <th>Categoria</th>
-                <th>Novos Chamados</th>
-                <th>Aguardando Atendimento</th>
-                <th>Em atendimento</th>
-                <th>Fechado</th>
-              </tr>
-            </thead>
-            <tbody className={stylesGlobal.tbody}>
-              <tr style={{ cursor: "auto" }}>
-                <td>Hardware</td>
-                <td>5</td>
-                <td>1</td>
-                <td>0</td>
-                <td>10</td>
-              </tr>
-            </tbody>
-          </table>
-          <table className={stylesGlobal.table}>
-            <thead className={stylesGlobal.thead}>
-              <tr>
-                <th>Mês</th>
-                <th>Novos Chamados</th>
-                <th>Aguardando Atendimento</th>
-                <th>Em atendimento</th>
-                <th>Fechado</th>
-              </tr>
-            </thead>
-            <tbody className={stylesGlobal.tbody}>
-              <tr style={{ cursor: "auto" }}>
-                <td>Março</td>
-                <td>5</td>
-                <td>1</td>
-                <td>0</td>
-                <td>10</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </Card>
+                  {tipoRelatorio === "mes" &&
+                    Object.entries(
+                      ticketsFiltrados.reduce((acc, ticket) => {
+                        const mes = new Date(ticket.data_criacao).getMonth();
+                        acc[mes] = acc[mes] || [];
+                        acc[mes].push(ticket);
+                        return acc;
+                      }, {})
+                    ).map(([mes, tickets]) => (
+                      <tr key={mes}>
+                        <td>{meses[mes]}</td>
+                        <td>{tickets.length}</td>
+                        <td>
+                          {
+                            tickets.filter(
+                              (t) => t.status === "Aguardando atendimento"
+                            ).length
+                          }
+                        </td>
+                        <td>
+                          {
+                            tickets.filter((t) => t.status === "Em atendimento")
+                              .length
+                          }
+                        </td>
+                        <td>
+                          {tickets.filter((t) => t.status === "Fechado").length}
+                        </td>
+                      </tr>
+                    ))}
+
+                  {tipoRelatorio === "tecnico" &&
+                    Object.entries(
+                      ticketsFiltrados.reduce((acc, ticket) => {
+                        const tecnico = ticket.tecnico || "Não atribuído";
+                        acc[tecnico] = acc[tecnico] || [];
+                        acc[tecnico].push(ticket);
+                        return acc;
+                      }, {})
+                    ).map(([tecnico, tickets]) => (
+                      <tr key={tecnico}>
+                        <td>{tecnico}</td>
+                        <td>{tickets.length}</td>
+                        <td>
+                          {
+                            tickets.filter(
+                              (t) => t.status === "Aguardando atendimento"
+                            ).length
+                          }
+                        </td>
+                        <td>
+                          {
+                            tickets.filter((t) => t.status === "Em atendimento")
+                              .length
+                          }
+                        </td>
+                        <td>
+                          {tickets.filter((t) => t.status === "Fechado").length}
+                        </td>
+                      </tr>
+                    ))}
+
+{tipoRelatorio === "categoria" &&
+                    Object.entries(
+                      ticketsFiltrados.reduce((acc, ticket) => {
+                        const categoria = ticket.categoria || "Não atribuído";
+                        acc[categoria] = acc[categoria] || [];
+                        acc[categoria].push(ticket);
+                        return acc;
+                      }, {})
+                    ).map(([categoria, tickets]) => (
+                      <tr key={categoria}>
+                        <td>{categoria}</td>
+                        <td>{tickets.length}</td>
+                        <td>
+                          {
+                            tickets.filter(
+                              (t) => t.status === "Aguardando atendimento"
+                            ).length
+                          }
+                        </td>
+                        <td>
+                          {
+                            tickets.filter((t) => t.status === "Em atendimento")
+                              .length
+                          }
+                        </td>
+                        <td>
+                          {tickets.filter((t) => t.status === "Fechado").length}
+                        </td>
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
+            ) : (
+              <p style={{ textAlign: "center" }}>
+                Nenhum chamado encontrado para o período selecionado.
+              </p>
+            )}
+          </div>
+        </Card>
+      )}
     </PaginaPadrao>
   );
 }
