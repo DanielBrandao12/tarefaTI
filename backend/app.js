@@ -13,7 +13,7 @@ const usersRouter = require('./routes/users');
 const usersTarefa = require('./routes/routeTarefa')
 const usersLogin = require('./routes/login')
 
-//Novas rotas service desk 2.0
+//Novas rotas service desk 2.1
 const usuarioRouter =require('./routes/usuariosRoute')
 const ticketRouter = require('./routes/ticketsRoute')
 const listaTarefaRouter = require('./routes/listaTarefaRoute')
@@ -23,6 +23,7 @@ const respostaRouter = require('./routes/respostaRoute')
 const statusRouter = require('./routes/statusRoute') 
 const emailService = require('./services/emailService')
 const anexoRouter = require('./routes/anexoRoute')
+const relatorioRouter = require('./routes/relatorioRoute')
 
 const app = express();
 
@@ -64,7 +65,7 @@ app.use('/users', usersRouter);
 app.use('/tarefas', usersTarefa)
 app.use('/login', usersLogin)
 
-//Novas rotas service desk 2.0
+//Novas rotas service desk 2.1
 app.use('/usuarios', usuarioRouter)
 app.use('/tickets', ticketRouter)
 app.use('/listaTarefa', listaTarefaRouter)
@@ -73,6 +74,7 @@ app.use('/historicoStatus', historicoStatusRouter)
 app.use('/resposta', respostaRouter)
 app.use('/status', statusRouter)
 app.use('/anexo', anexoRouter)
+app.use('/relatorio', relatorioRouter)
 
 
 // Verificar e-mails periodicamente (a cada 5 minutos)
