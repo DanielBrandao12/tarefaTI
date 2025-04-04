@@ -3,40 +3,71 @@ import PaginaPadrao from "../../components/paginaPadrao";
 import Card from "../../components/card";
 import stylesGlobal from "../../styles/styleGlobal.module.css";
 import style from "./style.module.css";
+import useRelatorio from "../../hooks/useRelatorio";
 
 function Relatorio() {
-  const [modoSelecao, setModoSelecao] = useState("select");
-  const [intervaloSelecionado, setIntervaloSelecionado] = useState("");
-  const [dataInicio, setDataInicio] = useState("");
-  const [dataFim, setDataFim] = useState("");
+  //Chamar api com rota do relatorio
+  //Passabar valores e exibir na tabela
+  const {
+    intervalo,
+    tipoRelatorio,
+    dateStart,
+    dateEnd,
+    relatorio,
+    setIntervalo,
+    setTipoRelatorio,
+    setDateStart,
+    setDateEnd,
+    fetchRelatorio,
+  } = useRelatorio();
 
+  const [modoSelecao, setModoSelecao] = useState("select");
+  const [formatTitle, setFormatTitle] = useState("");
   const handleModoSelecao = (modo) => {
     setModoSelecao(modo);
-    
+
     // Resetando valores ao alternar
     if (modo === "select") {
-      setDataInicio("");
-      setDataFim("");
+      setDateStart("");
+      setDateEnd("");
     } else {
-      setIntervaloSelecionado("");
+      setIntervalo("");
     }
   };
 
   const handleSubmit = () => {
-    if (modoSelecao === "select" && !intervaloSelecionado) {
+    if (modoSelecao === "select" && !intervalo) {
       alert("Escolha um intervalo de tempo.");
       return;
     }
-    if (modoSelecao === "data" && (!dataInicio || !dataFim)) {
+    if (modoSelecao === "data" && (!dateStart || !dateEnd)) {
       alert("Escolha um intervalo de datas válido.");
       return;
     }
 
-    const dadosEnvio = modoSelecao === "select"
-      ? { intervalo: intervaloSelecionado }
-      : { dataInicio, dataFim };
-
+    const dadosEnvio =
+      modoSelecao === "select"
+        ? { intervalo: intervalo }
+        : { dateStart, dateEnd };
+    if (tipoRelatorio === "mes") {
+      setFormatTitle("Mês");
+    } else if (tipoRelatorio === "dia") {
+      setFormatTitle("Data");
+    } else if (tipoRelatorio === "tecnico") {
+      setFormatTitle("Técnico");
+    } else if (tipoRelatorio === "categoria") {
+      setFormatTitle("Categoria");
+    }
+    fetchRelatorio();
     console.log("Enviando dados:", dadosEnvio);
+
+  };
+
+  const formatarMes = (data) => {
+    const mes = new Date(data + "-01").toLocaleDateString("pt-BR", {
+      month: "long",
+    });
+    return mes.charAt(0).toUpperCase() + mes.slice(1);
   };
 
   return (
@@ -57,8 +88,8 @@ function Relatorio() {
                   name="intervalo"
                   className={stylesGlobal.selectChamado}
                   disabled={modoSelecao !== "select"}
-                  value={intervaloSelecionado}
-                  onChange={(e) => setIntervaloSelecionado(e.target.value)}
+                  value={intervalo}
+                  onChange={(e) => setIntervalo(e.target.value)}
                 >
                   <option value="" disabled>
                     Escolha uma opção
@@ -82,16 +113,16 @@ function Relatorio() {
                   type="date"
                   className={stylesGlobal.inputTextChamado}
                   disabled={modoSelecao !== "data"}
-                  value={dataInicio}
-                  onChange={(e) => setDataInicio(e.target.value)}
+                  value={dateStart}
+                  onChange={(e) => setDateStart(e.target.value)}
                 />
                 <label>Até</label>
                 <input
                   type="date"
                   className={stylesGlobal.inputTextChamado}
                   disabled={modoSelecao !== "data"}
-                  value={dataFim}
-                  onChange={(e) => setDataFim(e.target.value)}
+                  value={dateEnd}
+                  onChange={(e) => setDateEnd(e.target.value)}
                 />
               </div>
             </div>
@@ -99,14 +130,19 @@ function Relatorio() {
           <div className={style.containerOptions}>
             <label>Tipo de Relatório</label>
             <div className={style.containerTipo}>
-              <select name="tipo" className={stylesGlobal.selectChamado}>
+              <select
+                name="tipo"
+                className={stylesGlobal.selectChamado}
+                value={tipoRelatorio}
+                onChange={(e) => setTipoRelatorio(e.target.value)}
+              >
                 <option value="" disabled>
                   Escolha uma opção
                 </option>
-                <option>Por Dia</option>
-                <option>Por mês</option>
-                <option>Técnico</option>
-                <option>Categoria</option>
+                <option value="dia">Por Dia</option>
+                <option value="mes">Por mês</option>
+                <option value="tecnico">Técnico</option>
+                <option value="categoria">Categoria</option>
               </select>
               <input
                 type="button"
@@ -123,81 +159,55 @@ function Relatorio() {
           <table className={stylesGlobal.table}>
             <thead className={stylesGlobal.thead}>
               <tr>
-                <th>Data</th>
-                <th>Novos Chamados</th>
+                <th>{formatTitle || "Data"}</th>
                 <th>Aguardando Atendimento</th>
                 <th>Em atendimento</th>
-                <th>Fechado</th>
+                <th>Fechados</th>
+                <th>Total</th>
               </tr>
             </thead>
             <tbody className={stylesGlobal.tbody}>
-              <tr style={{ cursor: "auto" }}>
-                <td>07-10-2024</td>
-                <td>5</td>
-                <td>1</td>
-                <td>0</td>
-                <td>10</td>
-              </tr>
-            </tbody>
-          </table>
-          <table className={stylesGlobal.table}>
-            <thead className={stylesGlobal.thead}>
-              <tr>
-                <th>Técnico</th>
-                <th>Novos Chamados</th>
-                <th>Aguardando Atendimento</th>
-                <th>Em atendimento</th>
-                <th>Fechado</th>
-              </tr>
-            </thead>
-            <tbody className={stylesGlobal.tbody}>
-              <tr style={{ cursor: "auto" }}>
-                <td>Daniel</td>
-                <td>5</td>
-                <td>1</td>
-                <td>0</td>
-                <td>10</td>
-              </tr>
-            </tbody>
-          </table>
-          <table className={stylesGlobal.table}>
-            <thead className={stylesGlobal.thead}>
-              <tr>
-                <th>Categoria</th>
-                <th>Novos Chamados</th>
-                <th>Aguardando Atendimento</th>
-                <th>Em atendimento</th>
-                <th>Fechado</th>
-              </tr>
-            </thead>
-            <tbody className={stylesGlobal.tbody}>
-              <tr style={{ cursor: "auto" }}>
-                <td>Hardware</td>
-                <td>5</td>
-                <td>1</td>
-                <td>0</td>
-                <td>10</td>
-              </tr>
-            </tbody>
-          </table>
-          <table className={stylesGlobal.table}>
-            <thead className={stylesGlobal.thead}>
-              <tr>
-                <th>Mês</th>
-                <th>Novos Chamados</th>
-                <th>Aguardando Atendimento</th>
-                <th>Em atendimento</th>
-                <th>Fechado</th>
-              </tr>
-            </thead>
-            <tbody className={stylesGlobal.tbody}>
-              <tr style={{ cursor: "auto" }}>
-                <td>Março</td>
-                <td>5</td>
-                <td>1</td>
-                <td>0</td>
-                <td>10</td>
-              </tr>
+              {Object.entries(relatorio) &&
+              Object.entries(relatorio).length > 0 ? (
+                Object.entries(relatorio).map((item, index) => (
+                  <tr key={index} style={{ cursor: "auto" }}>
+                    <td>
+                      {" "}
+                      {formatTitle === "Mês"
+                        ? formatarMes(item[0])
+                        : item[0] || "Sem dados"}
+                    </td>
+
+                    <td>
+                      {
+                        item[1].filter(
+                          (value) => value.status === "Aguardando Atendimento"
+                        ).length
+                      }
+                    </td>
+                    <td>
+                      {
+                        item[1].filter(
+                          (value) => value.status === "Em atendimento"
+                        ).length
+                      }
+                    </td>
+                    <td>
+                      {
+                        item[1].filter((value) => value.status === "Fechado")
+                          .length
+                      }
+                    </td>
+                    <td>{item[1].length}</td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="5" style={{ textAlign: "center" }}>
+                    Nenhum dado disponível
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
