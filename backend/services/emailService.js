@@ -85,7 +85,7 @@ const checkEmails = async () => {
                     console.log(ticketExistente);
                     if (ticketExistente && ticketExistente.id_status !== 4) {
                         console.log(`O ticket ${codigoTicket} já existe. Não será criado um novo chamado.`);
-                        const mensagem = getDivFirst(chamado.mensagem);
+                        const mensagem = getCorpoEmailLimpo(chamado.mensagem);
                         await createResposta(ticketExistente.dataValues.id_ticket, mensagem, chamado.anexos);
                         await connection.addFlags(message.attributes.uid, ['\\Seen']);
                         continue;
@@ -112,27 +112,56 @@ const checkEmails = async () => {
 
 
 
-
-const getDivFirst = (mensagem) => {
-    // Captura qualquer texto antes da primeira tag HTML
-    const textoAntesHTML = mensagem.split(/<[^>]+>/)[0].trim();
-
+const getCorpoEmailLimpo = (mensagem) => {
     const $ = cheerio.load(mensagem);
-
-    // Remove assinaturas e citações comuns (incluindo Yahoo e Gmail)
-    $('blockquote, div.gmail_quote, .gmail_attr, #divRplyFwdMsg, .BodyFragment, div#ymail_android_signature, a#ymail_android_signature_link').remove();
-
-    // Seleciona o conteúdo útil dentro das divs
-    const resposta = $('body').children().filter(function() {
-        const text = $(this).text().trim();
-        return text.length > 0 && !$(this).is('blockquote, div.ymail_signature');
-    }).map(function() {
-        return $(this).text().trim();
-    }).get().join('\n');
-
-    // Retorna o texto antes do HTML + o conteúdo filtrado
-    return [textoAntesHTML, resposta].filter(Boolean).join('\n').trim();
-};
+  
+    // Remove blocos de resposta/assinatura típicos de provedores
+    const seletoresRemocao = [
+      'blockquote',              // Respostas anteriores
+      'div.gmail_quote',         // Gmail
+      '.gmail_attr',
+      '#divRplyFwdMsg',          // Outlook
+      '.BodyFragment',           // Zimbra
+      'div#ymail_android_signature',
+      'a#ymail_android_signature_link',
+      'div.yahoo_quoted',
+      'div.moz-cite-prefix',     // Thunderbird
+      'div.h5',                  // Algumas respostas do Outlook
+      'hr',                      // Separadores
+      '.signature',              // Assinaturas genéricas
+      '.OutlookMessageHeader',
+      '.WordSection1'
+    ];
+  
+    $(seletoresRemocao.join(',')).remove();
+  
+    // Remove elementos de quebra de mensagens como "Em [data], [pessoa] escreveu:"
+    const regexCortes = [
+      /^Em\s.+escreveu:/i,
+      /^On\s.+wrote:/i,
+      /^From:\s.+/i,
+      /^De:\s.+/i,
+      /^Sent:\s.+/i,
+      /^To:\s.+/i,
+      /^Subject:\s.+/i,
+      /^Em\s\d{1,2}\/\d{1,2}\/\d{2,4}.+:/i
+    ];
+  
+    // Pega apenas o texto limpo e quebra por linhas
+    const linhas = $('body').text().split('\n')
+      .map(linha => linha.trim())
+      .filter(linha => linha.length > 0);
+  
+    // Para quando encontrar um indicativo de reply anterior
+    const conteudoLimpo = [];
+    for (let linha of linhas) {
+      if (regexCortes.some(rx => rx.test(linha))) break;
+      conteudoLimpo.push(linha);
+    }
+  
+    return conteudoLimpo.join('\n').trim();
+  };
+  
 
 const createResposta = async (id_ticket, descricao, anexo) => {
   try {
@@ -221,7 +250,7 @@ const criarChamadoPorEmail = async (emailData) => {
         
         createHistorico(ticketCriado.id_ticket, ticketData.idStatus, ticketData.id_usuario);
         if (Array.isArray(anexos) && anexos.length > 0) {
-            await createAnexo(ticketCriado.codigoTicket, null, anexos);
+            await createAnexo(ticketCriado.codigo_ticket, null, anexos);
         }
         return {
             message: 'Chamado criado com sucesso!',
