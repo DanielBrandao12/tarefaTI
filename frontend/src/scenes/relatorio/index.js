@@ -23,9 +23,10 @@ function Relatorio() {
 
   const [modoSelecao, setModoSelecao] = useState("select");
   const [formatTitle, setFormatTitle] = useState("");
+  const [activeButton, setActiveButton] = useState(false);
   const handleModoSelecao = (modo) => {
     setModoSelecao(modo);
-
+    setActiveButton(false);
     // Resetando valores ao alternar
     if (modo === "select") {
       setDateStart("");
@@ -59,8 +60,8 @@ function Relatorio() {
       setFormatTitle("Categoria");
     }
     fetchRelatorio();
+    setActiveButton(true);
     console.log("Enviando dados:", dadosEnvio);
-
   };
 
   const formatarMes = (data) => {
@@ -70,6 +71,202 @@ function Relatorio() {
     return mes.charAt(0).toUpperCase() + mes.slice(1);
   };
 
+  const handlePrint = () => {
+    let relatorioHTML = "";
+
+    const getDescricaoDetalhada = () => {
+      if (modoSelecao === "select") {
+        const hoje = new Date().toLocaleDateString("pt-BR");
+        const now = new Date();
+        switch (intervalo) {
+          case "hoje":
+            return hoje;
+          case "semana": {
+            const primeiroDia = new Date(
+              now.setDate(now.getDate() - now.getDay() + 1)
+            );
+            const ultimoDia = new Date(now.setDate(primeiroDia.getDate() + 6));
+            return `${primeiroDia.toLocaleDateString(
+              "pt-BR"
+            )} até ${ultimoDia.toLocaleDateString("pt-BR")}`;
+          }
+          case "mes": {
+            const mesAno = new Date().toLocaleDateString("pt-BR", {
+              month: "long",
+              year: "numeric",
+            });
+            return mesAno.charAt(0).toUpperCase() + mesAno.slice(1);
+          }
+          case "ano":
+            return new Date().getFullYear();
+          case "todos":
+            return "Todo o período";
+          default:
+            return "Intervalo não especificado";
+        }
+      } else {
+        return `${new Date(dateStart).toLocaleDateString(
+          "pt-BR"
+        )} até ${new Date(dateEnd).toLocaleDateString("pt-BR")}`;
+      }
+    };
+
+    const intervaloTexto =
+      modoSelecao === "select"
+        ? {
+            hoje: "Hoje",
+            semana: "Esta semana",
+            mes: "Este mês",
+            ano: "Este ano",
+            todos: "Todo o período",
+          }[intervalo] || "Intervalo não especificado"
+        : "Intervalo personalizado";
+
+    const descricaoDetalhada = getDescricaoDetalhada();
+
+    if (relatorio && Object.keys(relatorio).length > 0) {
+      Object.entries(relatorio).forEach(([chave, dados]) => {
+        const contagemPorStatus = dados.reduce((acc, item) => {
+          acc[item.status] = (acc[item.status] || 0) + 1;
+          return acc;
+        }, {});
+        const total = dados.length;
+
+        relatorioHTML += `
+          <div class="ticket-section">
+            <div class="info-topo">
+              <p><strong>${formatTitle}:</strong> ${formatDateOrTitle(
+          formatTitle,
+          chave
+        )}</p>
+            </div>
+            <ul>
+              ${Object.entries(contagemPorStatus)
+                .map(
+                  ([status, quantidade]) => `
+                    <li><strong>${status}:</strong> ${quantidade}</li>
+                  `
+                )
+                .join("")}
+              <li><strong>Total:</strong> ${total}</li>
+            </ul>
+           
+          </div>
+          
+        `;
+      });
+    } else {
+      relatorioHTML = "<p>Nenhum dado disponível</p>";
+    }
+
+    const printContent = `
+      <html>
+        <head>
+          <title>Relatório Detalhado</title>
+                  <div style="text-align: right; margin-bottom: 20px;">
+                    <img src="${window.location.origin}/logo.png" alt="Fatec Bragança Paulista" style="width: 20%; height: auto; border-radius: 5px;">
+                  </div>
+          <style>
+            body {
+              font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+              margin: 40px;
+              background: #f4f4f4;
+              color: #333;
+            }
+            h1 {
+              color: #b20000;
+              margin-bottom: 5px;
+            }
+            .relatorio-header {
+              background-color: #fff;
+              padding: 20px;
+              border-radius: 8px;
+              box-shadow: 0 0 10px rgba(0,0,0,0.1);
+              margin-bottom: 30px;
+            }
+            .relatorio-header p {
+              margin: 4px 0;
+            }
+            .ticket-section {
+              background-color: #fff;
+              border-radius: 8px;
+              padding: 20px;
+              margin-bottom: 20px;
+              box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+            }
+            .info-topo  p{
+              margin-top: 0;
+            
+            }
+            ul {
+              list-style-type: none;
+              padding: 0;
+            }
+            li {
+              margin-bottom: 8px;
+            }
+            @media print {
+              body {
+                background: #fff;
+                margin: 0;
+                box-shadow: none;
+              }
+              .ticket-section, .relatorio-header {
+                box-shadow: none;
+              }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="relatorio-header">
+            <h1>Relatório Detalhado</h1>
+            <p><strong>Tipo de Relatório:</strong> ${formatTitle}</p>
+            <p><strong>Intervalo:</strong> ${intervaloTexto}</p>
+            <p><strong>Data:</strong> ${descricaoDetalhada}</p>
+          </div>
+          ${relatorioHTML}
+          <div style="text-align: right; margin-bottom: 20px;">
+ 
+           <p style="font-size: 18px; text-align: right;"><strong>Equipe T.I Fatec Bragança Paulista</strong></p>
+        
+           <hr style="margin: 20px 0; border: none; border-top: 1px solid #ccc;">
+        
+           <img src="${window.location.origin}/logo.png" alt="Fatec Bragança Paulista" style="width: 20%; height: auto; border-radius: 5px;">
+         </div>
+        </body>
+      </html>
+    `;
+
+    const printWindow = window.open("", "_blank");
+    printWindow.document.open();
+    printWindow.document.write(printContent);
+    printWindow.document.close();
+    printWindow.onload = () => {
+      printWindow.print();
+    };
+  };
+
+  const formatarData = (data) => {
+    if (!data) return "";
+
+    const partes = data.split("-"); // ['2025', '04', '07']
+    const ano = partes[0];
+    const mes = partes[1];
+    const dia = partes[2];
+
+    return `${dia}/${mes}/${ano}`;
+  };
+
+  const formatDateOrTitle = (data, item) => {
+    console.log(data);
+    if (data === "Mês") {
+      return formatarMes(item);
+    } else if (data === "Data") {
+      return formatarData(item);
+    } else {
+      return item;
+    }
+  };
   return (
     <PaginaPadrao>
       <Card>
@@ -173,9 +370,7 @@ function Relatorio() {
                   <tr key={index} style={{ cursor: "auto" }}>
                     <td>
                       {" "}
-                      {formatTitle === "Mês"
-                        ? formatarMes(item[0])
-                        : item[0] || "Sem dados"}
+                      {formatDateOrTitle(formatTitle, item[0]) || "Sem dados"}
                     </td>
 
                     <td>
@@ -211,6 +406,16 @@ function Relatorio() {
             </tbody>
           </table>
         </div>
+        {activeButton && (
+          <div className={style.print}>
+            <input
+              type="button"
+              value="Gerar relatório"
+              className={stylesGlobal.buttonPadrao}
+              onClick={handlePrint}
+            />
+          </div>
+        )}
       </Card>
     </PaginaPadrao>
   );

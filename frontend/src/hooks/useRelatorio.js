@@ -25,6 +25,8 @@ const useRelatorio = () => {
       console.error("Erro ao buscar relatório:", error);
     }
   };
+
+
   return {
     intervalo,
     tipoRelatorio,

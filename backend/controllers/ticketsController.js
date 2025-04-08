@@ -1,5 +1,5 @@
 
-const { Tickets, ListaTarefa, Historico_status, View_Ticket, View_Respostas } = require('../database/models');
+const { Tickets, ListaTarefa, Historico_status, View_Ticket, Anexo, View_Respostas, Respostas } = require('../database/models');
 const transporter = require('../config/nodemailerConfig');
 require('dotenv').config();
 // Função que gera um código de ticket com a data e um número aleatório
@@ -331,7 +331,66 @@ const createHistorico = async ( id_ticket, id_status, id_usuario) =>{
     })
 }
 
+const deleteTicket = async (req, res) => {
+    const { id } = req.params;
 
+    try {
+        // Verifica se o ticket existe
+        const ticket = await Tickets.findOne({ where: { id_ticket: id } });
+
+        if (!ticket) {
+            return res.status(404).json({ message: "Ticket não encontrado." });
+        }
+
+        // Buscar respostas do ticket
+        const respostas = await Respostas.findAll({
+            where: { id_ticket: id },
+            attributes: ['id_resposta'] // só pega o id
+        });
+
+        // Extrair IDs das respostas
+        const idsRespostas = respostas.map(res => res.id_resposta);
+
+        // Apagar anexos vinculados às respostas
+        if (idsRespostas.length > 0) {
+            await Anexo.destroy({
+                where: {
+                    resposta_id: idsRespostas
+                }
+            });
+        }
+
+        //  Apagar anexos vinculados ao código do ticket
+        await Anexo.destroy({
+            where: { ticket_id: ticket.codigo_ticket }
+        });
+
+        //  Deletar respostas
+        await Respostas.destroy({
+            where: { id_ticket: id }
+        });
+
+        //  Deletar histórico
+        await Historico_status.destroy({
+            where: { id_ticket: id }
+        });
+
+   
+
+        // 8. Deletar o ticket
+        await ticket.destroy();
+
+        return res.status(200).json({
+            message: "Ticket e todos os registros relacionados foram deletados com sucesso!"
+        });
+
+    } catch (error) {
+        console.error("Erro ao deletar ticket: ", error);
+        return res.status(500).json({
+            message: error.message || "Erro ao deletar ticket, tente novamente mais tarde.",
+        });
+    }
+};
 
 module.exports = {
     createTickets,
@@ -339,6 +398,7 @@ module.exports = {
     getTickets,
     getTicketsId,
     getListaTarefaTicket,
+    deleteTicket
     
    
 }

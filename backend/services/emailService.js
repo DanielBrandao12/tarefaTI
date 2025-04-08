@@ -84,7 +84,7 @@ const checkEmails = async () => {
                     console.log(ticketExistente);
                     if (ticketExistente && ticketExistente.id_status !== 4) {
                         console.log(`O ticket ${codigoTicket} já existe. Não será criado um novo chamado.`);
-                        const mensagem = getDivFirst(chamado.mensagem);
+                        const mensagem = getCorpoEmailLimpo(chamado.mensagem);
                         console.log(chamado.mensagem)
                         await createResposta(ticketExistente.dataValues.id_ticket, mensagem, chamado.anexos);
                         await connection.addFlags(message.attributes.uid, ['\\Seen']);
@@ -111,27 +111,73 @@ const checkEmails = async () => {
 };
 
 
-const getDivFirst = (mensagem) => {
-    // Captura qualquer texto antes da primeira tag HTML
-    const textoAntesHTML = mensagem.split(/<[^>]+>/)[0].trim();
 
+const getCorpoEmailLimpo = (mensagem) => {
     const $ = cheerio.load(mensagem);
-
-    // Remove assinaturas e citações comuns (incluindo Yahoo e Gmail)
-    $('blockquote, div.gmail_quote, .gmail_attr, #divRplyFwdMsg, .BodyFragment, div#ymail_android_signature, a#ymail_android_signature_link').remove();
-
-    // Seleciona o conteúdo útil dentro das divs
-    const resposta = $('body').children().filter(function() {
-        const text = $(this).text().trim();
-        return text.length > 0 && !$(this).is('blockquote, div.ymail_signature');
-    }).map(function() {
-        return $(this).text().trim();
-    }).get().join('\n');
-
-    // Retorna o texto antes do HTML + o conteúdo filtrado
-    return [textoAntesHTML, resposta].filter(Boolean).join('\n').trim();
-};
-
+  
+    // Remove blocos HTML de respostas e assinaturas comuns
+    const seletoresRemocao = [
+      'blockquote',
+      'div.gmail_quote',
+      '.gmail_attr',
+      '#divRplyFwdMsg',
+      '.BodyFragment',
+      'div#ymail_android_signature',
+      'a#ymail_android_signature_link',
+      'div.yahoo_quoted',
+      'div.moz-cite-prefix',
+      'div.h5',
+      'hr',
+      '.signature',
+      '.OutlookMessageHeader',
+      '.WordSection1',
+      '.ms-outlook-mobile-body-separator-line',
+      '.ms-outlook-mobile-signature'
+    ];
+    $(seletoresRemocao.join(',')).remove();
+  
+    // Remove partes com estilo oculto
+    $('[style*="display:none"], [style*="visibility:hidden"]').remove();
+  
+    // Remove spans vazios
+    $('span').each((_, el) => {
+      const texto = $(el).text().trim();
+      if (!texto || texto === '\u200C') $(el).remove();
+    });
+  
+    // Captura texto do corpo
+    const textoCompleto = $('body').text();
+  
+    // Limpa e quebra por linha
+    const linhas = textoCompleto
+      .split('\n')
+      .map(l => l.trim())
+      .filter(l => l.length > 0);
+  
+    // Lista de padrões que indicam início de e-mail anterior
+    const regexCortes = [
+      /^Em\s.+escreveu:/i,
+      /^On\s.+wrote:/i,
+      /^From:\s.+/i,
+      /^De:\s.+/i,
+      /^Sent:\s.+/i,
+      /^To:\s.+/i,
+      /^Subject:\s.+/i,
+      /^-----Mensagem original-----/i,
+      /^----- Original Message -----/i
+    ];
+  
+    // Acha a primeira linha válida antes de qualquer assinatura ou resposta anterior
+    for (const linha of linhas) {
+      if (regexCortes.some(rx => rx.test(linha))) break;
+      if (/obrigado|agradecemos|estamos à disposição|android|enviado do/i.test(linha)) continue;
+      return linha; // <- só a primeira linha considerada "resposta"
+    }
+  
+    return ''; // Caso não encontre nada válido
+  };
+  
+  
 
 const createResposta = async (id_ticket, descricao, anexo) => {
   try {

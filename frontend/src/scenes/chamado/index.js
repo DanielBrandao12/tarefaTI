@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import styles from "./style.module.css";
 import stylesGlobal from "../../styles/styleGlobal.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPenToSquare, faPrint } from "@fortawesome/free-solid-svg-icons";
+import { faPenToSquare, faPrint, faTrash } from "@fortawesome/free-solid-svg-icons";
 import PaginaPadrao from "../../components/paginaPadrao";
 import Card from "../../components/card";
 import Popup from "../../components/popup";
@@ -57,7 +57,8 @@ function Chamado() {
     setUsuarioAtribuido,
     fetchChamado,
     fetchUserAtribuido,
-    salvarEdicao
+    salvarEdicao,
+    deletarTicket
   } = useTickets();
 
   const hasFetched = useRef(false);
@@ -200,6 +201,7 @@ useEffect(() => {
     setEdit(!edit);
   };
 
+
   return (
     <PaginaPadrao>
       {/* Layout principal */}
@@ -308,6 +310,10 @@ useEffect(() => {
               <div>
                 <FontAwesomeIcon icon={faPrint} />
                 <span onClick={handlePrint}>Imprimir</span>
+              </div>
+              <div>
+                <FontAwesomeIcon icon={faTrash} />
+                <span onClick={() => deletarTicket(id_ticket)}>Excluir</span>
               </div>
             </div>
           </Card>
