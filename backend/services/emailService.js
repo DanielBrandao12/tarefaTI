@@ -115,27 +115,46 @@ const checkEmails = async () => {
 const getCorpoEmailLimpo = (mensagem) => {
     const $ = cheerio.load(mensagem);
   
-    // Remove blocos de resposta/assinatura típicos de provedores
+    // Remove blocos HTML de respostas e assinaturas comuns
     const seletoresRemocao = [
-      'blockquote',              // Respostas anteriores
-      'div.gmail_quote',         // Gmail
+      'blockquote',
+      'div.gmail_quote',
       '.gmail_attr',
-      '#divRplyFwdMsg',          // Outlook
-      '.BodyFragment',           // Zimbra
+      '#divRplyFwdMsg',
+      '.BodyFragment',
       'div#ymail_android_signature',
       'a#ymail_android_signature_link',
       'div.yahoo_quoted',
-      'div.moz-cite-prefix',     // Thunderbird
-      'div.h5',                  // Algumas respostas do Outlook
-      'hr',                      // Separadores
-      '.signature',              // Assinaturas genéricas
+      'div.moz-cite-prefix',
+      'div.h5',
+      'hr',
+      '.signature',
       '.OutlookMessageHeader',
-      '.WordSection1'
+      '.WordSection1',
+      '.ms-outlook-mobile-body-separator-line',
+      '.ms-outlook-mobile-signature'
     ];
-  
     $(seletoresRemocao.join(',')).remove();
   
-    // Remove elementos de quebra de mensagens como "Em [data], [pessoa] escreveu:"
+    // Remove partes com estilo oculto
+    $('[style*="display:none"], [style*="visibility:hidden"]').remove();
+  
+    // Remove spans vazios
+    $('span').each((_, el) => {
+      const texto = $(el).text().trim();
+      if (!texto || texto === '\u200C') $(el).remove();
+    });
+  
+    // Captura texto do corpo
+    const textoCompleto = $('body').text();
+  
+    // Limpa e quebra por linha
+    const linhas = textoCompleto
+      .split('\n')
+      .map(l => l.trim())
+      .filter(l => l.length > 0);
+  
+    // Lista de padrões que indicam início de e-mail anterior
     const regexCortes = [
       /^Em\s.+escreveu:/i,
       /^On\s.+wrote:/i,
@@ -144,23 +163,20 @@ const getCorpoEmailLimpo = (mensagem) => {
       /^Sent:\s.+/i,
       /^To:\s.+/i,
       /^Subject:\s.+/i,
-      /^Em\s\d{1,2}\/\d{1,2}\/\d{2,4}.+:/i
+      /^-----Mensagem original-----/i,
+      /^----- Original Message -----/i
     ];
   
-    // Pega apenas o texto limpo e quebra por linhas
-    const linhas = $('body').text().split('\n')
-      .map(linha => linha.trim())
-      .filter(linha => linha.length > 0);
-  
-    // Para quando encontrar um indicativo de reply anterior
-    const conteudoLimpo = [];
-    for (let linha of linhas) {
+    // Acha a primeira linha válida antes de qualquer assinatura ou resposta anterior
+    for (const linha of linhas) {
       if (regexCortes.some(rx => rx.test(linha))) break;
-      conteudoLimpo.push(linha);
+      if (/obrigado|agradecemos|estamos à disposição|android|enviado do/i.test(linha)) continue;
+      return linha; // <- só a primeira linha considerada "resposta"
     }
   
-    return conteudoLimpo.join('\n').trim();
+    return ''; // Caso não encontre nada válido
   };
+  
   
 
 const createResposta = async (id_ticket, descricao, anexo) => {
