@@ -52,7 +52,7 @@ Antes de iniciar, é necessário ter os seguintes softwares instalados:
    Conecte-se ao seu servidor local.
 
 3. **Importe o banco de dados**  
-   No Workbench, importe o arquivo `bd_sistema_chamado_fatec.sql` para criar as tabelas, views e dados iniciais.
+   No Workbench, importe o arquivo `bd_tarefas_tarefas.sql` para criar as tabelas, views e dados iniciais.
 
 4. **Clone o repositório**
 
