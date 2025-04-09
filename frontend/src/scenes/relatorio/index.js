@@ -258,7 +258,7 @@ function Relatorio() {
   };
 
   const formatDateOrTitle = (data, item) => {
-    console.log(data);
+    
     if (data === "Mês") {
       return formatarMes(item);
     } else if (data === "Data") {

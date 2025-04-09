@@ -87,7 +87,8 @@ const getViewTickets = async (req, res) => {
         break;
       case "mes":
         agrupados = ticketsComUsuarios.reduce((acc, ticket) => {
-          const mes = new Date(ticket.data_criacao).getMonth();
+          const mes = new Date(ticket.data_criacao).getMonth()+1;
+          console.log(mes)
           acc[mes] = acc[mes] || [];
           acc[mes].push(ticket);
           return acc;

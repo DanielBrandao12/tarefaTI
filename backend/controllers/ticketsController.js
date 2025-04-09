@@ -221,9 +221,10 @@ const getTickets = async (req, res) =>{
     try{
         const tickets = await View_Ticket.findAll()
 
-       // console.log(tickets)
+      // console.log(tickets)
   
         return res.status(201).json(tickets);
+
     } catch (error) {
         // Log de erro para depuração
         console.error("Erro ao buscar tickets ", error);
