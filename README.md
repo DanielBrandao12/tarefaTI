@@ -57,8 +57,8 @@ Antes de iniciar, é necessário ter os seguintes softwares instalados:
 4. **Clone o repositório**
 
    ```bash
-   git clone https://github.com/seuusuario/sistema-chamados-fatec.git
-   cd sistema-chamados-fatec
+   git clone https://github.com/DanielBrandao12/tarefaTI.git
+   cd tarefaTI
 5. **Crie um arquivo .env dentro da pasta do backend com o seguinte conteúdo:
       DB_HOST=localhost
       DB_USER=root
