@@ -1,14 +1,16 @@
-import { useCallback,useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import api from "../services/api";
 
 import useUser from "./useUser";
 import formatarData from "./formatDate";
+import { confirmAlert } from "react-confirm-alert";
+import "react-confirm-alert/src/react-confirm-alert.css";
+import { useNavigate } from "react-router-dom";
 
 const useTickets = () => {
   const { idUser } = useUser();
-  
-
+  const navigate = useNavigate(); // Navegação entre páginas
   // Estados para armazenar dados e controlar o comportamento do componente
   const [chamado, setChamado] = useState({});
   const [chamados, setChamados] = useState([]);
@@ -35,47 +37,51 @@ const useTickets = () => {
   };
 
   // Buscar chamados do backend e atualizar contadores
-// Buscar chamados do backend e atualizar contadores
-const fetchChamados = async () => {
-  try {
-    const response = await api.get("/tickets/");
-    
-    // Formatar todas as datas no allTickets antes de setar no estado
-    const allTicketsFormatado = response.data.map((item) => ({
-      ...item,
-      data_criacao: formatarData(item.data_criacao)
-    }));
+  // Buscar chamados do backend e atualizar contadores
+  const fetchChamados = async () => {
+    try {
+      const response = await api.get("/tickets/");
 
-    // Cria um array de promessas para buscar os usuários atribuídos para todos os chamados
-    const promessas = allTicketsFormatado.map(async (chamado) => {
-      if (chamado.atribuido_a) {
-        const responseUsuario = await api.get(`/usuarios/${chamado.atribuido_a}`);
-        chamado.nome_usuarioAtribuido = responseUsuario.data.nomeUser.nome_usuario;
-      }
-      return chamado;
-    });
+      // Formatar todas as datas no allTickets antes de setar no estado
+      const allTicketsFormatado = response.data.map((item) => ({
+        ...item,
+        data_criacao: formatarData(item.data_criacao),
+      }));
 
-    // Aguarda todas as requisições terminarem
-    const allTicketsComUsuarios = await Promise.all(promessas);
+      // Cria um array de promessas para buscar os usuários atribuídos para todos os chamados
+      const promessas = allTicketsFormatado.map(async (chamado) => {
+        if (chamado.atribuido_a) {
+          const responseUsuario = await api.get(
+            `/usuarios/${chamado.atribuido_a}`
+          );
+          chamado.nome_usuarioAtribuido =
+            responseUsuario.data.nomeUser.nome_usuario;
+        }
+        return chamado;
+      });
 
-    // Atualiza o estado de allTickets com os usuários atribuídos
-    setAllTickets(allTicketsComUsuarios);
+      // Aguarda todas as requisições terminarem
+      const allTicketsComUsuarios = await Promise.all(promessas);
 
-    // Filtra apenas os chamados que não estão fechados
-    const chamadosAbertos = allTicketsComUsuarios.filter((item) => item.status !== "Fechado");
+      // Atualiza o estado de allTickets com os usuários atribuídos
+      setAllTickets(allTicketsComUsuarios);
 
-    // Atualiza os estados
-    setChamados(chamadosAbertos);
-    setFilteredChamados(chamadosAbertos);
-    atualizarContadores(chamadosAbertos);
-  } catch (error) {
-    console.error("Erro ao buscar tickets ou usuários:", error);
-  }
-};
+      // Filtra apenas os chamados que não estão fechados
+      const chamadosAbertos = allTicketsComUsuarios.filter(
+        (item) => item.status !== "Fechado"
+      );
 
-  
+      // Atualiza os estados
+      setChamados(chamadosAbertos);
+      setFilteredChamados(chamadosAbertos);
+      atualizarContadores(chamadosAbertos);
+    } catch (error) {
+      console.error("Erro ao buscar tickets ou usuários:", error);
+    }
+  };
+
   //Atualizar contadores
-  const atualizarContadores =(dados) => {
+  const atualizarContadores = (dados) => {
     setContadorTodos(dados.length);
 
     setContadorAtMim(
@@ -90,7 +96,11 @@ const fetchChamados = async () => {
       ).length
     );
     setContadorNaoAt(dados.filter((chamado) => !chamado.atribuido_a).length);
-    setNewTicket(chamados.filter(ticket =>ticket.data_criacao === formatarData(Date.now())).length);
+    setNewTicket(
+      chamados.filter(
+        (ticket) => ticket.data_criacao === formatarData(Date.now())
+      ).length
+    );
   };
 
   // Busca os detalhes do chamado pelo ID
@@ -100,7 +110,7 @@ const fetchChamados = async () => {
         const response = await api.get(`/tickets/${id_ticket}`);
 
         setChamado(response.data.ticket);
-        console.log(response.data.ticket)
+        console.log(response.data.ticket);
         if (response.data.respostas.length > 0) {
           const respostasComAnexos = await Promise.all(
             response.data.respostas.map(async (resposta) => {
@@ -248,6 +258,43 @@ const fetchChamados = async () => {
     }
   };
 
+  const deletarTicket = (id) => {
+    confirmAlert({
+      title: "Confirmação",
+      message: "Tem certeza que deseja excluir?",
+      overlayClassName: ".react-confirm-alert-body",
+      buttons: [
+        {
+          label: "Sim",
+          onClick: async () => {
+            try {
+              const response = await api.delete(`/tickets/delete/${id}`);
+
+              if (response.status === 200) {
+                handleOpenPopup("Ticket deletado com sucesso!");
+                // Ir para lista de tickets
+                setTimeout(() => {
+                  navigate("/tickets");
+                }, 2000);
+              } else {
+                handleOpenPopup("Não foi possível deletar o ticket.");
+              }
+            } catch (error) {
+              console.error("Erro ao deletar o ticket:", error);
+              handleOpenPopup("Ocorreu um erro ao deletar o ticket.");
+            }
+          },
+        },
+        {
+          label: "Não",
+          onClick: () => {
+            // Se quiser fazer algo quando clicar em "Não"
+          },
+        },
+      ],
+    });
+  };
+
   return {
     chamado,
     respostas,
@@ -283,6 +330,7 @@ const fetchChamados = async () => {
     salvarEdicao,
     atualizarContadores,
     fetchChamados,
+    deletarTicket,
   };
 };
 

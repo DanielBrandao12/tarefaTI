@@ -44,16 +44,7 @@
   }
 
 
-  .table{
-    width: 100%;
-    border-collapse: collapse;
-    font-family: Arial, sans-serif;
-    background-color: #fff;
-    border-radius: 5px;
-    overflow: hidden;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-    font-size: 13px;
-}
+
 
 .controls{
   display: flex;
@@ -68,42 +59,55 @@
   border-radius: 4px;
   border: 1px solid #ccc;
 }
-
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: Arial, sans-serif;
+  background-color: #fff;
+  border-radius: 5px;
+  overflow: hidden;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  font-size: 13px;
+  table-layout: fixed; /* Mantém o tamanho fixo das colunas */
+}
 
 .thead {
   background-color: #b20000;
   color: white;
   font-weight: bold;
-  
 }
 
 .thead th {
   padding: 10px;
   text-align: center;
   border-bottom: 2px solid #7E0000;
-
+  width: 20%; /* Distribui as colunas uniformemente */
+  white-space: nowrap; /* Impede quebra de linha */
 }
-  /* Corpo da tabela */
-  .tbody tr {
-    
-    text-align: center;
-    transition: background-color 0.3s;
-   
-  }
 
-  .tbody tr:nth-child(even) {
-    background-color: #f8f8f8;
-  }
-  
-  .tbody tr:hover {
-    background-color: #f0dddd;
-    cursor: pointer;
-  }
-  
-  .tbody td {
-    padding:12px 5px;
-    border-bottom: 1px solid #ddd;
-  }
+.tbody tr {
+  text-align: center;
+  transition: background-color 0.3s;
+}
+
+.tbody tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+.tbody tr:hover {
+  background-color: #f0dddd;
+  cursor: pointer;
+}
+
+.tbody td {
+  padding: 12px 5px;
+  border-bottom: 1px solid #ddd;
+  width: 20%; /* Mantém o tamanho fixo */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis; /* Adiciona "..." se o texto for maior que a célula */
+}
+
 
     /* Controles de paginação */
     .pagination {

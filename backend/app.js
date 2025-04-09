@@ -6,25 +6,24 @@ const cors = require('cors')
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
-
+require('dotenv').config();
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 
 const usersTarefa = require('./routes/routeTarefa')
 const usersLogin = require('./routes/login')
 
-//Novas rotas service desk 2.0
+//Novas rotas service desk 2.1
 const usuarioRouter =require('./routes/usuariosRoute')
 const ticketRouter = require('./routes/ticketsRoute')
 const listaTarefaRouter = require('./routes/listaTarefaRoute')
 const categoriaRouter = require('./routes/categoriasRoute')
-const relatorioInventarioRouter = require('./routes/relatorioInventarioRoute')
-const maquinaRouter = require('./routes/maquinaRoute')
 const historicoStatusRouter = require('./routes/historicoStatusRoute')
 const respostaRouter = require('./routes/respostaRoute')
 const statusRouter = require('./routes/statusRoute') 
 const emailService = require('./services/emailService')
 const anexoRouter = require('./routes/anexoRoute')
+const relatorioRouter = require('./routes/relatorioRoute')
 
 const app = express();
 
@@ -41,8 +40,13 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 // Configuração do CORS
 const corsOptions = {
+<<<<<<< HEAD
  origin: 'http://servicedesk:3000', // Substitua pelo domínio do seu frontend
   //origin: 'http://localhost:3000', // Substitua pelo domínio do seu frontend
+=======
+ 
+  origin: process.env.DOMINIO_HOST, // Substitua pelo domínio do seu frontend
+>>>>>>> versao2.1
 
   credentials: true, // Permite que cookies e outras credenciais sejam enviadas
 };
@@ -66,17 +70,16 @@ app.use('/users', usersRouter);
 app.use('/tarefas', usersTarefa)
 app.use('/login', usersLogin)
 
-//Novas rotas service desk 2.0
+//Novas rotas service desk 2.1
 app.use('/usuarios', usuarioRouter)
 app.use('/tickets', ticketRouter)
 app.use('/listaTarefa', listaTarefaRouter)
 app.use('/categoria', categoriaRouter)
-app.use('/relatorioInventario', relatorioInventarioRouter)
-app.use('/maquinas', maquinaRouter)
 app.use('/historicoStatus', historicoStatusRouter)
 app.use('/resposta', respostaRouter)
 app.use('/status', statusRouter)
 app.use('/anexo', anexoRouter)
+app.use('/relatorio', relatorioRouter)
 
 
 // Verificar e-mails periodicamente (a cada 5 minutos)

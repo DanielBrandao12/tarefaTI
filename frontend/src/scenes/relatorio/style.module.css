@@ -42,3 +42,40 @@
 .icon:hover{
     font-size: 22px;
 }
+.container{
+    display: flex;
+    flex-direction: row;
+    
+    gap: 2rem;
+    padding: 2rem;
+}
+
+.containerOptions{
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    color: #b20000;
+    font-weight: bold;
+
+}
+.containerTipo{
+    display: flex;
+    
+}
+.interlavoData{
+    display: flex;
+    justify-content: flex-start;
+    gap: 2rem;
+   
+}
+.interlavoData div{
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.print{
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 1rem;
+}

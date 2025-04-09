@@ -4,6 +4,7 @@ const { imapConfig } = require('../config/imapConfig');
 const transporter = require('../config/nodemailerConfig');
 const { Tickets, Historico_status, Respostas, Anexo } = require('../database/models');
 const cheerio = require('cheerio');
+require('dotenv').config();
 
 const conectarIMAP = async () => {
     try {
@@ -65,7 +66,11 @@ const checkEmails = async () => {
                     tamanho: att.size,
                     arquivo: att.content
                 })) : [];
+<<<<<<< HEAD
 
+=======
+           
+>>>>>>> versao2.1
                 const chamado = {
                     remetente: parsed.from?.text || parsed.from || 'Desconhecido',
                     assunto: parsed.subject || 'Sem assunto',
@@ -76,7 +81,10 @@ const checkEmails = async () => {
                 // Garante que chamado.anexos seja sempre um array
                 chamado.anexos = chamado.anexos || [];
 
+<<<<<<< HEAD
                 console.log(parsed.from);
+=======
+>>>>>>> versao2.1
                 const codigoTicket = extrairCodigoTicket(chamado.assunto);
 
                 if (codigoTicket) {
@@ -84,7 +92,8 @@ const checkEmails = async () => {
                     console.log(ticketExistente);
                     if (ticketExistente && ticketExistente.id_status !== 4) {
                         console.log(`O ticket ${codigoTicket} já existe. Não será criado um novo chamado.`);
-                        const mensagem = getDivFirst(chamado.mensagem);
+                        const mensagem = getCorpoEmailLimpo(chamado.mensagem);
+                        console.log(chamado.mensagem)
                         await createResposta(ticketExistente.dataValues.id_ticket, mensagem, chamado.anexos);
                         await connection.addFlags(message.attributes.uid, ['\\Seen']);
                         continue;
@@ -111,22 +120,72 @@ const checkEmails = async () => {
 
 
 
-const getDivFirst = (mensagem) =>{
+const getCorpoEmailLimpo = (mensagem) => {
     const $ = cheerio.load(mensagem);
-
-    // Remove os elementos que correspondem à citação do e-mail anterior
-    $('blockquote, div.gmail_quote, .gmail_attr, #divRplyFwdMsg, .BodyFragment').remove();
-
-     // Seleciona o conteúdo dentro das divs que estão antes das citações
-     const resposta = $('body').children().filter(function() {
-        return $(this).text().trim().length > 0; // Filtra elementos com texto significativo
-    }).map(function() {
-        return $(this).html(); // Pega o HTML de cada um desses elementos
-    }).get().join(''); // Junta todos os conteúdos em uma string
-
-    // Retorna o conteúdo limpo
-    return resposta.trim();
-}
+  
+    // Remove blocos HTML de respostas e assinaturas comuns
+    const seletoresRemocao = [
+      'blockquote',
+      'div.gmail_quote',
+      '.gmail_attr',
+      '#divRplyFwdMsg',
+      '.BodyFragment',
+      'div#ymail_android_signature',
+      'a#ymail_android_signature_link',
+      'div.yahoo_quoted',
+      'div.moz-cite-prefix',
+      'div.h5',
+      'hr',
+      '.signature',
+      '.OutlookMessageHeader',
+      '.WordSection1',
+      '.ms-outlook-mobile-body-separator-line',
+      '.ms-outlook-mobile-signature'
+    ];
+    $(seletoresRemocao.join(',')).remove();
+  
+    // Remove partes com estilo oculto
+    $('[style*="display:none"], [style*="visibility:hidden"]').remove();
+  
+    // Remove spans vazios
+    $('span').each((_, el) => {
+      const texto = $(el).text().trim();
+      if (!texto || texto === '\u200C') $(el).remove();
+    });
+  
+    // Captura texto do corpo
+    const textoCompleto = $('body').text();
+  
+    // Limpa e quebra por linha
+    const linhas = textoCompleto
+      .split('\n')
+      .map(l => l.trim())
+      .filter(l => l.length > 0);
+  
+    // Lista de padrões que indicam início de e-mail anterior
+    const regexCortes = [
+      /^Em\s.+escreveu:/i,
+      /^On\s.+wrote:/i,
+      /^From:\s.+/i,
+      /^De:\s.+/i,
+      /^Sent:\s.+/i,
+      /^To:\s.+/i,
+      /^Subject:\s.+/i,
+      /^-----Mensagem original-----/i,
+      /^----- Original Message -----/i
+    ];
+  
+    // Acha a primeira linha válida antes de qualquer assinatura ou resposta anterior
+    for (const linha of linhas) {
+      if (regexCortes.some(rx => rx.test(linha))) break;
+      if (/obrigado|agradecemos|estamos à disposição|android|enviado do/i.test(linha)) continue;
+      return linha; // <- só a primeira linha considerada "resposta"
+    }
+  
+    return ''; // Caso não encontre nada válido
+  };
+  
+  
 
 const createResposta = async (id_ticket, descricao, anexo) => {
   try {
@@ -215,7 +274,13 @@ const criarChamadoPorEmail = async (emailData) => {
         
         createHistorico(ticketCriado.id_ticket, ticketData.idStatus, ticketData.id_usuario);
         if (Array.isArray(anexos) && anexos.length > 0) {
+<<<<<<< HEAD
             await createAnexo(ticketCriado.id_ticket, null, anexos);
+=======
+              console.log(ticketCriado.codigo_ticket)
+            await createAnexo(ticketCriado.codigo_ticket, null, anexos);
+          
+>>>>>>> versao2.1
         }
         return {
             message: 'Chamado criado com sucesso!',
@@ -260,7 +325,10 @@ const createAnexo = async (idTicket, idResposta, dadosAnexo) => {
     }
 };
 
+<<<<<<< HEAD
   
+=======
+>>>>>>> versao2.1
 
 const getTicketPorCodigo = async (codigoTicket) => {
     if (!codigoTicket) return null;
@@ -293,7 +361,11 @@ const verificarCodigoUnico = async (codigo) => {
 const enviarRespostaAutomatica = async (remetente, codigoTicket) => {
     try {
         await transporter.sendMail({
+<<<<<<< HEAD
             from: 'servicedesk@fatecbpaulista.edu.br',
+=======
+            from: process.env.EMAIL_USER,
+>>>>>>> versao2.1
             to: remetente,
             subject: `Chamado Criado - ${codigoTicket}`,
             html: `
