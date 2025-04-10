@@ -113,71 +113,82 @@ const checkEmails = async () => {
 
 
 const getCorpoEmailLimpo = (mensagem) => {
-    const $ = cheerio.load(mensagem);
-  
-    // Remove blocos HTML de respostas e assinaturas comuns
-    const seletoresRemocao = [
-      'blockquote',
-      'div.gmail_quote',
-      '.gmail_attr',
-      '#divRplyFwdMsg',
-      '.BodyFragment',
-      'div#ymail_android_signature',
-      'a#ymail_android_signature_link',
-      'div.yahoo_quoted',
-      'div.moz-cite-prefix',
-      'div.h5',
-      'hr',
-      '.signature',
-      '.OutlookMessageHeader',
-      '.WordSection1',
-      '.ms-outlook-mobile-body-separator-line',
-      '.ms-outlook-mobile-signature'
-    ];
-    $(seletoresRemocao.join(',')).remove();
-  
-    // Remove partes com estilo oculto
-    $('[style*="display:none"], [style*="visibility:hidden"]').remove();
-  
-    // Remove spans vazios
-    $('span').each((_, el) => {
-      const texto = $(el).text().trim();
-      if (!texto || texto === '\u200C') $(el).remove();
-    });
-  
-    // Captura texto do corpo
-    const textoCompleto = $('body').text();
-  
-    // Limpa e quebra por linha
-    const linhas = textoCompleto
-      .split('\n')
-      .map(l => l.trim())
-      .filter(l => l.length > 0);
-  
-    // Lista de padrões que indicam início de e-mail anterior
-    const regexCortes = [
-      /^Em\s.+escreveu:/i,
-      /^On\s.+wrote:/i,
-      /^From:\s.+/i,
-      /^De:\s.+/i,
-      /^Sent:\s.+/i,
-      /^To:\s.+/i,
-      /^Subject:\s.+/i,
-      /^-----Mensagem original-----/i,
-      /^----- Original Message -----/i
-    ];
-  
-    // Acha a primeira linha válida antes de qualquer assinatura ou resposta anterior
-    for (const linha of linhas) {
-      if (regexCortes.some(rx => rx.test(linha))) break;
-      if (/obrigado|agradecemos|estamos à disposição|android|enviado do/i.test(linha)) continue;
-      return linha; // <- só a primeira linha considerada "resposta"
+  const $ = cheerio.load(mensagem);
+
+  // Seletores de elementos que representam assinaturas ou respostas anteriores
+  const seletoresRemocao = [
+    'blockquote',
+    'div.gmail_quote',
+    '.gmail_attr',
+    '#divRplyFwdMsg',
+    '.BodyFragment',
+    'div#ymail_android_signature',
+    'a#ymail_android_signature_link',
+    'div.yahoo_quoted',
+    'div.moz-cite-prefix',
+    'div.h5',
+    'hr',
+    '.signature',
+    '.OutlookMessageHeader',
+    '.WordSection1',
+    '.ms-outlook-mobile-body-separator-line',
+    '.ms-outlook-mobile-signature'
+  ];
+  $(seletoresRemocao.join(',')).remove();
+
+  // Remove partes escondidas visualmente
+  $('[style*="display:none"], [style*="visibility:hidden"]').remove();
+
+  // Substitui imagens por elas mesmas preservando src
+  $('img').each((_, el) => {
+    const src = $(el).attr('src');
+    if (src) {
+      $(el).replaceWith(`<img src="${src}" alt="imagem" style="max-width:100%;">`);
     }
-  
-    return ''; // Caso não encontre nada válido
-  };
-  
-  
+  });
+
+  // Remove spans vazios
+  $('span').each((_, el) => {
+    const text = $(el).text().trim();
+    if (!text || text === '\u200C') $(el).remove();
+  });
+
+  // Regex que identifica início de mensagens anteriores
+  const regexCortes = [
+    /^Em\s.+escreveu:/i,
+    /^On\s.+wrote:/i,
+    /^From:\s.+/i,
+    /^De:\s.+/i,
+    /^Sent:\s.+/i,
+    /^To:\s.+/i,
+    /^Subject:\s.+/i,
+    /^-----Mensagem original-----/i,
+    /^----- Original Message -----/i
+  ];
+
+  const $body = $('body');
+  let coletando = true;
+  let htmlFinal = '';
+
+  $body.children().each((_, el) => {
+    const texto = $(el).text().trim();
+
+    if (
+      texto.length === 0 ||
+      regexCortes.some(rx => rx.test(texto))
+    ) {
+      coletando = false; // Parar se encontrar início de e-mail anterior
+    }
+
+    if (coletando) {
+      htmlFinal += $.html(el);
+    }
+  });
+
+  return htmlFinal.trim();
+};
+
+
 
 const createResposta = async (id_ticket, descricao, anexo) => {
   try {
