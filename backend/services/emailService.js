@@ -66,11 +66,8 @@ const checkEmails = async () => {
                     tamanho: att.size,
                     arquivo: att.content
                 })) : [];
-<<<<<<< HEAD
 
-=======
            
->>>>>>> versao2.1
                 const chamado = {
                     remetente: parsed.from?.text || parsed.from || 'Desconhecido',
                     assunto: parsed.subject || 'Sem assunto',
@@ -81,10 +78,6 @@ const checkEmails = async () => {
                 // Garante que chamado.anexos seja sempre um array
                 chamado.anexos = chamado.anexos || [];
 
-<<<<<<< HEAD
-                console.log(parsed.from);
-=======
->>>>>>> versao2.1
                 const codigoTicket = extrairCodigoTicket(chamado.assunto);
 
                 if (codigoTicket) {
@@ -274,13 +267,11 @@ const criarChamadoPorEmail = async (emailData) => {
         
         createHistorico(ticketCriado.id_ticket, ticketData.idStatus, ticketData.id_usuario);
         if (Array.isArray(anexos) && anexos.length > 0) {
-<<<<<<< HEAD
-            await createAnexo(ticketCriado.id_ticket, null, anexos);
-=======
+
               console.log(ticketCriado.codigo_ticket)
             await createAnexo(ticketCriado.codigo_ticket, null, anexos);
           
->>>>>>> versao2.1
+
         }
         return {
             message: 'Chamado criado com sucesso!',
@@ -325,10 +316,6 @@ const createAnexo = async (idTicket, idResposta, dadosAnexo) => {
     }
 };
 
-<<<<<<< HEAD
-  
-=======
->>>>>>> versao2.1
 
 const getTicketPorCodigo = async (codigoTicket) => {
     if (!codigoTicket) return null;
@@ -361,11 +348,8 @@ const verificarCodigoUnico = async (codigo) => {
 const enviarRespostaAutomatica = async (remetente, codigoTicket) => {
     try {
         await transporter.sendMail({
-<<<<<<< HEAD
-            from: 'servicedesk@fatecbpaulista.edu.br',
-=======
+
             from: process.env.EMAIL_USER,
->>>>>>> versao2.1
             to: remetente,
             subject: `Chamado Criado - ${codigoTicket}`,
             html: `

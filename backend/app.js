@@ -40,13 +40,10 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 // Configuração do CORS
 const corsOptions = {
-<<<<<<< HEAD
- origin: 'http://servicedesk:3000', // Substitua pelo domínio do seu frontend
-  //origin: 'http://localhost:3000', // Substitua pelo domínio do seu frontend
-=======
+
  
   origin: process.env.DOMINIO_HOST, // Substitua pelo domínio do seu frontend
->>>>>>> versao2.1
+
 
   credentials: true, // Permite que cookies e outras credenciais sejam enviadas
 };

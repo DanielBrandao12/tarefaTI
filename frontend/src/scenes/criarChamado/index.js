@@ -4,19 +4,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import styles from "./style.module.css";
 import stylesGlobal from "../../styles/styleGlobal.module.css";
 
-<<<<<<< HEAD
-import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css';
-import { confirmAlert } from 'react-confirm-alert';
-import 'react-confirm-alert/src/react-confirm-alert.css'
-import Card from '../../components/card';
-import PaginaPadrao from '../../components/paginaPadrao';
-import Popup from '../../components/popup';
-import Cookies from 'js-cookie';
-import { jwtDecode } from 'jwt-decode';
 
-import api from '../../services/api';
-=======
+
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { confirmAlert } from "react-confirm-alert";
@@ -28,7 +17,7 @@ import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
 
 import api from "../../services/api";
->>>>>>> versao2.1
+
 
 function CriarChamado() {
   const navigate = useNavigate();
@@ -151,11 +140,8 @@ function CriarChamado() {
       });
       return;
     }
-<<<<<<< HEAD
-  
-=======
 
->>>>>>> versao2.1
+
     confirmAlert({
       customUI: ({ onClose }) => (
         <div className="react-confirm-alert-body">
@@ -168,13 +154,7 @@ function CriarChamado() {
               onClick={async () => {
                 onClose();
                 setIsLoading(true); // Ativa o loading
-<<<<<<< HEAD
-    
-                try {
-                  const token = Cookies.get("token");
-                  const headers = token ? { Authorization: `Bearer ${token}` } : {};
-    
-=======
+
 
                 try {
                   const token = Cookies.get("token");
@@ -182,7 +162,6 @@ function CriarChamado() {
                     ? { Authorization: `Bearer ${token}` }
                     : {};
 
->>>>>>> versao2.1
                   const response = await api.post(
                     "/tickets/createTicket",
                     {
@@ -198,11 +177,6 @@ function CriarChamado() {
                     },
                     { headers }
                   );
-<<<<<<< HEAD
-    
-=======
-
->>>>>>> versao2.1
                   if (response.status === 201) {
                     setMessage("Ticket criado com sucesso!");
                     setPopupVisible(true);
@@ -214,13 +188,11 @@ function CriarChamado() {
                   }
                 } catch (error) {
                   console.error("Erro ao enviar os dados:", error);
-<<<<<<< HEAD
-                  setMessage("Erro ao criar o chamado. Tente novamente mais tarde.");
-=======
+
                   setMessage(
                     "Erro ao criar o chamado. Tente novamente mais tarde."
                   );
->>>>>>> versao2.1
+
                   setPopupVisible(true);
                 } finally {
                   setIsLoading(false); // Desativa o loading
@@ -234,10 +206,7 @@ function CriarChamado() {
         </div>
       ),
     });
-<<<<<<< HEAD
-    
-=======
->>>>>>> versao2.1
+
   };
   
 
@@ -306,11 +275,7 @@ function CriarChamado() {
     }
   };
 
-<<<<<<< HEAD
 
-  
-=======
->>>>>>> versao2.1
   //função para buscar ticket pelo id
   useEffect(() => {
     const getTicketId = async () => {
@@ -338,13 +303,7 @@ function CriarChamado() {
     getTicketId();
   }, [id_ticket.id]); // Executa o efeito apenas quando `id_ticket.id` muda.
 
-<<<<<<< HEAD
 
-
-
-
-=======
->>>>>>> versao2.1
   //fecha popup
   const closePopup = () => setPopupVisible(false);
 

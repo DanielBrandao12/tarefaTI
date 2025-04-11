@@ -62,6 +62,7 @@ function Relatorio() {
     fetchRelatorio();
     setActiveButton(true);
     console.log("Enviando dados:", dadosEnvio);
+    console.log(relatorio)
   };
 
   const formatarMes = (data) => {
